@@ -1,0 +1,174 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  font-family: "Inter", sans-serif;
+  background: linear-gradient(135deg, #6a5af9, #6fb1fc);
+}
+
+/* Layout tổng */
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  background: linear-gradient(135deg, #5f5c76, #56769b);
+}
+
+.login-card {
+  background: #fff;
+  padding: 2.5rem;
+  border-radius: 1.5rem;
+  width: 400px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* Header */
+.login-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-logo-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-bottom: 0.4rem;
+}
+
+.login-logo {
+  width: 45px;
+  height: 45px;
+  object-fit: contain;
+}
+
+.login-header h2 {
+  font-weight: 700;
+  margin: 0;
+  color: black;
+}
+
+.login-subtitle {
+  color: black;
+  font-size: 20px;
+  margin-bottom: 1.5rem;
+}
+
+/* Input Group (dành riêng cho login form) */
+.login-form .input-group {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  margin-bottom: 1rem;
+}
+
+.login-form .input-group label {
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.login-form .input-group input {
+  padding: 0.75rem 0.9rem;
+  border-radius: 0.6rem;
+  border: 1px solid #ccc;
+  background-color: #f8f8f8;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+  color: #000;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.login-form .input-group input::placeholder {
+  color: #aaa;
+}
+
+.login-form .input-group input:focus {
+  outline: none;
+  border-color: #6a5af9;
+  box-shadow: 0 0 0 2px rgba(106, 90, 249, 0.15);
+  background-color: #fff;
+}
+
+/* Password field */
+.login-form .password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.login-form .password-wrapper input {
+  width: 100%;
+  padding-right: 2.5rem;
+  box-sizing: border-box;
+}
+
+.login-form .toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #666;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.login-form .toggle-password:hover {
+  color: #000;
+}
+
+/* Forgot password */
+.login-options {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1.2rem;
+  font-size: 0.9rem;
+}
+
+.login-options a {
+  color: #6a5af9;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.login-options a:hover {
+  text-decoration: underline;
+}
+
+/* Button */
+.btn-login {
+  width: 100%;
+  padding: 0.8rem;
+  background: linear-gradient(90deg, #6a5af9, #7b7efc);
+  border: none;
+  border-radius: 0.6rem;
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-login:hover {
+  background: linear-gradient(90deg, #5749d6, #6a5af9);
+  transform: translateY(-1px);
+}
+
+/* Error text */
+.login-error {
+  color: #e53935;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
