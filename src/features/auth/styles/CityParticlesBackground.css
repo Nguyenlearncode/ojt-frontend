@@ -1,0 +1,94 @@
+/* Ported from the provided CodePen: full-screen city image with floating particles */
+.city-bg {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+  background-color: #021027;
+  pointer-events: none;
+}
+
+.city-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* Replaceable background image for the scene via CSS var */
+  background: var(--bg-url, url("/backgrounds/lab.jpg")) center/cover no-repeat;
+  /* vignette like the pen's radial mask */
+  -webkit-mask-image: radial-gradient(white 0%, white 30%, transparent 80%, transparent);
+          mask-image: radial-gradient(white 0%, white 30%, transparent 80%, transparent);
+}
+
+.circle-container {
+  position: absolute;
+  will-change: transform; /* Optimize for GPU */
+  animation: move-var var(--dur, 30000ms) linear var(--delay, 0ms) infinite;
+}
+
+.circle-container .circle {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  mix-blend-mode: screen;
+  background-image: radial-gradient(#99ffff, #99ffff 10%, rgba(153, 255, 255, 0) 56%);
+  animation: fade-frames 200ms infinite, scale-frames 2s infinite;
+  /* Cải tiến: glow rõ ràng hơn */
+  box-shadow: 0 0 8px rgba(153, 255, 255, 0.8);
+}
+
+.trail {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-image: radial-gradient(#99ffff, rgba(153, 255, 255, 0.4) 10%, transparent 56%);
+  opacity: 0;
+  animation: trail-fade 500ms linear infinite;
+  filter: blur(4px);
+}
+
+@keyframes fade-frames {
+  0% { opacity: 1; }
+  50% { opacity: .7; }
+  100% { opacity: 1; }
+}
+
+@keyframes scale-frames {
+  0% { transform: scale3d(.4, .4, 1); }
+  50% { transform: scale3d(2.2, 2.2, 1); }
+  100% { transform: scale3d(.4, .4, 1); }
+}
+
+@keyframes trail-fade {
+  0% { opacity: 0.6; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.5) translateY(10px); }
+}
+
+/* Generate nth-child rules like the pen would; keep 200 selectors minimal by using CSS vars via inline styles if ever needed. */
+/* For now, let containers be auto-positioned via a lightweight JS-free approach: use random seeds with CSS animations using steps through a sprite-like trick is heavy. The imported pen relies on many nth-child rules which are not critical to keep 1:1. We’ll approximate: */
+@keyframes move-var {
+  from { transform: translate3d(var(--sx), var(--sy), 0); }
+  to   { transform: translate3d(var(--ex), var(--ey), 0); }
+}
+
+.city-bg.gathering .circle-container {
+  animation: move-var var(--dur) ease-in forwards; /* Override for gathering */
+}
+
+.city-bg.resetting .circle-container {
+  opacity: 0;
+  transition: opacity 0.1s;
+}
+
+.city-bg.normal .circle-container {
+  animation: move-var var(--dur) linear var(--delay) infinite;
+}
+
+/* Reduce motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .circle-container, .circle-container .circle { animation: none !important; }
+}
+
+

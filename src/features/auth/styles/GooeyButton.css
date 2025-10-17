@@ -1,0 +1,81 @@
+@property --a {
+  syntax: "<percentage>";
+  initial-value: 0%;
+  inherits: true;
+}
+
+.gooey-btn {
+  --a: 0%;
+  --hue: 200deg;
+  --x: 50;
+  --y: 50;
+  --button: hsl(var(--hue), 66%, 60%);
+  --edge: 20px;
+  --size: 1.25em;
+
+  position: relative;
+  background: transparent;
+  color: hsla(var(--hue), 80%, 95%, 0.9);
+  font-weight: 700;
+  padding: calc(var(--size)) calc(var(--size) * 1.5);
+  border-radius: 12px;
+  border: none;
+  isolation: isolate;
+  transition: --a .5s ease-in-out, transform .3s ease, filter .2s ease;
+  animation: color 20s linear infinite both;
+  scale: .98;
+}
+
+.gooey-btn:hover {
+  --a: 100%;
+  transform: translateY(-1px);
+}
+
+.gooey-btn.is-loading { cursor: progress; }
+
+.gooey-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(125, 211, 252, 0.35);
+}
+
+.gooey-btn::before {
+  content: "";
+  position: absolute;
+  /* extend beyond button so effect can stretch when cursor nears edges */
+  inset: -16px;
+  filter: blur(12px) url(#goo) drop-shadow(0 .25em .5em rgba(0, 0, 0, 0.6));
+  background-image:
+    linear-gradient(0deg, var(--button), var(--button)),
+    radial-gradient(
+      40% 70% at calc(var(--x) * 1%) calc(var(--y) * 1%),
+      hsla(var(--hue), 77%, 77%, var(--a)) 0%,
+      transparent 90%
+    );
+  /* inner content-box keeps the solid button size exact; outer allows radial to overflow */
+  background-clip: content-box, border-box;
+  padding: 16px;
+  z-index: -1;
+  pointer-events: none;
+  border: inherit;
+  animation: color 20s linear infinite both;
+  border-radius: 14px;
+}
+
+@property --hue {
+  syntax: "<angle>";
+  initial-value: 200deg;
+  inherits: false;
+}
+
+@keyframes color {
+  from { --hue: 170deg; }
+  to { --hue: 530deg; }
+}
+
+/* remove idle animation (back to original behavior where only hover triggers movement) */
+
+@media (prefers-reduced-motion: reduce) {
+  .gooey-btn, .gooey-btn::before { transition: none; animation: none !important; }
+}
+
+
