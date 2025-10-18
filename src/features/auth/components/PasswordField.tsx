@@ -1,3 +1,5 @@
+// src/features/auth/components/PasswordField.tsx
+
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useContext } from "react";

@@ -1,3 +1,5 @@
+// src/features/auth/components/SubmitButton.tsx
+
 import React, { useRef, useContext } from "react";
 import "../styles/GooeyButton.css";
 import { ParticleContext } from "../contexts/ParticleContext"; // Correct path

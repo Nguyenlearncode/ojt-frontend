@@ -1,3 +1,5 @@
+// src/features/auth/components/EmailField.tsx
+
 import React from "react";
 
 interface EmailFieldProps {

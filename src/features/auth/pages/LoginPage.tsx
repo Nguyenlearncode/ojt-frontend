@@ -1,3 +1,4 @@
+// src/features/auth/pages/LoginPage.tsx
 import React, { useRef } from "react";
 import EmailField from "../components/EmailField";
 import PasswordField from "../components/PasswordField";
