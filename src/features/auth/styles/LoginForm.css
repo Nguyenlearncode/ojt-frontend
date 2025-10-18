@@ -214,6 +214,13 @@ body {
   border-radius: 8px;
 }
 
+.login-form .input-group > * {
+  border-top-left-radius: 0.8rem !important;
+  border-bottom-left-radius: 0.8rem !important;
+  margin-left: 0 !important;
+}
+
+
 @keyframes card-in {
   to { transform: translateY(0); }
 }

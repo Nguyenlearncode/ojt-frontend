@@ -13,6 +13,8 @@ interface LoginResponse {
 
 export const authApi = {
   login: async (data: LoginRequest): Promise<LoginResponse> => {
-    return axiosClient.post("/users/login", data);
-  },
+  const res = await axiosClient.post("/users/login", data);
+  return res.data; 
+},
+
 };

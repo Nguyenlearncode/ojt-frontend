@@ -17,17 +17,22 @@ describe("authApi (unit)", () => {
   it("should call axiosClient.post with correct URL and data", async () => {
     const mockData = { email: "test@example.com", password: "123456" };
     const mockResponse = {
-      accessToken: "mockAccessToken",
-      refreshToken: "mockRefreshToken",
+      data: {
+        accessToken: "mockAccessToken",
+        refreshToken: "mockRefreshToken",
+      },
     };
 
-    // ✅ Mock resolve từ axiosClient.post
+    // ✅ Mock axiosClient.post trả về { data: ... }
     (axiosClient.post as unknown as Mock).mockResolvedValue(mockResponse);
 
     const result = await authApi.login(mockData);
 
+    // ✅ Kiểm tra URL & payload
     expect(axiosClient.post).toHaveBeenCalledWith("/users/login", mockData);
-    expect(result).toEqual(mockResponse);
+
+    // ✅ So sánh với dữ liệu trong mockResponse.data
+    expect(result).toEqual(mockResponse.data);
   });
 
   it("should throw error when axiosClient.post rejects", async () => {
