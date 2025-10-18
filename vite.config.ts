@@ -24,9 +24,17 @@ export default defineConfig({
     ],
     exclude: ["node_modules", "dist", "coverage", "**/build/**"],
     coverage: {
-      reporter: ["text", "html"],
+      provider: "v8", // hoặc 'istanbul' nếu bạn muốn dùng istanbul
+      reporter: ["text", "html", "json-summary"],
       include: ["src/**/*.{ts,tsx}"],
       exclude: ["src/tests/**"],
+      all: true, // ✅ tính coverage cho tất cả file, kể cả chưa test
+      thresholds: {
+        statements: 80,
+        branches: 80,
+        functions: 80,
+        lines: 80,
+      },
     },
   },
 });
