@@ -1,14 +1,22 @@
 import { renderHook, act } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, type Mock } from "vitest";
-import { useLogin } from "../../../../../features/auth/hooks/useLogin";
-import { authApi } from "../../../../../features/auth/api/authApi";
 
-// 🧩 Mock module authApi
+// ⚠️ 1️⃣ Mock react-router-dom PHẢI đặt trước khi import useLogin
+const mockNavigate = vi.fn();
+vi.mock("react-router-dom", () => ({
+  useNavigate: () => mockNavigate,
+}));
+
+// ⚠️ 2️⃣ Mock authApi
 vi.mock("../../../../../features/auth/api/authApi", () => ({
   authApi: {
     login: vi.fn(),
   },
 }));
+
+// ⚠️ 3️⃣ Import hook sau khi mock xong
+import { useLogin } from "../../../../../features/auth/hooks/useLogin";
+import { authApi } from "../../../../../features/auth/api/authApi";
 
 describe("useLogin hook (unit)", () => {
   const mockLogin = vi.fn();
@@ -47,15 +55,13 @@ describe("useLogin hook (unit)", () => {
     expect(result.current.formData.password).toBe("123456");
   });
 
-  it("calls authApi.login and saves tokens on success", async () => {
+  it("calls authApi.login, saves tokens, and navigates on success", async () => {
     mockLogin.mockResolvedValueOnce({
       accessToken: "access-123",
       refreshToken: "refresh-456",
     });
 
     const { result } = renderHook(() => useLogin());
-
-    const alertSpy = vi.spyOn(window, "alert").mockImplementation(() => {});
 
     await act(async () => {
       await result.current.handleSubmit({
@@ -68,8 +74,7 @@ describe("useLogin hook (unit)", () => {
     expect(localStorage.getItem("refreshToken")).toBe("refresh-456");
     expect(result.current.loading).toBe(false);
     expect(result.current.error).toBe("");
-
-    alertSpy.mockRestore();
+    expect(mockNavigate).toHaveBeenCalledWith("/dashboard");
   });
 
   it("sets error message on failed login", async () => {
@@ -88,6 +93,7 @@ describe("useLogin hook (unit)", () => {
     expect(mockLogin).toHaveBeenCalledTimes(1);
     expect(result.current.error).toBe("Invalid credentials");
     expect(result.current.loading).toBe(false);
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 
   it("sets default error message if error has no response", async () => {
@@ -102,5 +108,6 @@ describe("useLogin hook (unit)", () => {
     });
 
     expect(result.current.error).toBe("Invalid email or password");
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 });

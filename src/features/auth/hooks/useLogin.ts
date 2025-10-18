@@ -1,5 +1,6 @@
 // src/features/auth/hooks/useLogin.ts
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { authApi } from "../api/authApi";
 
 interface LoginData {
@@ -11,6 +12,7 @@ export const useLogin = () => {
   const [formData, setFormData] = useState<LoginData>({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -29,7 +31,8 @@ export const useLogin = () => {
       localStorage.setItem("accessToken", res.accessToken);
       localStorage.setItem("refreshToken", res.refreshToken);
 
-      alert("✅ Login successful!");
+      // 🚀 Chuyển sang trang Dashboard
+      navigate("/dashboard");
     } catch (err: any) {
       console.error(err);
       setError(err.response?.data?.message || "Invalid email or password");

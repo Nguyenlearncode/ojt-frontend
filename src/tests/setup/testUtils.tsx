@@ -1,11 +1,16 @@
-import '@testing-library/jest-dom';
+import React from "react";
+import { render } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 
-// (Tuỳ chọn) Nếu bạn cần MSW mock API:
-// import { server } from '../mocks/server';
-// beforeAll(() => server.listen());
-// afterEach(() => server.resetHandlers());
-// afterAll(() => server.close());
+// Giúp render component có router context
+export const renderWithRouter = (ui: React.ReactElement) => {
+  return render(<MemoryRouter>{ui}</MemoryRouter>);
+};
 
-// (Tuỳ chọn) Nếu bạn muốn có helper render chung:
-// export * from '@testing-library/react';
-// export { default as userEvent } from '@testing-library/user-event';
+// Jest-dom matchers (toBeInTheDocument, v.v.)
+import "@testing-library/jest-dom";
+
+// Dọn localStorage trước mỗi test
+beforeEach(() => {
+  localStorage.clear();
+});

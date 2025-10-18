@@ -12,27 +12,17 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "jsdom",
-
-    // Setup chung cho test (cleanup DOM, msw, v.v.)
     setupFiles: [
-      "src/tests/setup/testUtils.tsx", // file cleanup / global utils
-      "src/tests/setup/testSetup.ts",  // file khởi tạo mock server (MSW)
+      "src/tests/setup/testUtils.tsx",
+      "src/tests/setup/testSetup.ts",
     ],
-
     include: [
       "src/**/*.test.{ts,tsx}",
       "src/**/__tests__/**/*.{ts,tsx}",
       "src/tests/unit/**/*.{test,spec}.{ts,tsx}",
       "src/tests/integration/**/*.{test,spec}.{ts,tsx}",
     ],
-
-    exclude: [
-      "node_modules",
-      "dist",
-      "coverage",
-      "**/build/**",
-    ],
-
+    exclude: ["node_modules", "dist", "coverage", "**/build/**"],
     coverage: {
       reporter: ["text", "html"],
       include: ["src/**/*.{ts,tsx}"],
