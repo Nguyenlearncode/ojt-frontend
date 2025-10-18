@@ -1,6 +1,6 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import LoginForm from "./features/auth/pages/LoginForm";
+import LoginForm from "./features/auth/pages/LoginPage";
 
 const App: React.FC = () => {
   return (

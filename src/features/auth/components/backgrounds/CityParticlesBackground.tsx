@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useImperativeHandle, forwardRef } from "react";
-import "../styles/CityParticlesBackground.css";
+import { useState, useEffect, useImperativeHandle, forwardRef } from "react";
+import "../../styles/CityParticlesBackground.css";
 
 const NUM_CIRCLES = 150; // Reduced from 200 for better performance
 
@@ -14,7 +14,15 @@ const CityParticlesBackground = forwardRef(({ imageSrc = "/backgrounds/lab.jpg" 
 
   const [phase, setPhase] = useState<'normal' | 'gathering' | 'resetting'>('normal');
   const [targetPos, setTargetPos] = useState({ x: 50, y: 50 }); // vw, vh
-  const [particles, setParticles] = useState([]); // To regenerate on reset
+  const [particles, setParticles] = useState<Array<{
+    sx: number;
+    ex: number;
+    sy: number;
+    ey: number;
+    size: number;
+    dur: number;
+    delay: number;
+  }>>([]); // To regenerate on reset
 
   useImperativeHandle(ref, () => ({
     triggerGather: (tx: number, ty: number) => {

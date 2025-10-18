@@ -1,4 +1,6 @@
+// src/features/auth/hooks/useLogin.ts
 import { useState } from "react";
+import { authApi } from "../api/authApi";
 
 interface LoginData {
   email: string;
@@ -21,18 +23,16 @@ export const useLogin = () => {
     setLoading(true);
 
     try {
-      await new Promise((res) => setTimeout(res, 800));
+      const res = await authApi.login(formData);
 
-      if (
-        formData.email === "admin@example.com" &&
-        formData.password === "123456"
-      ) {
-        alert("✅ Login successful!");
-      } else {
-        setError("Invalid email or password");
-      }
-    } catch {
-      setError("Something went wrong. Please try again.");
+      // 🟢 Lưu token vào localStorage
+      localStorage.setItem("accessToken", res.accessToken);
+      localStorage.setItem("refreshToken", res.refreshToken);
+
+      alert("✅ Login successful!");
+    } catch (err: any) {
+      console.error(err);
+      setError(err.response?.data?.message || "Invalid email or password");
     } finally {
       setLoading(false);
     }

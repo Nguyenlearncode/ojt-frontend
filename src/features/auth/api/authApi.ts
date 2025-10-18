@@ -1,15 +1,19 @@
+// src/features/auth/api/authApi.ts
 import axiosClient from "../../../api/axiosClient";
 
-export const authApi = {
-  login: async (data: { email: string; password: string }) => {
-    // 🔹 Dùng API thật:
-    // return axiosClient.post("/auth/login", data);
+interface LoginRequest {
+  email: string;
+  password: string;
+}
 
-    // 🔹 Mock login để test:
-    await new Promise((res) => setTimeout(res, 1000));
-    if (data.email === "admin@example.com" && data.password === "123456") {
-      return { success: true, token: "fake-jwt-token" };
-    }
-    return { success: false };
+interface LoginResponse {
+  accessToken: string;
+  refreshToken: string;
+}
+
+export const authApi = {
+  login: async (data: LoginRequest): Promise<LoginResponse> => {
+    // ⚙️ Đổi đường dẫn này
+    return axiosClient.post("/users/login", data);
   },
 };

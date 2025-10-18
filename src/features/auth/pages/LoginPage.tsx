@@ -2,8 +2,7 @@ import React, { useRef } from "react";
 import EmailField from "../components/EmailField";
 import PasswordField from "../components/PasswordField";
 import SubmitButton from "../components/SubmitButton";
-import AnimatedBackground from "../components/AnimatedBackground";
-import CityParticlesBackground from "../components/CityParticlesBackground";
+import CityParticlesBackground from "../components/backgrounds/CityParticlesBackground";
 import { useLogin } from "../hooks/useLogin";
 import "../styles/LoginForm.css";
 import logo from "../../../assets/react.svg";
@@ -11,7 +10,7 @@ import { ParticleContext } from "../contexts/ParticleContext";
 
 const LoginPage: React.FC = () => {
   const { formData, loading, error, handleChange, handleSubmit } = useLogin();
-  const bgRef = useRef(null);
+  const bgRef = useRef<{ triggerGather: (x: number, y: number) => void } | null>(null);
 
   const triggerGather = (x: number, y: number) => {
     if (bgRef.current) {
