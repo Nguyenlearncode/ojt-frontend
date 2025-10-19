@@ -1,5 +1,4 @@
 // src/features/auth/components/EmailField.tsx
-
 import React from "react";
 
 interface EmailFieldProps {
@@ -18,7 +17,7 @@ const EmailField: React.FC<EmailFieldProps> = ({
   onChange,
 }) => {
   return (
-    <div className="input-group">
+    <div className="input-group" data-testid="email-field">
       <label htmlFor={id}>{label}</label>
       <input
         type="email"

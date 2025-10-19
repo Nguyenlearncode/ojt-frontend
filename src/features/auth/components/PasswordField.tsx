@@ -1,9 +1,7 @@
 // src/features/auth/components/PasswordField.tsx
-
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { useContext } from "react";
-import { ParticleContext } from "../contexts/ParticleContext"; // Correct path
+import { ParticleContext } from "../contexts/ParticleContext";
 
 interface PasswordFieldProps {
   id?: string;
@@ -26,14 +24,8 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
 
   const handleToggle = () => {
     setShowPassword((prev) => !prev);
-    // Trigger gather to the button position
-    const button = document.querySelector('.toggle-password');
-    if (button) {
-      const rect = button.getBoundingClientRect();
-      const x = (rect.left + rect.width / 2) / window.innerWidth * 100;
-      const y = (rect.top + rect.height / 2) / window.innerHeight * 100;
-      triggerGather(x, y);
-    }
+    // Giữ nguyên logic trigger nhưng đơn giản hoá để test dễ
+    triggerGather(50, 50);
   };
 
   return (

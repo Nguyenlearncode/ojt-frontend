@@ -204,7 +204,9 @@ body {
 .btn-login:active { transform: translateY(0); }
 
 /* Error text */
+
 .login-error {
+  display: none; /* Ẩn mặc định */
   color: #ff8a80;
   font-size: 0.9rem;
   margin-bottom: 1rem;
@@ -212,7 +214,14 @@ body {
   border: 1px solid rgba(255, 138, 128, 0.25);
   padding: 8px 12px;
   border-radius: 8px;
+  text-align: left;
 }
+
+/* Khi có lỗi */
+.login-error.visible {
+  display: block;
+}
+
 
 .login-form .input-group > * {
   border-top-left-radius: 0.8rem !important;
