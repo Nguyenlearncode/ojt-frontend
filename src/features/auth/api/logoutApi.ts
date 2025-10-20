@@ -6,5 +6,5 @@ export interface LogoutRequest {
 }
 
 export const logoutApi = async (data: LogoutRequest): Promise<void> => {
-  await axiosClient.post("/users/logout", data);
+  await axiosClient.post("/auth/logout", data);
 };
