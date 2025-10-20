@@ -7,9 +7,9 @@ import {
   FiSettings,
   FiChevronDown,
   FiMenu,
-  FiLogOut,
 } from "react-icons/fi";
 import "./Sidebar.css";
+import LogoutButton from "../features/auth/components/LogoutButton";
 
 const Sidebar: React.FC = () => {
   const [expanded, setExpanded] = useState(true);
@@ -53,8 +53,6 @@ const Sidebar: React.FC = () => {
       ],
     },
   ];
-
-
 
   // Xác định menu đang active
   const isActive = (path?: string) => {
@@ -141,10 +139,9 @@ const Sidebar: React.FC = () => {
             </div>
           )}
         </div>
-        <button className="logout-btn" >
-          <FiLogOut size={20} />
-          {expanded && <span>Logout</span>}
-        </button>
+
+        {/* ✅ Nút Logout riêng biệt */}
+        <LogoutButton expanded={expanded} />
       </div>
     </div>
   );
