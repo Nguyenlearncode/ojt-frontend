@@ -6,7 +6,7 @@ import { MemoryRouter } from "react-router-dom";
 
 const mockNavigate = vi.fn();
 
-// ✅ Mock react-router-dom
+// ✅ Mock react-router-dom để kiểm soát navigate
 vi.mock("react-router-dom", async () => {
   const actual = await vi.importActual("react-router-dom");
   return { ...actual, useNavigate: () => mockNavigate };
@@ -16,12 +16,14 @@ describe("useLogout Hook", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
-    vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.spyOn(console, "error").mockImplementation(() => {}); // Ngăn console.log lỗi trong test
   });
 
   it("calls logoutApi, clears tokens, and navigates (success path)", async () => {
+    // Mock API trả về thành công
     vi.spyOn(logoutApiModule, "logoutApi").mockResolvedValueOnce(undefined);
 
+    // Giả lập token trước khi logout
     localStorage.setItem("accessToken", "abc");
     localStorage.setItem("refreshToken", "def");
 
@@ -31,13 +33,15 @@ describe("useLogout Hook", () => {
       await result.current.logout({ refreshToken: "def" });
     });
 
+    // ✅ Sau khi logout thành công
     expect(result.current.loading).toBe(false);
     expect(localStorage.getItem("accessToken")).toBeNull();
     expect(localStorage.getItem("refreshToken")).toBeNull();
     expect(mockNavigate).toHaveBeenCalledWith("/");
   });
 
-  it("handles API errors gracefully (error path)", async () => {
+  it("does NOT clear tokens or navigate when logoutApi fails (error path)", async () => {
+    // Mock API thất bại
     vi.spyOn(logoutApiModule, "logoutApi").mockRejectedValueOnce(new Error("fail"));
 
     localStorage.setItem("accessToken", "aaa");
@@ -49,13 +53,16 @@ describe("useLogout Hook", () => {
       await result.current.logout({ refreshToken: "bbb" });
     });
 
+    // ✅ Token vẫn còn
     expect(result.current.loading).toBe(false);
-    expect(localStorage.getItem("accessToken")).toBeNull();
-    expect(localStorage.getItem("refreshToken")).toBeNull();
-    expect(mockNavigate).toHaveBeenCalledWith("/");
+    expect(localStorage.getItem("accessToken")).toBe("aaa");
+    expect(localStorage.getItem("refreshToken")).toBe("bbb");
+    // ✅ Không điều hướng khi lỗi
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 
   it("toggles loading state correctly", async () => {
+    // Mock API với độ trễ nhỏ
     vi.spyOn(logoutApiModule, "logoutApi").mockImplementation(
       () => new Promise((resolve) => setTimeout(resolve, 10))
     );
@@ -68,7 +75,7 @@ describe("useLogout Hook", () => {
       await result.current.logout({ refreshToken: "zzz" });
     });
 
-    // ✅ chỉ cần verify final state — React 18 batch update
+    // ✅ Kết thúc -> loading trở lại false
     expect(result.current.loading).toBe(false);
   });
 });

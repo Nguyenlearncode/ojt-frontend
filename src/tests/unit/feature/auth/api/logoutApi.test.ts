@@ -20,7 +20,7 @@ describe("logoutApi", () => {
     const result = await logoutApi(data);
 
     // ✅ API được gọi đúng endpoint và payload
-    expect(mockPost).toHaveBeenCalledWith("/users/logout", data);
+    expect(mockPost).toHaveBeenCalledWith("/auth/logout", data);
     // ✅ API trả về void (undefined)
     expect(result).toBeUndefined();
   });
