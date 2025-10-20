@@ -29,7 +29,7 @@ describe("authApi (unit)", () => {
 
     const result = await authApi.login(mockData);
 
-    expect(axiosClient.post).toHaveBeenCalledWith("/users/login", mockData);
+    expect(axiosClient.post).toHaveBeenCalledWith("/auth/login", mockData);
     expect(result).toEqual(mockResponse);
   });
 
@@ -40,6 +40,6 @@ describe("authApi (unit)", () => {
     (axiosClient.post as unknown as Mock).mockRejectedValueOnce(mockError);
 
     await expect(authApi.login(mockData)).rejects.toThrow("Network Error");
-    expect(axiosClient.post).toHaveBeenCalledWith("/users/login", mockData);
+    expect(axiosClient.post).toHaveBeenCalledWith("/auth/login", mockData);
   });
 });

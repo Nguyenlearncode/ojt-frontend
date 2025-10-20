@@ -3,7 +3,7 @@ import axios from "axios";
 import type { AxiosError, AxiosResponse } from "axios";
 
 const axiosClient = axios.create({
-  baseURL: "https://localhost:5001/api", // 🟢 dùng port backend thật
+  baseURL: "https://localhost:5001/api", 
   headers: { "Content-Type": "application/json" },
 });
 

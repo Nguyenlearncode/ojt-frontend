@@ -2,7 +2,7 @@ import { setupServer } from "msw/node";
 import { http, HttpResponse } from "msw";
 
 export const handlers = [
-  http.post("https://localhost:5001/api/users/login", async ({ request }) => {
+  http.post("https://localhost:5001/api/auth/login", async ({ request }) => {
     const body = (await request.json()) as { email: string; password: string };
 
     if (body.email === "test@example.com" && body.password === "123456") {
