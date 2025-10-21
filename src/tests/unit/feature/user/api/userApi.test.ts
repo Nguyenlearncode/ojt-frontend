@@ -1,17 +1,18 @@
-// src/tests/unit/features/user/api/userApi.test.ts
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import axiosClient from "../../../../../api/axiosClient";
 import { userApi } from "../../../../../features/user/api/userApi";
 import type { User } from "../../../../../features/user/api/userApi";
 
-vi.mock("../../../../../api/axiosClient");
+vi.mock("../../../../../api/axiosClient", () => ({
+  default: { get: vi.fn() },
+}));
 
 describe("userApi", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("gọi đúng endpoint và trả về danh sách user", async () => {
+  it("gọi đúng endpoint và trả về danh sách người dùng", async () => {
     const mockUsers: User[] = [
       {
         userId: "1",
@@ -26,8 +27,7 @@ describe("userApi", () => {
       },
     ];
 
-    // interceptor axiosClient đã unwrap data => trả về trực tiếp
-    (axiosClient.get as any).mockResolvedValue(mockUsers);
+    (axiosClient.get as any).mockResolvedValue({ data: mockUsers });
 
     const result = await userApi.getAllUsers();
 
@@ -35,9 +35,17 @@ describe("userApi", () => {
     expect(result).toEqual(mockUsers);
   });
 
-  it("trả về [] khi response null hoặc undefined", async () => {
-    (axiosClient.get as any).mockResolvedValue(undefined);
+  it("trả về [] khi API trả về null", async () => {
+    (axiosClient.get as any).mockResolvedValue({ data: null });
+
     const result = await userApi.getAllUsers();
+
     expect(result).toEqual([]);
+  });
+
+  it("throw lỗi nếu axiosClient.get bị reject", async () => {
+    (axiosClient.get as any).mockRejectedValue(new Error("Network error"));
+
+    await expect(userApi.getAllUsers()).rejects.toThrow("Network error");
   });
 });
