@@ -1,0 +1,33 @@
+.create-account-container {
+  margin-top: 30px;
+}
+
+/* Buttons */
+.btn-success {
+  background-color: #10b981;
+  border: none;
+}
+
+.btn-success:hover {
+  background-color: #059669;
+}
+
+.btn-secondary {
+  background-color: #6b7280;
+  border: none;
+}
+
+.btn-secondary:hover {
+  background-color: #4b5563;
+}
+
+/* Back button */
+.btn-outline-dark {
+  border-color: #374151;
+  color: #374151;
+}
+
+.btn-outline-dark:hover {
+  background-color: #374151;
+  color: white;
+}

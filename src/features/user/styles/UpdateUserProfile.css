@@ -1,0 +1,73 @@
+.update-profile-container {
+  margin-top: 30px;
+}
+
+/* Avatar wrapper */
+.user-avatar-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+  margin-bottom: 20px;
+}
+
+/* Avatar image */
+.user-avatar-img {
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #ccc;
+  margin-bottom: 10px;
+  transition: transform 0.2s ease-in-out;
+}
+
+.user-avatar-img:hover {
+  transform: scale(1.05);
+}
+
+/* Upload text */
+.user-avatar-text {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+/* File input styling */
+.user-avatar-input {
+  width: 80%;
+  max-width: 250px;
+}
+
+
+.personal-info h3 {
+  margin-top: 10px;
+  color: #333;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #0069d9;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  border: none;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+}
+
+.btn-warning {
+  background-color: #f59e0b;
+  border: none;
+}
+
+.btn-warning:hover {
+  background-color: #d97706;
+}
