@@ -1,3 +1,4 @@
+// src/features/user/pages/UserManagementPage.tsx
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/UserManagementPage.css";
