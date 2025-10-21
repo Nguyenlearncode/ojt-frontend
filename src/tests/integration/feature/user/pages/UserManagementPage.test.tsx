@@ -1,12 +1,11 @@
-
-import { render, screen, waitFor, within } from "@testing-library/react";
-import { vi, describe, test, expect, afterEach } from "vitest";
+import { render, screen, waitFor } from "@testing-library/react";
+import { vi } from "vitest";
 import "@testing-library/jest-dom";
 import UserManagementPage from "../../../../../features/user/pages/UserManagementPage";
 import * as useUsersHook from "../../../../../features/user/hooks/useUsers";
 import type { User } from "../../../../../features/user/api/userApi";
 
-// 🧩 Mock component con UserTable
+// ✅ Mock UserTable component — không test component con
 vi.mock("../../../../../features/user/components/UserTable", () => ({
   default: ({ users }: { users: User[] }) => (
     <div data-testid="user-table">
@@ -19,12 +18,13 @@ vi.mock("../../../../../features/user/components/UserTable", () => ({
   ),
 }));
 
-describe("UserManagementPage Integration Test", () => {
+describe("Integration Test: UserManagementPage", () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });
 
-  test("hiển thị thông báo tải khi đang loading", () => {
+  // 🧩 Case 1: Khi đang loading
+  it("hiển thị thông báo đang tải khi useUsers.loading = true", () => {
     vi.spyOn(useUsersHook, "useUsers").mockReturnValue({
       users: [],
       loading: true,
@@ -35,7 +35,8 @@ describe("UserManagementPage Integration Test", () => {
     expect(screen.getByText("Đang tải dữ liệu...")).toBeInTheDocument();
   });
 
-  test("hiển thị lỗi nếu hook trả về error", () => {
+  // 🧩 Case 2: Khi có lỗi
+  it("hiển thị thông báo lỗi khi useUsers.error có giá trị", () => {
     vi.spyOn(useUsersHook, "useUsers").mockReturnValue({
       users: [],
       loading: false,
@@ -46,7 +47,8 @@ describe("UserManagementPage Integration Test", () => {
     expect(screen.getByText("Không thể tải dữ liệu")).toBeInTheDocument();
   });
 
-  test("hiển thị bảng người dùng khi có dữ liệu", async () => {
+  // 🧩 Case 3: Khi có dữ liệu người dùng
+  it("hiển thị bảng người dùng và các thành phần UI khi useUsers trả về users", async () => {
     const mockUsers: User[] = [
       {
         userId: "1",
@@ -80,27 +82,22 @@ describe("UserManagementPage Integration Test", () => {
 
     render(<UserManagementPage />);
 
-    // ✅ Kiểm tra tiêu đề trang (h2 có text "User Management")
-    const heading = screen.getByRole("heading", { level: 2 });
-    expect(heading).toBeInTheDocument();
-    expect(heading.textContent).toMatch(/User\s*Management/i);
+    // ✅ Kiểm tra tiêu đề trang
+    expect(screen.getByRole("heading", { name: /User\s*Management/i })).toBeInTheDocument();
 
-    // ✅ Kiểm tra bảng người dùng render đúng
-    const table = await screen.findByTestId("user-table");
-    expect(table).toBeInTheDocument();
+    // ✅ Kiểm tra bảng hiển thị đúng dữ liệu người dùng
+    expect(await screen.findByTestId("user-table")).toBeInTheDocument();
+    expect(screen.getByText("Nguyễn Văn A")).toBeInTheDocument();
+    expect(screen.getByText("Trần Thị B")).toBeInTheDocument();
+    expect(screen.getByText("Admin")).toBeInTheDocument();
+    expect(screen.getAllByText("User").length).toBeGreaterThan(0); // tránh trùng heading
 
-    const tableScope = within(table);
-    expect(tableScope.getByText("Nguyễn Văn A")).toBeInTheDocument();
-    expect(tableScope.getByText("Trần Thị B")).toBeInTheDocument();
-    expect(tableScope.getByText("Admin")).toBeInTheDocument();
-    expect(tableScope.getByText("User")).toBeInTheDocument();
-
-    // ✅ Kiểm tra nút thao tác
+    // ✅ Kiểm tra nút chức năng
     const createBtn = screen.getByText("Tạo tài khoản");
     expect(createBtn).toHaveAttribute("href", "/CreateUser");
     expect(screen.getByText("Quản lí vai trò")).toBeInTheDocument();
 
-    // ✅ Kiểm tra phần hiển thị số lượng entries
+    // ✅ Kiểm tra hiển thị tổng số người dùng
     await waitFor(() => {
       expect(screen.getByText(/Showing/i)).toHaveTextContent("Showing 2 entries");
     });

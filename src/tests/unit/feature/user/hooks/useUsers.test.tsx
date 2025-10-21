@@ -1,17 +1,18 @@
-// src/tests/unit/features/user/hooks/useUsers.test.tsx
 import { renderHook, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { useUsers } from "../../../../../features/user/hooks/useUsers";
 import { userApi } from "../../../../../features/user/api/userApi";
 
-vi.mock("../../../../../features/user/api/userApi");
+vi.mock("../../../../../features/user/api/userApi", () => ({
+  userApi: { getAllUsers: vi.fn() },
+}));
 
 describe("useUsers", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("fetch thành công -> trả về danh sách users", async () => {
+  it("fetch thành công → trả về danh sách users", async () => {
     const mockUsers = [
       {
         userId: "1",
@@ -36,7 +37,7 @@ describe("useUsers", () => {
     });
   });
 
-  it("API trả về mảng rỗng -> hiển thị lỗi 'Không có người dùng nào.'", async () => {
+  it("API trả về mảng rỗng → hiển thị lỗi 'Không có người dùng nào.'", async () => {
     (userApi.getAllUsers as any).mockResolvedValue([]);
 
     const { result } = renderHook(() => useUsers());
@@ -48,8 +49,8 @@ describe("useUsers", () => {
     });
   });
 
-  it("API lỗi -> hiển thị lỗi 'Lỗi khi tải danh sách người dùng.'", async () => {
-    (userApi.getAllUsers as any).mockRejectedValue(new Error("Network Error"));
+  it("API lỗi → hiển thị lỗi 'Lỗi khi tải danh sách người dùng.'", async () => {
+    (userApi.getAllUsers as any).mockRejectedValue(new Error("Network error"));
 
     const { result } = renderHook(() => useUsers());
 

@@ -1,3 +1,4 @@
+// src/features/user/components/UserTable.tsx
 import React from "react";
 import type { User } from "../api/userApi";
 
