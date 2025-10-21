@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Sidebar from "./Sidebar";
 
 interface DashboardLayoutProps {
@@ -6,20 +6,24 @@ interface DashboardLayoutProps {
 }
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
+
   return (
     <div
-      className="d-flex"
       style={{
-        overflowX: "hidden", 
+        display: "flex",
+        minHeight: "100vh",
+        overflowX: "hidden",
       }}
     >
-      <Sidebar />
+      <Sidebar onToggle={setIsSidebarExpanded} />
       <div
-        className="flex-grow-1 p-0"
         style={{
+          marginLeft: isSidebarExpanded ? "250px" : "80px",
+          width: "100%",
           backgroundColor: "#f9f9f9",
           minHeight: "100vh",
-          minWidth: 0, 
+          transition: "margin-left 0.3s ease",
         }}
       >
         {children}

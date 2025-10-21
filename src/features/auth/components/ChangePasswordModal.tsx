@@ -39,7 +39,7 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
       return;
     }
 
-    console.log("Password changed:", formData);
+    // TODO: Implement API call to change password
     alert("Password changed successfully!");
     setFormData({ currentPassword: "", newPassword: "", confirmPassword: "" });
     onClose(); // đóng modal sau khi đổi xong

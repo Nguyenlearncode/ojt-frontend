@@ -12,7 +12,11 @@ import "./Sidebar.css";
 import LogoutButton from "../features/auth/components/LogoutButton";
 import { getUserInfo } from "../utils/jwtHelper";
 
-const Sidebar: React.FC = () => {
+interface SidebarProps {
+  onToggle?: (expanded: boolean) => void;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ onToggle }) => {
   const [expanded, setExpanded] = useState(true);
   const [expandedSubmenus, setExpandedSubmenus] = useState<string[]>([]);
   const [userInfo, setUserInfo] = useState<{
@@ -34,7 +38,13 @@ const Sidebar: React.FC = () => {
   }, []);
 
   // Toggle sidebar mở/đóng
-  const toggleSidebar = () => setExpanded(!expanded);
+  const toggleSidebar = () => {
+    const newExpanded = !expanded;
+    setExpanded(newExpanded);
+    if (onToggle) {
+      onToggle(newExpanded);
+    }
+  };
 
   // Toggle submenu
   const toggleSubmenu = (name: string) => {

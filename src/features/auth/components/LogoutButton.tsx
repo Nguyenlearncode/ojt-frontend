@@ -17,7 +17,7 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({ expanded }) => {
     try {
       await logout({ refreshToken });
     } catch (error) {
-      console.error("Logout failed:", error);
+      // Logout error handled in useLogout hook
     }
   };
 

@@ -1,41 +1,160 @@
 // src/features/user/pages/UserManagementPage.tsx
-import React from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
+import React, { useState, useMemo } from "react";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { FiPlus, FiUsers } from "react-icons/fi";
 import "../styles/UserManagementPage.css";
-import UserTable from "../components/UserTable";
+import SearchFilter from "../components/SearchFilter";
+import UserTableModern from "../components/UserTableModern";
+import Pagination from "../components/Pagination";
 import { useUsers } from "../hooks/useUsers";
 
 const UserManagementPage: React.FC = () => {
   const { users, loading, error } = useUsers();
+  const navigate = useNavigate();
 
-  if (loading) return <div className="text-center mt-4">Đang tải dữ liệu...</div>;
-  if (error) return <div className="text-center mt-4 text-danger">{error}</div>;
+  // Search & Filter states
+  const [searchTerm, setSearchTerm] = useState("");
+  const [roleFilter, setRoleFilter] = useState("");
+  const [genderFilter, setGenderFilter] = useState("");
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
+
+  // Filter users
+  const filteredUsers = useMemo(() => {
+    return users.filter((user) => {
+      const matchesSearch =
+        user.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.phoneNumber?.includes(searchTerm);
+
+      const matchesRole = roleFilter === "" || user.role?.roleName === roleFilter;
+      const matchesGender = genderFilter === "" || user.gender === genderFilter;
+
+      return matchesSearch && matchesRole && matchesGender;
+    });
+  }, [users, searchTerm, roleFilter, genderFilter]);
+
+  // Paginate users
+  const paginatedUsers = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredUsers.slice(startIndex, endIndex);
+  }, [filteredUsers, currentPage, itemsPerPage]);
+
+  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+
+  // Handlers
+  const handleEdit = (user: any) => {
+    navigate("/UpdateUserProfile", { state: { user } });
+  };
+
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <motion.div
+          className="loading-spinner"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+        >
+          <FiUsers size={48} />
+        </motion.div>
+        <p>Loading users...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    const isAuthError = error.includes("Session expired") || error.includes("login");
+    
+    return (
+      <div className="error-container">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="error-card"
+        >
+          {isAuthError ? (
+            <>
+              <h3>🔒 {error}</h3>
+              <p>Your session has expired. Redirecting to login...</p>
+              <button 
+                className="btn-retry" 
+                onClick={() => {
+                  localStorage.clear();
+                  navigate("/");
+                }}
+              >
+                Go to Login Now
+              </button>
+            </>
+          ) : (
+            <>
+              <h3>❌ {error}</h3>
+              <p>Failed to load users. Please try again.</p>
+              <button className="btn-retry" onClick={() => window.location.reload()}>
+                Retry
+              </button>
+            </>
+          )}
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
-    <div className="ump-page container-xl mt-4">
-      <div className="ump-table-responsive">
-        <div className="ump-table-wrapper">
-          <div className="ump-table-title d-flex justify-content-between align-items-center">
-            <h2 className="m-0">
-              User <b>Management</b>
-            </h2>
-            <div>
-              <a href="/CreateUser" className="ump-btn me-2" style={{ textDecoration: "none" }}>
-                Tạo tài khoản
-              </a>
-              <button className="ump-btn">Quản lí vai trò</button>
-            </div>
+    <div className="user-management-page">
+      {/* Header */}
+      <motion.div
+        className="page-header"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        <div className="header-content">
+          <div>
+            <h1 className="page-title">User Management</h1>
+            <p className="page-subtitle">Manage and monitor all users in the system</p>
           </div>
-
-          <UserTable users={users} />
-
-          <div className="d-flex justify-content-between align-items-center">
-            <span className="ump-hint-text">
-              Showing <b>{users.length}</b> entries
-            </span>
-          </div>
+          <motion.button
+            className="create-user-btn"
+            onClick={() => navigate("/CreateUser")}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <FiPlus size={20} />
+            <span>Create New User</span>
+          </motion.button>
         </div>
-      </div>
+      </motion.div>
+
+      {/* Search & Filter */}
+      <SearchFilter
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        roleFilter={roleFilter}
+        onRoleFilterChange={setRoleFilter}
+        genderFilter={genderFilter}
+        onGenderFilterChange={setGenderFilter}
+      />
+
+      {/* Table */}
+      <UserTableModern
+        users={paginatedUsers}
+        onEdit={handleEdit}
+      />
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+          totalItems={filteredUsers.length}
+          itemsPerPage={itemsPerPage}
+        />
+      )}
     </div>
   );
 };

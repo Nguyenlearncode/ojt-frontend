@@ -15,6 +15,7 @@ export interface User {
   address: string;
   dateOfBirth: string;
   role: Role;
+  isActive?: boolean;
 }
 
 // Gọi API lấy danh sách user
@@ -22,5 +23,9 @@ export const userApi = {
   getAllUsers: async (): Promise<User[]> => {
     const response: AxiosResponse<any> = await axiosClient.get("/users/getalluser");
     return response.data || []; // unwrap data từ ApiResponse
+  },
+
+  deleteUser: async (userId: string): Promise<void> => {
+    await axiosClient.delete(`/users/${userId}`);
   },
 };
