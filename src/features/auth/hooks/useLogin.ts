@@ -34,7 +34,6 @@ export const useLogin = () => {
       // 🚀 Chuyển sang trang Dashboard
       navigate("/dashboard");
     } catch (err: any) {
-      console.error(err);
       setError(err.response?.data?.message || "Invalid email or password");
     } finally {
       setLoading(false);

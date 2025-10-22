@@ -16,20 +16,39 @@ export default defineConfig({
       "src/tests/setup/testUtils.tsx",
       "src/tests/setup/testSetup.ts",
     ],
+
+    // 🧩 Các thư mục test bạn cho phép
     include: [
       "src/**/*.test.{ts,tsx}",
       "src/**/__tests__/**/*.{ts,tsx}",
       "src/tests/unit/**/*.{test,spec}.{ts,tsx}",
       "src/tests/integration/**/*.{test,spec}.{ts,tsx}",
     ],
+
+    // 🚫 Loại bỏ các thư mục build, coverage, node_modules
     exclude: ["node_modules", "dist", "coverage", "**/build/**"],
+
     coverage: {
-      provider: "v8",
-      reporter: ["text", "html", "lcov"], // ✅ thêm "lcov" để xuất file HTML
-      reportsDirectory: "./coverage",     // ✅ đảm bảo xuất ra thư mục coverage
+      provider: "v8", // nhanh và tương thích tốt với Vitest
+      reporter: ["text", "html", "lcov"], // xuất HTML + file lcov cho CI/CD
+      reportsDirectory: "./coverage",
+
+      // ✅ Chỉ đo coverage trong src
       include: ["src/**/*.{ts,tsx}"],
-      exclude: ["src/tests/**"],
+
+      // 🚫 Loại bỏ hook, API, test setup, axios client, và file test
+      exclude: [
+        "src/tests/**",
+        "src/**/__tests__/**",
+        "src/features/**/hooks/**",
+        "src/features/**/api/**",
+        "src/api/**",
+      ],
+
+      // ❗ Không ép đo coverage cho file chưa import
       all: false,
+
+      // ✅ Ngưỡng coverage nghiêm ngặt cho UI logic
       thresholds: {
         statements: 90,
         branches: 80,

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   FiHome,
@@ -10,15 +10,41 @@ import {
 } from "react-icons/fi";
 import "./Sidebar.css";
 import LogoutButton from "../features/auth/components/LogoutButton";
+import { getUserInfo } from "../utils/jwtHelper";
 
-const Sidebar: React.FC = () => {
+interface SidebarProps {
+  onToggle?: (expanded: boolean) => void;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ onToggle }) => {
   const [expanded, setExpanded] = useState(true);
   const [expandedSubmenus, setExpandedSubmenus] = useState<string[]>([]);
+  const [userInfo, setUserInfo] = useState<{
+    fullName: string;
+    roleCode: string;
+  } | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Lấy thông tin user từ token
+  useEffect(() => {
+    const info = getUserInfo();
+    if (info) {
+      setUserInfo({
+        fullName: info.FullName,
+        roleCode: info.RoleCode,
+      });
+    }
+  }, []);
+
   // Toggle sidebar mở/đóng
-  const toggleSidebar = () => setExpanded(!expanded);
+  const toggleSidebar = () => {
+    const newExpanded = !expanded;
+    setExpanded(newExpanded);
+    if (onToggle) {
+      onToggle(newExpanded);
+    }
+  };
 
   // Toggle submenu
   const toggleSubmenu = (name: string) => {
@@ -94,9 +120,8 @@ const Sidebar: React.FC = () => {
                 {item.submenu && expanded && (
                   <FiChevronDown
                     size={18}
-                    className={`chevron ${
-                      expandedSubmenus.includes(item.name) ? "rotate" : ""
-                    }`}
+                    className={`chevron ${expandedSubmenus.includes(item.name) ? "rotate" : ""
+                      }`}
                   />
                 )}
               </button>
@@ -108,10 +133,22 @@ const Sidebar: React.FC = () => {
                     {item.submenu.map((sub) => (
                       <li key={sub.name}>
                         <button
-                          className={`submenu-item ${
-                            isActive(sub.path) ? "active" : ""
-                          }`}
-                          onClick={() => navigate(sub.path)}
+                          className={`submenu-item ${isActive(sub.path) ? "active" : ""
+                            }`}
+                          onClick={() => {
+                            // If it's Profile, get userId from token and navigate with it
+                            if (sub.name === "Profile") {
+                              const info = getUserInfo();
+                              const userId = info?.sub;
+                              if (userId) {
+                                navigate(`${sub.path}?userId=${userId}`);
+                              } else {
+                                navigate(sub.path);
+                              }
+                            } else {
+                              navigate(sub.path);
+                            }
+                          }}
                         >
                           {sub.name}
                         </button>
@@ -134,13 +171,12 @@ const Sidebar: React.FC = () => {
           />
           {expanded && (
             <div>
-              <p className="user-name">John Doe</p>
-              <p className="user-role">Administrator</p>
+              <p className="user-name">{userInfo?.fullName || "Loading..."}</p>
+              <p className="user-role">{userInfo?.roleCode || "Loading..."}</p>
             </div>
           )}
         </div>
 
-        {/* ✅ Nút Logout riêng biệt */}
         <LogoutButton expanded={expanded} />
       </div>
     </div>

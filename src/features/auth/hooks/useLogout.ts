@@ -16,8 +16,7 @@ export const useLogout = () => {
       localStorage.removeItem("refreshToken");
       navigate("/");
     } catch (error) {
-      console.error("Logout failed:", error);
-      // ❌ Không xóa token nếu API lỗi
+      // Logout failed - do not clear tokens
     } finally {
       setLoading(false);
     }
