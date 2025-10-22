@@ -11,19 +11,22 @@
   display: flex;
   flex-direction: column;
   transition: width 0.3s ease;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden; 
   z-index: 1000;
   font-family: "Inter", sans-serif;
 }
 
 /* Phần trên sẽ co giãn chiếm hết chiều cao trừ footer */
+/* Nội dung cuộn được (đẩy footer xuống cuối) */
 .sidebar-content {
   flex: 1;
+  overflow-y: auto; /* ✅ chỉ phần này cuộn */
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* đẩy menu lên trên */
+  justify-content: flex-start;
 }
+
 
 
 .sidebar.expanded {
@@ -145,12 +148,14 @@
   transform: rotate(180deg);
 }
 
-/* Footer */
+/* Footer luôn dính đáy */
 .sidebar-footer {
+  margin-top: auto; /* ✅ đẩy footer xuống cuối */
   padding: 16px 18px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   background-color: #1f2937;
 }
+
 
 .user-info {
   display: flex;
@@ -208,4 +213,10 @@ html {
 
 .flex-grow-1 {
   min-width: 0 !important;
+}
+
+/* Force text color in Sidebar footer */
+.sidebar-footer .user-name,
+.sidebar-footer .user-role {
+  color: #fff !important; 
 }

@@ -183,3 +183,13 @@
   }
 }
 
+/* Ẩn scrollbar nhưng vẫn cuộn được */
+.view-modal-container {
+  overflow-y: scroll; /* vẫn cuộn được */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE, Edge cũ */
+}
+
+.view-modal-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge mới */
+}

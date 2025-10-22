@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiEdit2, FiEye, FiMail, FiPhone, FiCheckCircle, FiXCircle } from "react-icons/fi";
 import type { User } from "../api/userApi";
-import ViewUserModal from "./ViewUserModal";
+import UserDetailModal from "./UserDetailModal";
 import "../styles/UserTableModern.css";
 
 interface UserTableModernProps {
@@ -172,7 +172,7 @@ const UserTableModern: React.FC<UserTableModernProps> = ({
       </div>
 
       {showViewModal && selectedUser && (
-        <ViewUserModal
+        <UserDetailModal
           user={selectedUser}
           onClose={() => setShowViewModal(false)}
         />
