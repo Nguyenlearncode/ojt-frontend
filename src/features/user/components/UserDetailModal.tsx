@@ -3,7 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FiX, FiMail, FiPhone, FiMapPin, FiCalendar, FiUser } from "react-icons/fi";
 import type { User } from "../api/userApi";
 import "../styles/UserDetailModal.css";
-import DeleteUserButton from "./DeleteUserButton";
+import DeleteUserButton from "./Button/DeleteUserButton";
+import { getUserInfo } from "../../../utils/jwtHelper"; // ✅ Thêm dòng này để đọc role từ token
 
 interface UserDetailModalProps {
   user: User;
@@ -37,11 +38,22 @@ const UserDetailModal: React.FC<UserDetailModalProps> = ({ user, onClose }) => {
     { icon: FiUser, label: "User ID", value: user.userId },
     { icon: FiMail, label: "Email", value: user.email },
     { icon: FiPhone, label: "Phone Number", value: user.phoneNumber },
-    { icon: FiCalendar, label: "Date of Birth", value: user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString() : null },
+    {
+      icon: FiCalendar,
+      label: "Date of Birth",
+      value: user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString() : null,
+    },
     { icon: FiUser, label: "Gender", value: user.gender },
     { icon: FiUser, label: "Age", value: user.age },
     { icon: FiMapPin, label: "Address", value: user.address, fullWidth: true },
   ];
+
+  // 🔹 Lấy thông tin người dùng hiện tại từ token
+  const currentUser = getUserInfo();
+  const currentRole = currentUser?.RoleCode || "";
+
+  // ✅ Chỉ cho phép ADMIN hoặc LAB_MANAGER được xóa tài khoản
+  const canDelete = currentRole === "ADMIN" || currentRole === "LAB_MANAGER";
 
   return (
     <AnimatePresence>
@@ -74,11 +86,7 @@ const UserDetailModal: React.FC<UserDetailModalProps> = ({ user, onClose }) => {
                 {user.fullName?.charAt(0).toUpperCase()}
               </div>
               <h3 className="profile-name">{user.fullName}</h3>
-              <span
-                className={`role-badge ${
-                  user.role?.roleName?.toLowerCase() || ""
-                }`}
-              >
+              <span className={`role-badge ${user.role?.roleName?.toLowerCase() || ""}`}>
                 {user.role?.roleName || "N/A"}
               </span>
             </div>
@@ -102,7 +110,11 @@ const UserDetailModal: React.FC<UserDetailModalProps> = ({ user, onClose }) => {
             <button className="btn-secondary" onClick={onClose}>
               Đóng
             </button>
-            <DeleteUserButton userId={user.userId} fullName={user.fullName} />
+
+            {/* ✅ Chỉ hiển thị nút xóa nếu là ADMIN hoặc LAB_MANAGER */}
+            {canDelete && (
+              <DeleteUserButton userId={user.userId} fullName={user.fullName} />
+            )}
           </div>
         </motion.div>
       </motion.div>

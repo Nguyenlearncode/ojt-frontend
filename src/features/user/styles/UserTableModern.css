@@ -117,25 +117,7 @@
   text-transform: capitalize;
 }
 
-.role-badge.admin {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  color: white;
-}
 
-.role-badge.manager {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  color: white;
-}
-
-.role-badge.staff {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
-}
-
-.role-badge.user {
-  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
-  color: white;
-}
 
 /* Gender Badge */
 .gender-badge {
@@ -271,6 +253,7 @@
 }
 
 @media (max-width: 768px) {
+
   .modern-table thead tr th,
   .modern-table tbody tr td {
     padding: 1rem;
@@ -297,4 +280,8 @@
     height: 32px;
   }
 }
-
+.status-badge.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}

@@ -29,16 +29,25 @@ export interface ApiResponse<T> {
 export const userApi = {
   getAllUsers: async (): Promise<User[]> => {
     const response: AxiosResponse<any> = await axiosClient.get("/users/getalluser");
-    return response.data || []; // unwrap data từ ApiResponse
+    return response.data || [];
   },
 
   getUserById: async (userId: string): Promise<User> => {
     const response: any = await axiosClient.get(`/users/${userId}`);
-    // axiosClient already unwraps to response.data, so response here is ApiResponse
-    return response.data; // unwrap data from ApiResponse
+    return response.data;
   },
 
-  deleteUser: async (userId: string): Promise<void> => {
-    await axiosClient.delete(`/users/${userId}`);
+  async lockUser(userId: string) {
+    return axiosClient.post(`/users/${userId}/lock`);
+  },
+
+  async unlockUser(userId: string) {
+    return axiosClient.post(`/users/${userId}/unlock`);
+  },
+
+  // 🔹 Xóa vĩnh viễn (API mới)
+  deleteUserPermanently: async (userId: string): Promise<void> => {
+    await axiosClient.delete(`/users/${userId}/permanent`);
   },
 };
+

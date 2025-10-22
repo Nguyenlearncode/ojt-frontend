@@ -2,7 +2,7 @@
 import React from "react";
 import { FiSearch, FiFilter } from "react-icons/fi";
 import { motion } from "framer-motion";
-import "../styles/SearchFilter.css";
+import "../../styles/SearchFilter.css";
 
 interface SearchFilterProps {
   searchTerm: string;

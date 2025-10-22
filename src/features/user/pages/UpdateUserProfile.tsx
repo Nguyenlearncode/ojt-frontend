@@ -7,7 +7,7 @@ import GenderSelect from "../../../components/common/GenderSelect";
 import DateField from "../../../components/common/DateField";
 import { useUserById } from "../hooks/useUserById";
 import { getUserInfo } from "../../../utils/jwtHelper";
-import DeleteUserButton from "../components/DeleteUserButton"; // 🔹 import component mới
+import DeleteUserButton from "../components/Button/DeleteUserButton"; // 🔹 import component mới
 import {
   FiUser,
   FiMail,
