@@ -1,5 +1,5 @@
 // src/features/auth/api/authApi.ts
-import axiosClient from "../../../api/axiosClient";
+import axiosAuth from "../../../api/axiosAuth";
 
 interface LoginRequest {
   email: string;
@@ -12,9 +12,17 @@ interface LoginResponse {
 }
 
 export const authApi = {
+  // 🔐 Đăng nhập
   login: async (data: LoginRequest): Promise<LoginResponse> => {
-  const res = await axiosClient.post("/auth/login", data);
-  return res.data; 
-},
+    const res = await axiosAuth.post("/auth/login", data);
+    return res.data.data;
+  },
 
+  // 🔄 Làm mới AccessToken
+  refresh: async (refreshToken: string): Promise<{ accessToken: string }> => {
+    const res = await axiosAuth.post("/auth/refresh", JSON.stringify(refreshToken), {
+      headers: { "Content-Type": "application/json" },
+    });
+    return res.data.data;
+  },
 };

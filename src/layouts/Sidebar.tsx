@@ -8,175 +8,145 @@ import {
   FiChevronDown,
   FiMenu,
 } from "react-icons/fi";
-import "./Sidebar.css";
+import Avatar from "react-avatar";
 import LogoutButton from "../features/auth/components/LogoutButton";
 import { getUserInfo } from "../utils/jwtHelper";
+import "./Sidebar.css";
 
 interface SidebarProps {
   onToggle?: (expanded: boolean) => void;
 }
 
+const menuItems = [
+  { name: "Dashboard", icon: <FiHome size={22} />, path: "/dashboard" },
+  {
+    name: "Báo cáo",
+    icon: <FiPieChart size={22} />,
+    submenu: [
+      { name: "Reports", path: "/reports" },
+      { name: "Statistics", path: "/statistics" },
+      { name: "Performance", path: "/performance" },
+    ],
+  },
+  {
+    name: "Quản lí tài khoản",
+    icon: <FiUsers size={22} />,
+    path: "/UserManagement",
+  },
+  {
+    name: "Cài đặt",
+    icon: <FiSettings size={22} />,
+    submenu: [
+      { name: "Profile", path: "/UpdateUserProfile" },
+      { name: "Preferences", path: "/preferences" },
+    ],
+  },
+];
+
 const Sidebar: React.FC<SidebarProps> = ({ onToggle }) => {
   const [expanded, setExpanded] = useState(true);
-  const [expandedSubmenus, setExpandedSubmenus] = useState<string[]>([]);
-  const [userInfo, setUserInfo] = useState<{
-    fullName: string;
-    roleCode: string;
-  } | null>(null);
+  const [openSubmenus, setOpenSubmenus] = useState<string[]>([]);
+  const [user, setUser] = useState<{ fullName: string; roleCode: string } | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Lấy thông tin user từ token
   useEffect(() => {
     const info = getUserInfo();
-    if (info) {
-      setUserInfo({
-        fullName: info.FullName,
-        roleCode: info.RoleCode,
-      });
-    }
+    if (info) setUser({ fullName: info.FullName, roleCode: info.RoleCode });
   }, []);
 
-  // Toggle sidebar mở/đóng
   const toggleSidebar = () => {
-    const newExpanded = !expanded;
-    setExpanded(newExpanded);
-    if (onToggle) {
-      onToggle(newExpanded);
-    }
+    setExpanded((prev) => {
+      const newState = !prev;
+      onToggle?.(newState);
+      return newState;
+    });
   };
 
-  // Toggle submenu
   const toggleSubmenu = (name: string) => {
-    setExpandedSubmenus((prev) =>
+    setOpenSubmenus((prev) =>
       prev.includes(name) ? prev.filter((n) => n !== name) : [...prev, name]
     );
   };
 
-  // Danh sách menu
-  const menuItems = [
-    { name: "Dashboard", icon: <FiHome size={22} />, path: "/dashboard" },
-    {
-      name: "Báo cáo",
-      icon: <FiPieChart size={22} />,
-      submenu: [
-        { name: "Reports", path: "/reports" },
-        { name: "Statistics", path: "/statistics" },
-        { name: "Performance", path: "/performance" },
-      ],
-    },
-    {
-      name: "Quản lí tài khoản",
-      icon: <FiUsers size={22} />,
-      path: "/UserManagement",
-    },
-    {
-      name: "Cài đặt",
-      icon: <FiSettings size={22} />,
-      submenu: [
-        { name: "Profile", path: "/UpdateUserProfile" },
-        { name: "Preferences", path: "/preferences" },
-      ],
-    },
-  ];
-
-  // Xác định menu đang active
-  const isActive = (path?: string) => {
-    if (!path) return false;
-    return location.pathname.startsWith(path);
+  const handleNavigation = (path: string, name?: string) => {
+    if (name === "Profile") {
+      const id = getUserInfo()?.sub;
+      navigate(id ? `${path}?userId=${id}` : path);
+    } else navigate(path);
   };
+
+  const isActive = (path?: string) =>
+    !!path && location.pathname.startsWith(path);
 
   return (
     <div className={`sidebar ${expanded ? "expanded" : "collapsed"}`}>
-      {/* Nội dung chính */}
-      <div className="sidebar-content">
-        {/* Header */}
-        <div className="sidebar-header">
-          {expanded && <h2 className="sidebar-title">Laboratory Management</h2>}
-          <button className="menu-toggle" onClick={toggleSidebar}>
-            <FiMenu size={22} />
-          </button>
-        </div>
-
-        {/* Menu */}
-        <ul className="sidebar-menu">
-          {menuItems.map((item) => (
-            <li key={item.name}>
-              <button
-                className={`menu-item ${isActive(item.path) ? "active" : ""}`}
-                onClick={() => {
-                  if (item.submenu) {
-                    if (!expanded) setExpanded(true);
-                    toggleSubmenu(item.name);
-                  } else if (item.path) {
-                    navigate(item.path);
-                  }
-                }}
-              >
-                <div className="menu-left">
-                  {item.icon}
-                  {expanded && <span className="menu-text">{item.name}</span>}
-                </div>
-                {item.submenu && expanded && (
-                  <FiChevronDown
-                    size={18}
-                    className={`chevron ${expandedSubmenus.includes(item.name) ? "rotate" : ""
-                      }`}
-                  />
-                )}
-              </button>
-
-              {item.submenu &&
-                expanded &&
-                expandedSubmenus.includes(item.name) && (
-                  <ul className="submenu">
-                    {item.submenu.map((sub) => (
-                      <li key={sub.name}>
-                        <button
-                          className={`submenu-item ${isActive(sub.path) ? "active" : ""
-                            }`}
-                          onClick={() => {
-                            // If it's Profile, get userId from token and navigate with it
-                            if (sub.name === "Profile") {
-                              const info = getUserInfo();
-                              const userId = info?.sub;
-                              if (userId) {
-                                navigate(`${sub.path}?userId=${userId}`);
-                              } else {
-                                navigate(sub.path);
-                              }
-                            } else {
-                              navigate(sub.path);
-                            }
-                          }}
-                        >
-                          {sub.name}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-            </li>
-          ))}
-        </ul>
+      {/* Header */}
+      <div className="sidebar-header">
+        {expanded && <h2 className="sidebar-title">Laboratory Management</h2>}
+        <button className="menu-toggle" onClick={toggleSidebar}>
+          <FiMenu size={22} />
+        </button>
       </div>
+
+      {/* Menu */}
+      <ul className="sidebar-menu">
+        {menuItems.map(({ name, icon, path, submenu }) => (
+          <li key={name}>
+            <button
+              className={`menu-item ${isActive(path) ? "active" : ""}`}
+              onClick={() =>
+                submenu
+                  ? (expanded ? toggleSubmenu(name) : setExpanded(true))
+                  : handleNavigation(path!)
+              }
+            >
+              <div className="menu-left">
+                {icon}
+                {expanded && <span className="menu-text">{name}</span>}
+              </div>
+              {submenu && expanded && (
+                <FiChevronDown
+                  size={18}
+                  className={`chevron ${openSubmenus.includes(name) ? "rotate" : ""}`}
+                />
+              )}
+            </button>
+
+            {submenu && expanded && openSubmenus.includes(name) && (
+              <ul className="submenu">
+                {submenu.map(({ name: subName, path: subPath }) => (
+                  <li key={subName}>
+                    <button
+                      className={`submenu-item ${isActive(subPath) ? "active" : ""}`}
+                      onClick={() => handleNavigation(subPath, subName)}
+                    >
+                      {subName}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+        ))}
+      </ul>
 
       {/* Footer */}
       <div className="sidebar-footer">
         <div className="user-info">
-          <img
-            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e"
-            alt="user"
-            className="avatar"
+          <Avatar
+            name={user?.fullName || "User"}
+            size="40"
+            round
+            textSizeRatio={2}
           />
           {expanded && (
             <div>
-              <p className="user-name">{userInfo?.fullName || "Loading..."}</p>
-              <p className="user-role">{userInfo?.roleCode || "Loading..."}</p>
+              <p className="user-name">{user?.fullName || "Loading..."}</p>
+              <p className="user-role">{user?.roleCode || "Loading..."}</p>
             </div>
           )}
         </div>
-
         <LogoutButton expanded={expanded} />
       </div>
     </div>
