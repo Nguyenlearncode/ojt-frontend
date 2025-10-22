@@ -135,7 +135,20 @@ const Sidebar: React.FC<SidebarProps> = ({ onToggle }) => {
                         <button
                           className={`submenu-item ${isActive(sub.path) ? "active" : ""
                             }`}
-                          onClick={() => navigate(sub.path)}
+                          onClick={() => {
+                            // If it's Profile, get userId from token and navigate with it
+                            if (sub.name === "Profile") {
+                              const info = getUserInfo();
+                              const userId = info?.sub;
+                              if (userId) {
+                                navigate(`${sub.path}?userId=${userId}`);
+                              } else {
+                                navigate(sub.path);
+                              }
+                            } else {
+                              navigate(sub.path);
+                            }
+                          }}
                         >
                           {sub.name}
                         </button>

@@ -1,13 +1,13 @@
-import React, { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/UpdateUserProfile.css";
-import ChangePasswordModal from "../../auth/components/ChangePasswordModal";
 import GenderSelect from "../../../components/common/GenderSelect";
 import DateField from "../../../components/common/DateField";
-import { formatDate } from "../../../utils/formatDate";
 import { userApi } from "../api/userApi";
+import { useUserById } from "../hooks/useUserById";
+import { getUserInfo } from "../../../utils/jwtHelper";
 import { 
   FiTrash2, 
   FiAlertTriangle, 
@@ -16,34 +16,67 @@ import {
   FiPhone, 
   FiMapPin, 
   FiCalendar,
-  FiKey,
   FiCamera,
   FiSave,
-  FiX
+  FiX,
+  FiLoader,
+  FiEdit
 } from "react-icons/fi";
 
 const UpdateUserProfile: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
   const userFromState = location.state?.user;
+  const userIdFromUrl = searchParams.get("userId");
+  
+  // Get current logged-in user's ID from token if no userId in URL
+  const currentUserInfo = getUserInfo();
+  const currentUserId = currentUserInfo?.sub;
+  
+  // Use userId from URL, or fallback to current user's ID
+  const targetUserId = userIdFromUrl || currentUserId;
+  
+  // Use API to fetch user
+  const { user: userFromApi, loading: loadingUser, error: errorUser } = useUserById(targetUserId || undefined);
 
   const [formData, setFormData] = useState({
-    userId: userFromState?.userId || "",
-    username: userFromState?.username || "janeuser",
-    fullName: userFromState?.fullName || "Jane Bishop",
-    gender: userFromState?.gender || "Female",
-    age: userFromState?.age || 28,
-    dateOfBirth: userFromState?.dateOfBirth || "1997-02-10",
-    phone: userFromState?.phoneNumber || "0987654321",
-    address: userFromState?.address || "123 Main Street, Hanoi",
-    email: userFromState?.email || "janesemail@gmail.com",
-    cccd: userFromState?.cccd || "079123456789",
+    userId: "",
+    username: "",
+    fullName: "",
+    gender: "",
+    age: 0,
+    dateOfBirth: "",
+    phone: "",
+    address: "",
+    email: "",
+    cccd: "",
     avatar: "",
   });
 
-  const [showChangePassword, setShowChangePassword] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+
+  // Update form data when user is loaded from API or state
+  useEffect(() => {
+    const userData = userFromApi || userFromState;
+    if (userData) {
+      setFormData({
+        userId: userData.userId || "",
+        username: userData.email?.split("@")[0] || "",
+        fullName: userData.fullName || "",
+        gender: userData.gender || "",
+        age: userData.age || 0,
+        dateOfBirth: userData.dateOfBirth || "",
+        phone: userData.phoneNumber || "",
+        address: userData.address || "",
+        email: userData.email || "",
+        cccd: userData.identifyNumber || "",
+        avatar: "",
+      });
+    }
+  }, [userFromApi, userFromState]);
 
   /** 🔹 Xử lý thay đổi input chung */
   const handleChange = (
@@ -53,24 +86,19 @@ const UpdateUserProfile: React.FC = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  /** 🔹 Xử lý chọn ngày sinh → cập nhật tuổi */
   const handleDateChange = (value: string) => {
     const birthDate = new Date(value);
     const today = new Date();
-    const age =
-      today.getFullYear() -
-      birthDate.getFullYear() -
+    const age = today.getFullYear() - birthDate.getFullYear() - 
       (today < new Date(birthDate.setFullYear(today.getFullYear())) ? 1 : 0);
     setFormData({ ...formData, dateOfBirth: value, age });
   };
 
-  /** 🔹 Xử lý upload ảnh đại diện */
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = () =>
-        setFormData({ ...formData, avatar: reader.result as string });
+      reader.onload = () => setFormData({ ...formData, avatar: reader.result as string });
       reader.readAsDataURL(file);
     }
   };
@@ -78,25 +106,12 @@ const UpdateUserProfile: React.FC = () => {
   /** 🔹 Lưu thay đổi */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const formattedData = {
-      ...formData,
-      dateOfBirth: formatDate(formData.dateOfBirth),
-    };
-    // TODO: Implement API call to update user
     alert("Profile updated successfully!");
+    setIsEditMode(false);
   };
 
-  /** 🔹 Hủy thay đổi */
-  const handleCancel = () => {
-    navigate("/UserManagement");
-  };
-
-  /** 🔹 Xóa tài khoản */
   const handleDeleteAccount = async () => {
-    if (!formData.userId) {
-      alert("Không tìm thấy User ID!");
-      return;
-    }
+    if (!formData.userId) return alert("Không tìm thấy User ID!");
 
     setIsDeleting(true);
     try {
@@ -104,13 +119,41 @@ const UpdateUserProfile: React.FC = () => {
       alert("Đã xóa tài khoản thành công!");
       navigate("/UserManagement");
     } catch (error) {
-      console.error("Error deleting user:", error);
       alert("Không thể xóa tài khoản. Vui lòng thử lại!");
     } finally {
       setIsDeleting(false);
       setShowDeleteConfirm(false);
     }
   };
+
+  if (loadingUser) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px', flexDirection: 'column' }}>
+        <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }}>
+          <FiLoader size={48} color="#667eea" />
+        </motion.div>
+        <p style={{ marginTop: '1rem', color: '#6b7280' }}>Loading user information...</p>
+      </div>
+    );
+  }
+
+  if (errorUser) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          style={{ textAlign: 'center', padding: '2rem', background: '#fee2e2', borderRadius: '12px' }}
+        >
+          <FiAlertTriangle size={48} color="#ef4444" />
+          <h3 style={{ marginTop: '1rem', color: '#dc2626' }}>{errorUser}</h3>
+          <button className="btn btn-primary mt-3" onClick={() => navigate("/UserManagement")}>
+            Back to User Management
+          </button>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className="update-profile-modern-container">
@@ -124,12 +167,34 @@ const UpdateUserProfile: React.FC = () => {
           <div>
             <h1 className="profile-title">
               <FiUser className="me-2" />
-              Update User Profile
+              {isEditMode ? "Update User Profile" : "View User Profile"}
             </h1>
             <p className="profile-subtitle">
-              Manage and update user account information
+              {isEditMode ? "Edit and update user account information" : "View user account information"}
             </p>
           </div>
+          {!isEditMode && (
+            <motion.button
+              className="create-user-btn"
+              onClick={() => setIsEditMode(true)}
+              whileHover={{ scale: 1.08, boxShadow: "0 8px 24px rgba(102, 126, 234, 0.5)" }}
+              whileTap={{ scale: 0.95 }}
+              style={{ 
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                padding: '14px 32px',
+                fontSize: '16px',
+                fontWeight: '700',
+                boxShadow: '0 4px 16px rgba(102, 126, 234, 0.4)',
+                border: 'none',
+                color: 'white',
+                opacity: 1,
+                zIndex: 10
+              }}
+            >
+              <FiEdit size={22} />
+              <span>Edit Profile</span>
+            </motion.button>
+          )}
         </div>
       </motion.div>
 
@@ -150,22 +215,28 @@ const UpdateUserProfile: React.FC = () => {
                     className="avatar-image"
                     alt="avatar"
                   />
-                  <div className="avatar-overlay">
-                    <FiCamera size={32} />
-                    <span>Change Photo</span>
-                  </div>
+                  {isEditMode && (
+                    <div className="avatar-overlay">
+                      <FiCamera size={32} />
+                      <span>Change Photo</span>
+                    </div>
+                  )}
                 </div>
-                <input
-                  type="file"
-                  className="avatar-file-input"
-                  id="avatarInput"
-                  onChange={handleFileChange}
-                  accept="image/*"
-                />
-                <label htmlFor="avatarInput" className="avatar-upload-btn">
-                  <FiCamera className="me-2" />
-                  Upload New Photo
-                </label>
+                {isEditMode && (
+                  <>
+                    <input
+                      type="file"
+                      className="avatar-file-input"
+                      id="avatarInput"
+                      onChange={handleFileChange}
+                      accept="image/*"
+                    />
+                    <label htmlFor="avatarInput" className="avatar-upload-btn">
+                      <FiCamera className="me-2" />
+                      Upload New Photo
+                    </label>
+                  </>
+                )}
               </div>
 
               <div className="user-info-card">
@@ -205,6 +276,7 @@ const UpdateUserProfile: React.FC = () => {
                     value={formData.fullName}
                     onChange={handleChange}
                     placeholder="Enter full name"
+                    disabled={!isEditMode}
                   />
                 </div>
 
@@ -221,6 +293,7 @@ const UpdateUserProfile: React.FC = () => {
                     value={formData.email}
                     onChange={handleChange}
                     placeholder="Enter email"
+                    disabled={!isEditMode}
                   />
                 </div>
 
@@ -237,6 +310,7 @@ const UpdateUserProfile: React.FC = () => {
                     value={formData.phone}
                     onChange={handleChange}
                     placeholder="Enter phone number"
+                    disabled={!isEditMode}
                   />
                 </div>
 
@@ -253,6 +327,7 @@ const UpdateUserProfile: React.FC = () => {
                     value={formData.address}
                     onChange={handleChange}
                     placeholder="Enter address"
+                    disabled={!isEditMode}
                   />
                 </div>
 
@@ -266,7 +341,7 @@ const UpdateUserProfile: React.FC = () => {
                       </label>
                       <GenderSelect
                         value={formData.gender}
-                        onChange={(gender) => setFormData({ ...formData, gender })}
+                        onChange={(gender) => isEditMode && setFormData({ ...formData, gender })}
                       />
                     </div>
                   </div>
@@ -280,6 +355,7 @@ const UpdateUserProfile: React.FC = () => {
                         name="dateOfBirth"
                         value={formData.dateOfBirth}
                         onChange={handleDateChange}
+                        disabled={!isEditMode}
                       />
                     </div>
                   </div>
@@ -319,59 +395,48 @@ const UpdateUserProfile: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Change Password Button */}
-                <div className="form-field">
-                  <button
-                    type="button"
-                    className="btn-change-password"
-                    onClick={() => setShowChangePassword(true)}
-                  >
-                    <FiKey size={18} />
-                    Change Password
-                  </button>
-                </div>
+                {/* Action Buttons - Only show in Edit Mode */}
+                {isEditMode && (
+                  <div className="form-actions">
+                    <motion.button
+                      type="submit"
+                      className="btn-save"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <FiSave size={18} />
+                      Save Changes
+                    </motion.button>
+                    
+                    <motion.button
+                      type="button"
+                      className="btn-cancel"
+                      onClick={() => setIsEditMode(false)}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <FiX size={18} />
+                      Cancel
+                    </motion.button>
 
-                {/* Action Buttons */}
-                <div className="form-actions">
-                  <motion.button
-                    type="submit"
-                    className="btn-save"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <FiSave size={18} />
-                    Save Changes
-                  </motion.button>
-                  
-                  <motion.button
-                    type="button"
-                    className="btn-cancel"
-                    onClick={handleCancel}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <FiX size={18} />
-                    Cancel
-                  </motion.button>
-
-                  <motion.button
-                    type="button"
-                    className="btn-delete"
-                    onClick={() => setShowDeleteConfirm(true)}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <FiTrash2 size={18} />
-                    Delete Account
-                  </motion.button>
-                </div>
+                    <motion.button
+                      type="button"
+                      className="btn-delete"
+                      onClick={() => setShowDeleteConfirm(true)}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <FiTrash2 size={18} />
+                      Delete Account
+                    </motion.button>
+                  </div>
+                )}
               </form>
             </motion.div>
           </div>
         </div>
       </div>
 
-      {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
         <div className="delete-modal-overlay" onClick={() => setShowDeleteConfirm(false)}>
           <div className="delete-modal-content" onClick={(e) => e.stopPropagation()}>
@@ -382,23 +447,13 @@ const UpdateUserProfile: React.FC = () => {
             <p className="delete-modal-message">
               Bạn có chắc chắn muốn xóa tài khoản <strong>{formData.fullName}</strong>?
               <br />
-              <span className="delete-modal-warning">
-                ⚠️ Hành động này không thể hoàn tác!
-              </span>
+              <span className="delete-modal-warning">⚠️ Hành động này không thể hoàn tác!</span>
             </p>
             <div className="delete-modal-actions">
-              <button
-                className="btn btn-secondary me-2"
-                onClick={() => setShowDeleteConfirm(false)}
-                disabled={isDeleting}
-              >
+              <button className="btn btn-secondary me-2" onClick={() => setShowDeleteConfirm(false)} disabled={isDeleting}>
                 Hủy
               </button>
-              <button
-                className="btn btn-danger"
-                onClick={handleDeleteAccount}
-                disabled={isDeleting}
-              >
+              <button className="btn btn-danger" onClick={handleDeleteAccount} disabled={isDeleting}>
                 {isDeleting ? (
                   <>
                     <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
@@ -415,14 +470,6 @@ const UpdateUserProfile: React.FC = () => {
           </div>
         </div>
       )}
-
-      {/* Change Password Modal */}
-      <ChangePasswordModal
-        isOpen={showChangePassword}
-        onClose={() => setShowChangePassword(false)}
-      />
-
-      <hr />
     </div>
   );
 };
