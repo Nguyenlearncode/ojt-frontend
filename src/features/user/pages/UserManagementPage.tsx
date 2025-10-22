@@ -4,8 +4,8 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { FiPlus, FiUsers } from "react-icons/fi";
 import "../styles/UserManagementPage.css";
-import SearchFilter from "../components/SearchFilter";
-import UserTableModern from "../components/UserTableModern";
+import SearchFilter from "../components/UserTable/SearchFilter";
+import { UserTableModern } from "../components/UserTableModern"; "../components/UserTableModern";
 import Pagination from "../components/Pagination";
 import { useUsers } from "../hooks/useUsers";
 
