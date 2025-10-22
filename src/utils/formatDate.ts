@@ -1,24 +1,43 @@
-// src/utils/formatDate.ts
-export const formatDate = (dateString?: string): string => {
+// ✅ formatDate.ts
+export const formatDate = (
+  dateString?: string,
+  format: "dd/MM/yyyy" | "MM/dd/yyyy" | "yyyy-MM-dd" = "dd/MM/yyyy"
+): string => {
   if (!dateString) return "";
   const date = new Date(dateString);
 
-  // Format chuẩn "DD/MM/YYYY"
   const day = String(date.getDate()).padStart(2, "0");
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const year = date.getFullYear();
 
-  return `${day}/${month}/${year}`;
+  switch (format) {
+    case "MM/dd/yyyy":
+      return `${month}/${day}/${year}`;
+    case "yyyy-MM-dd":
+      return `${year}-${month}-${day}`;
+    default:
+      return `${day}/${month}/${year}`;
+  }
 };
 
-// Format để truyền vào input type="date" (YYYY-MM-DD)
+// ✅ Format để truyền vào input type="date"
 export const toInputDateFormat = (dateString?: string): string => {
   if (!dateString) return "";
   const date = new Date(dateString);
   return date.toISOString().split("T")[0];
 };
 
-// Format hiển thị ngày + giờ (dùng cho log, report)
+// ✅ Dành riêng để gửi API (đảm bảo không kèm 'T' hoặc timezone)
+export const normalizeDateForApi = (dateString?: string): string => {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`; // ✅ chuẩn "yyyy-MM-dd"
+};
+
+// ✅ Dùng cho hiển thị ngày + giờ (log, report)
 export const formatDateTime = (dateString?: string): string => {
   if (!dateString) return "";
   const date = new Date(dateString);

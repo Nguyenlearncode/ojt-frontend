@@ -18,6 +18,32 @@ export interface User {
   isActive?: boolean;
 }
 
+export interface CreateUserPayload {
+  roleCode: string;
+  email: string;
+  phoneNumber: string;
+  fullName: string;
+  identifyNumber: string;
+  gender: string;
+  age: number;
+  address: string;
+  dateOfBirth: string;
+  password: string;
+}
+
+export interface CreateUserResult {
+  userId: string;
+  roleCode: string;
+  email: string;
+  phoneNumber: string;
+  fullName: string;
+  identifyNumber: string;
+  gender: string;
+  age: number;
+  address: string;
+  dateOfBirth: string;
+}
+
 export interface ApiResponse<T> {
   statusCode: number;
   message: string;
@@ -48,6 +74,11 @@ export const userApi = {
   // 🔹 Xóa vĩnh viễn (API mới)
   deleteUserPermanently: async (userId: string): Promise<void> => {
     await axiosClient.delete(`/users/${userId}/permanent`);
+  },
+
+  async createUser(data: CreateUserPayload) {
+    const res: AxiosResponse<any> = await axiosClient.post("/users/create", data);
+    return res.data;
   },
 };
 

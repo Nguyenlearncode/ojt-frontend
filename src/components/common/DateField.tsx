@@ -4,7 +4,7 @@ import { toInputDateFormat } from "../../utils/formatDate";
 interface DateFieldProps {
   label?: string;
   name?: string;
-  value: string;
+  value?: string;
   onChange: (value: string) => void;
   className?: string;
   disabled?: boolean;
@@ -13,19 +13,25 @@ interface DateFieldProps {
 const DateField: React.FC<DateFieldProps> = ({
   label,
   name,
-  value,
+  value = "",
   onChange,
   className = "form-control",
   disabled = false,
 }) => {
+  // Hàm xử lý khi người dùng chọn ngày
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value; // yyyy-MM-dd
+    onChange(newValue); // ✅ Truyền chính xác cho formData.dateOfBirth
+  };
+
+  const formattedValue = value && /^\d{4}-\d{2}-\d{2}$/.test(value)
+  ? value
+  : toInputDateFormat(value);
+
   return (
     <div className="date-field">
       {label && (
-        <label
-          htmlFor={name}
-          className="form-label"
-          style={{ fontWeight: 500 }}
-        >
+        <label htmlFor={name} className="form-label" style={{ fontWeight: 500 }}>
           {label}
         </label>
       )}
@@ -34,8 +40,8 @@ const DateField: React.FC<DateFieldProps> = ({
         name={name}
         type="date"
         className={className}
-        value={toInputDateFormat(value)} // đảm bảo format chuẩn YYYY-MM-DD
-        onChange={(e) => onChange(e.target.value)}
+        value={formattedValue}
+        onChange={handleChange}
         disabled={disabled}
       />
     </div>
