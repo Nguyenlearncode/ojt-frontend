@@ -21,7 +21,7 @@ import {
 } from "react-icons/fi";
 
 const CreateUser: React.FC = () => {
-  const navigate = useNavigate(); // 👈 hook điều hướng
+  const navigate = useNavigate(); 
 
   const [formData, setFormData] = useState({
     username: "",

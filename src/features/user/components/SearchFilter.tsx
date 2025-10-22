@@ -32,7 +32,7 @@ const SearchFilter: React.FC<SearchFilterProps> = ({
         <FiSearch className="search-icon" />
         <input
           type="text"
-          placeholder="Search by name, email, or phone..."
+          placeholder="Tìm kiếm theo tên, email hoặc số điện thoại"
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
           className="search-input"
@@ -47,11 +47,12 @@ const SearchFilter: React.FC<SearchFilterProps> = ({
             onChange={(e) => onRoleFilterChange(e.target.value)}
             className="filter-select"
           >
-            <option value="">All Roles</option>
+            <option value="">Tất cả vai trò</option>
             <option value="Administrator">Administrator</option>
-            <option value="Manager">Manager</option>
-            <option value="Staff">Staff</option>
-            <option value="User">User</option>
+            <option value="Lab Manager">Lab Manager</option>
+            <option value="Service">Service</option>
+            <option value="Lab User">Lab User</option>
+            <option value="Custom Role">Custom Role</option>
           </select>
         </div>
 
@@ -61,10 +62,9 @@ const SearchFilter: React.FC<SearchFilterProps> = ({
             onChange={(e) => onGenderFilterChange(e.target.value)}
             className="filter-select"
           >
-            <option value="">All Genders</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Other">Other</option>
+            <option value="">Tất cả</option>
+            <option value="Male">Nam</option>
+            <option value="Female">Nữ</option>
           </select>
         </div>
       </div>

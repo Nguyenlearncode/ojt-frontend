@@ -5,22 +5,20 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/UpdateUserProfile.css";
 import GenderSelect from "../../../components/common/GenderSelect";
 import DateField from "../../../components/common/DateField";
-import { userApi } from "../api/userApi";
 import { useUserById } from "../hooks/useUserById";
 import { getUserInfo } from "../../../utils/jwtHelper";
-import { 
-  FiTrash2, 
-  FiAlertTriangle, 
-  FiUser, 
-  FiMail, 
-  FiPhone, 
-  FiMapPin, 
+import DeleteUserButton from "../components/DeleteUserButton"; // 🔹 import component mới
+import {
+  FiUser,
+  FiMail,
+  FiPhone,
+  FiMapPin,
   FiCalendar,
-  FiCamera,
   FiSave,
   FiX,
   FiLoader,
-  FiEdit
+  FiEdit,
+  FiAlertTriangle
 } from "react-icons/fi";
 
 const UpdateUserProfile: React.FC = () => {
@@ -29,16 +27,20 @@ const UpdateUserProfile: React.FC = () => {
   const [searchParams] = useSearchParams();
   const userFromState = location.state?.user;
   const userIdFromUrl = searchParams.get("userId");
-  
-  // Get current logged-in user's ID from token if no userId in URL
+
+  // Lấy ID người dùng hiện tại từ token nếu không có trong URL
   const currentUserInfo = getUserInfo();
   const currentUserId = currentUserInfo?.sub;
-  
-  // Use userId from URL, or fallback to current user's ID
+
+  // Dùng userId trong URL hoặc fallback sang user hiện tại
   const targetUserId = userIdFromUrl || currentUserId;
-  
-  // Use API to fetch user
-  const { user: userFromApi, loading: loadingUser, error: errorUser } = useUserById(targetUserId || undefined);
+
+  // Fetch thông tin user từ API
+  const {
+    user: userFromApi,
+    loading: loadingUser,
+    error: errorUser,
+  } = useUserById(targetUserId || undefined);
 
   const [formData, setFormData] = useState({
     userId: "",
@@ -51,14 +53,11 @@ const UpdateUserProfile: React.FC = () => {
     address: "",
     email: "",
     cccd: "",
-    avatar: "",
   });
 
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  // Update form data when user is loaded from API or state
+  // Cập nhật dữ liệu form khi load user xong
   useEffect(() => {
     const userData = userFromApi || userFromState;
     if (userData) {
@@ -73,12 +72,11 @@ const UpdateUserProfile: React.FC = () => {
         address: userData.address || "",
         email: userData.email || "",
         cccd: userData.identifyNumber || "",
-        avatar: "",
       });
     }
   }, [userFromApi, userFromState]);
 
-  /** 🔹 Xử lý thay đổi input chung */
+  /** 🔹 Xử lý thay đổi input */
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -86,21 +84,15 @@ const UpdateUserProfile: React.FC = () => {
     setFormData({ ...formData, [name]: value });
   };
 
+  /** 🔹 Cập nhật ngày sinh và tuổi */
   const handleDateChange = (value: string) => {
     const birthDate = new Date(value);
     const today = new Date();
-    const age = today.getFullYear() - birthDate.getFullYear() - 
+    const age =
+      today.getFullYear() -
+      birthDate.getFullYear() -
       (today < new Date(birthDate.setFullYear(today.getFullYear())) ? 1 : 0);
     setFormData({ ...formData, dateOfBirth: value, age });
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => setFormData({ ...formData, avatar: reader.result as string });
-      reader.readAsDataURL(file);
-    }
   };
 
   /** 🔹 Lưu thay đổi */
@@ -110,45 +102,59 @@ const UpdateUserProfile: React.FC = () => {
     setIsEditMode(false);
   };
 
-  const handleDeleteAccount = async () => {
-    if (!formData.userId) return alert("Không tìm thấy User ID!");
-
-    setIsDeleting(true);
-    try {
-      await userApi.deleteUser(formData.userId);
-      alert("Đã xóa tài khoản thành công!");
-      navigate("/UserManagement");
-    } catch (error) {
-      alert("Không thể xóa tài khoản. Vui lòng thử lại!");
-    } finally {
-      setIsDeleting(false);
-      setShowDeleteConfirm(false);
-    }
-  };
-
+  // 🌀 Loading
   if (loadingUser) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px', flexDirection: 'column' }}>
-        <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "400px",
+          flexDirection: "column",
+        }}
+      >
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+        >
           <FiLoader size={48} color="#667eea" />
         </motion.div>
-        <p style={{ marginTop: '1rem', color: '#6b7280' }}>Loading user information...</p>
+        <p style={{ marginTop: "1rem", color: "#6b7280" }}>
+          Loading user information...
+        </p>
       </div>
     );
   }
 
+  // ⚠️ Error
   if (errorUser) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "400px",
+        }}
+      >
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          style={{ textAlign: 'center', padding: '2rem', background: '#fee2e2', borderRadius: '12px' }}
+          style={{
+            textAlign: "center",
+            padding: "2rem",
+            background: "#fee2e2",
+            borderRadius: "12px",
+          }}
         >
           <FiAlertTriangle size={48} color="#ef4444" />
-          <h3 style={{ marginTop: '1rem', color: '#dc2626' }}>{errorUser}</h3>
-          <button className="btn btn-primary mt-3" onClick={() => navigate("/UserManagement")}>
-            Back to User Management
+          <h3 style={{ marginTop: "1rem", color: "#dc2626" }}>{errorUser}</h3>
+          <button
+            className="btn btn-primary mt-3"
+            onClick={() => navigate("/UserManagement")}
+          >
+            Quay lại
           </button>
         </motion.div>
       </div>
@@ -170,25 +176,29 @@ const UpdateUserProfile: React.FC = () => {
               {isEditMode ? "Update User Profile" : "View User Profile"}
             </h1>
             <p className="profile-subtitle">
-              {isEditMode ? "Edit and update user account information" : "View user account information"}
+              {isEditMode
+                ? "Edit and update user account information"
+                : "View user account information"}
             </p>
           </div>
           {!isEditMode && (
             <motion.button
               className="create-user-btn"
               onClick={() => setIsEditMode(true)}
-              whileHover={{ scale: 1.08, boxShadow: "0 8px 24px rgba(102, 126, 234, 0.5)" }}
+              whileHover={{
+                scale: 1.08,
+                boxShadow: "0 8px 24px rgba(102, 126, 234, 0.5)",
+              }}
               whileTap={{ scale: 0.95 }}
-              style={{ 
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                padding: '14px 32px',
-                fontSize: '16px',
-                fontWeight: '700',
-                boxShadow: '0 4px 16px rgba(102, 126, 234, 0.4)',
-                border: 'none',
-                color: 'white',
-                opacity: 1,
-                zIndex: 10
+              style={{
+                background:
+                  "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                padding: "14px 32px",
+                fontSize: "16px",
+                fontWeight: "700",
+                boxShadow: "0 4px 16px rgba(102, 126, 234, 0.4)",
+                border: "none",
+                color: "white",
               }}
             >
               <FiEdit size={22} />
@@ -200,7 +210,7 @@ const UpdateUserProfile: React.FC = () => {
 
       <div className="profile-content-wrapper">
         <div className="row g-4">
-          {/* 🔹 Cột trái - Avatar Card */}
+          {/* 🔹 Cột trái - Avatar */}
           <div className="col-lg-4">
             <motion.div
               className="avatar-card"
@@ -211,32 +221,13 @@ const UpdateUserProfile: React.FC = () => {
               <div className="avatar-wrapper">
                 <div className="avatar-container">
                   <img
-                    src={formData.avatar || "https://ui-avatars.com/api/?name=" + formData.fullName + "&size=200&background=667eea&color=fff"}
+                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
+                      formData.fullName || "User"
+                    )}&size=200&background=667eea&color=fff`}
                     className="avatar-image"
                     alt="avatar"
                   />
-                  {isEditMode && (
-                    <div className="avatar-overlay">
-                      <FiCamera size={32} />
-                      <span>Change Photo</span>
-                    </div>
-                  )}
                 </div>
-                {isEditMode && (
-                  <>
-                    <input
-                      type="file"
-                      className="avatar-file-input"
-                      id="avatarInput"
-                      onChange={handleFileChange}
-                      accept="image/*"
-                    />
-                    <label htmlFor="avatarInput" className="avatar-upload-btn">
-                      <FiCamera className="me-2" />
-                      Upload New Photo
-                    </label>
-                  </>
-                )}
               </div>
 
               <div className="user-info-card">
@@ -263,11 +254,11 @@ const UpdateUserProfile: React.FC = () => {
               <h3 className="form-card-title">Personal Information</h3>
 
               <form className="modern-form" onSubmit={handleSubmit}>
-                {/* Full name */}
+                {/* Full Name */}
                 <div className="form-field">
                   <label className="field-label">
                     <FiUser size={18} />
-                    Full Name
+                    Họ và tên
                   </label>
                   <input
                     className="field-input"
@@ -284,7 +275,7 @@ const UpdateUserProfile: React.FC = () => {
                 <div className="form-field">
                   <label className="field-label">
                     <FiMail size={18} />
-                    Email Address
+                    Email
                   </label>
                   <input
                     className="field-input"
@@ -301,7 +292,7 @@ const UpdateUserProfile: React.FC = () => {
                 <div className="form-field">
                   <label className="field-label">
                     <FiPhone size={18} />
-                    Phone Number
+                    Số điện thoại
                   </label>
                   <input
                     className="field-input"
@@ -318,7 +309,7 @@ const UpdateUserProfile: React.FC = () => {
                 <div className="form-field">
                   <label className="field-label">
                     <FiMapPin size={18} />
-                    Address
+                    Địa chỉ
                   </label>
                   <input
                     className="field-input"
@@ -331,17 +322,19 @@ const UpdateUserProfile: React.FC = () => {
                   />
                 </div>
 
-                {/* Row: Gender & Date of Birth */}
+                {/* Row: Gender & DOB */}
                 <div className="row g-3">
                   <div className="col-md-6">
                     <div className="form-field">
                       <label className="field-label">
                         <FiUser size={18} />
-                        Gender
+                        Giới tính
                       </label>
                       <GenderSelect
                         value={formData.gender}
-                        onChange={(gender) => isEditMode && setFormData({ ...formData, gender })}
+                        onChange={(gender) =>
+                          isEditMode && setFormData({ ...formData, gender })
+                        }
                       />
                     </div>
                   </div>
@@ -349,7 +342,7 @@ const UpdateUserProfile: React.FC = () => {
                     <div className="form-field">
                       <label className="field-label">
                         <FiCalendar size={18} />
-                        Date of Birth
+                        Ngày sinh
                       </label>
                       <DateField
                         name="dateOfBirth"
@@ -395,7 +388,7 @@ const UpdateUserProfile: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Action Buttons - Only show in Edit Mode */}
+                {/* 🔹 Action Buttons */}
                 {isEditMode && (
                   <div className="form-actions">
                     <motion.button
@@ -407,7 +400,7 @@ const UpdateUserProfile: React.FC = () => {
                       <FiSave size={18} />
                       Save Changes
                     </motion.button>
-                    
+
                     <motion.button
                       type="button"
                       className="btn-cancel"
@@ -419,16 +412,11 @@ const UpdateUserProfile: React.FC = () => {
                       Cancel
                     </motion.button>
 
-                    <motion.button
-                      type="button"
-                      className="btn-delete"
-                      onClick={() => setShowDeleteConfirm(true)}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      <FiTrash2 size={18} />
-                      Delete Account
-                    </motion.button>
+                    {/* ✅ Dùng component tách riêng */}
+                    <DeleteUserButton
+                      userId={formData.userId}
+                      fullName={formData.fullName}
+                    />
                   </div>
                 )}
               </form>
@@ -436,40 +424,6 @@ const UpdateUserProfile: React.FC = () => {
           </div>
         </div>
       </div>
-
-      {showDeleteConfirm && (
-        <div className="delete-modal-overlay" onClick={() => setShowDeleteConfirm(false)}>
-          <div className="delete-modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="delete-modal-icon">
-              <FiAlertTriangle size={64} color="#ef4444" />
-            </div>
-            <h3 className="delete-modal-title">Xác nhận xóa tài khoản</h3>
-            <p className="delete-modal-message">
-              Bạn có chắc chắn muốn xóa tài khoản <strong>{formData.fullName}</strong>?
-              <br />
-              <span className="delete-modal-warning">⚠️ Hành động này không thể hoàn tác!</span>
-            </p>
-            <div className="delete-modal-actions">
-              <button className="btn btn-secondary me-2" onClick={() => setShowDeleteConfirm(false)} disabled={isDeleting}>
-                Hủy
-              </button>
-              <button className="btn btn-danger" onClick={handleDeleteAccount} disabled={isDeleting}>
-                {isDeleting ? (
-                  <>
-                    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                    Đang xóa...
-                  </>
-                ) : (
-                  <>
-                    <FiTrash2 size={16} className="me-2" />
-                    Xác nhận xóa
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

@@ -61,7 +61,7 @@ const UserManagementPage: React.FC = () => {
         >
           <FiUsers size={48} />
         </motion.div>
-        <p>Loading users...</p>
+        <p>Đang tải...</p>
       </div>
     );
   }
@@ -79,7 +79,7 @@ const UserManagementPage: React.FC = () => {
           {isAuthError ? (
             <>
               <h3>🔒 {error}</h3>
-              <p>Your session has expired. Redirecting to login...</p>
+              <p>Phiên đăng nhập đã hết hạn. Đang chuyển hướng đến trang đăng nhập...</p>
               <button 
                 className="btn-retry" 
                 onClick={() => {
@@ -87,15 +87,15 @@ const UserManagementPage: React.FC = () => {
                   navigate("/");
                 }}
               >
-                Go to Login Now
+                Đi đến trang đăng nhập ngay
               </button>
             </>
           ) : (
             <>
               <h3>❌ {error}</h3>
-              <p>Failed to load users. Please try again.</p>
+              <p>Không thể tải người dùng. Vui lòng thử lại.</p>
               <button className="btn-retry" onClick={() => window.location.reload()}>
-                Retry
+                Thử lại
               </button>
             </>
           )}
@@ -114,8 +114,8 @@ const UserManagementPage: React.FC = () => {
       >
         <div className="header-content">
           <div>
-            <h1 className="page-title">User Management</h1>
-            <p className="page-subtitle">Manage and monitor all users in the system</p>
+            <h1 className="page-title">Quản lý người dùng</h1>
+            <p className="page-subtitle">Quản lý và giám sát tất cả người dùng trong hệ thống</p>
           </div>
           <motion.button
             className="create-user-btn"
@@ -124,7 +124,7 @@ const UserManagementPage: React.FC = () => {
             whileTap={{ scale: 0.95 }}
           >
             <FiPlus size={20} />
-            <span>Create New User</span>
+            <span>Tạo người dùng mới</span>
           </motion.button>
         </div>
       </motion.div>
