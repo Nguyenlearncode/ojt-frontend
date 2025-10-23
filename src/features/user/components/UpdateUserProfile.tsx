@@ -39,10 +39,10 @@ const UpdateUserProfile: React.FC = () => {
       >
         <div className="header-content">
           <h1 className="create-title">
-            <FiUserCheck className="me-2" /> Cập nhật Hồ sơ Người dùng
+            <FiUserCheck className="me-2" /> Update User Profile
           </h1>
           <p className="create-subtitle">
-            Chỉnh sửa và cập nhật thông tin tài khoản
+            Edit and update your existing account information
           </p>
         </div>
       </motion.div>
@@ -55,15 +55,15 @@ const UpdateUserProfile: React.FC = () => {
       >
         <div className="form-card-header">
           <FiUser size={24} />
-          <h3>Thông tin người dùng</h3>
+          <h3>User Information</h3>
         </div>
 
         <form className="modern-create-form" onSubmit={handleSubmit}>
-          {[ 
-            { name: "fullName", label: "Họ và tên", icon: <FiUser size={18} /> },
-            { name: "email", label: "Email", icon: <FiMail size={18} /> },
-            { name: "phoneNumber", label: "Số điện thoại", icon: <FiPhone size={18} /> },
-            { name: "address", label: "Địa chỉ", icon: <FiMapPin size={18} /> },
+          {[
+            { name: "fullName", label: "Full Name", icon: <FiUser size={18} /> },
+            { name: "email", label: "Email Address", icon: <FiMail size={18} /> },
+            { name: "phoneNumber", label: "Phone Number", icon: <FiPhone size={18} /> },
+            { name: "address", label: "Address", icon: <FiMapPin size={18} /> },
           ].map(({ name, label, icon }) => (
             <div className="form-field" key={name}>
               <label className="field-label">
@@ -86,7 +86,7 @@ const UpdateUserProfile: React.FC = () => {
             <div className="col-md-4">
               <div className="form-field">
                 <label className="field-label">
-                  <FiUser size={18} /> Giới tính
+                  <FiUser size={18} /> Gender
                 </label>
                 <GenderSelect
                   value={formData.gender}
@@ -100,7 +100,7 @@ const UpdateUserProfile: React.FC = () => {
             <div className="col-md-4">
               <div className="form-field">
                 <label className="field-label">
-                  <FiCalendar size={18} /> Ngày sinh
+                  <FiCalendar size={18} /> Date of Birth
                 </label>
                 <DateField
                   name="dateOfBirth"
@@ -122,7 +122,7 @@ const UpdateUserProfile: React.FC = () => {
             <div className="col-md-4">
               <div className="form-field">
                 <label className="field-label">
-                  <FiHash size={18} /> Tuổi
+                  <FiHash size={18} /> Age
                 </label>
                 <input
                   type="number"
@@ -156,7 +156,7 @@ const UpdateUserProfile: React.FC = () => {
                 </>
               ) : (
                 <>
-                  <FiSave size={18} /> Cập nhât
+                  <FiSave size={18} /> Update Profile
                 </>
               )}
             </motion.button>
@@ -168,7 +168,7 @@ const UpdateUserProfile: React.FC = () => {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              <FiArrowLeft size={18} /> Quay lại
+              <FiArrowLeft size={18} /> Go Back
             </motion.button>
           </div>
         </form>
