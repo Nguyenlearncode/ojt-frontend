@@ -1,3 +1,5 @@
+// src/features/user/api/userApi.ts
+
 import axiosClient from "../../../api/axiosClient";
 import type { AxiosResponse } from "axios";
 
@@ -78,6 +80,11 @@ export const userApi = {
 
   async createUser(data: CreateUserPayload) {
     const res: AxiosResponse<any> = await axiosClient.post("/users/create", data);
+    return res.data;
+  },
+
+  updateUser: async (userId: string, data: any) => {
+    const res = await axiosClient.put(`/users/${userId}`, data);
     return res.data;
   },
 };

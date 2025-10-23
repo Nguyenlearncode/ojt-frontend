@@ -1,16 +1,15 @@
-// src/features/user/pages/UserManagementPage.tsx
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { FiPlus, FiUsers } from "react-icons/fi";
 import "../styles/UserManagementPage.css";
 import SearchFilter from "../components/UserTable/SearchFilter";
-import { UserTableModern } from "../components/UserTableModern"; "../components/UserTableModern";
+import { UserTableModern } from "../components/UserTableModern";
 import Pagination from "../components/Pagination";
 import { useUsers } from "../hooks/useUsers";
 
 const UserManagementPage: React.FC = () => {
-  const { users, loading, error } = useUsers();
+  const { users, loading, error, refetch } = useUsers(); // ✅ thêm refetch
   const navigate = useNavigate();
 
   // Search & Filter states
@@ -22,7 +21,14 @@ const UserManagementPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
 
-  // Filter users
+  // 🔁 Tự động refetch khi quay lại tab hoặc sau khi cập nhật user
+  useEffect(() => {
+    const handleFocus = () => refetch && refetch();
+    window.addEventListener("focus", handleFocus);
+    return () => window.removeEventListener("focus", handleFocus);
+  }, [refetch]);
+
+  // 🔍 Filter users theo search / role / gender
   const filteredUsers = useMemo(() => {
     return users.filter((user) => {
       const matchesSearch =
@@ -37,7 +43,7 @@ const UserManagementPage: React.FC = () => {
     });
   }, [users, searchTerm, roleFilter, genderFilter]);
 
-  // Paginate users
+  // 📄 Pagination
   const paginatedUsers = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
@@ -46,11 +52,12 @@ const UserManagementPage: React.FC = () => {
 
   const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
 
-  // Handlers
+  // ✏️ Edit handler
   const handleEdit = (user: any) => {
-    navigate("/UpdateUserProfile", { state: { user } });
+    navigate(`/UpdateUserProfile/${user.userId}`);
   };
 
+  // ⏳ Loading state
   if (loading) {
     return (
       <div className="loading-container">
@@ -66,9 +73,10 @@ const UserManagementPage: React.FC = () => {
     );
   }
 
+  // ❌ Error state
   if (error) {
     const isAuthError = error.includes("Session expired") || error.includes("login");
-    
+
     return (
       <div className="error-container">
         <motion.div
@@ -80,8 +88,8 @@ const UserManagementPage: React.FC = () => {
             <>
               <h3>🔒 {error}</h3>
               <p>Phiên đăng nhập đã hết hạn. Đang chuyển hướng đến trang đăng nhập...</p>
-              <button 
-                className="btn-retry" 
+              <button
+                className="btn-retry"
                 onClick={() => {
                   localStorage.clear();
                   navigate("/");
@@ -94,7 +102,7 @@ const UserManagementPage: React.FC = () => {
             <>
               <h3>❌ {error}</h3>
               <p>Không thể tải người dùng. Vui lòng thử lại.</p>
-              <button className="btn-retry" onClick={() => window.location.reload()}>
+              <button className="btn-retry" onClick={() => refetch()}>
                 Thử lại
               </button>
             </>
@@ -104,6 +112,7 @@ const UserManagementPage: React.FC = () => {
     );
   }
 
+  // 🧩 Main UI
   return (
     <div className="user-management-page">
       {/* Header */}
@@ -115,7 +124,9 @@ const UserManagementPage: React.FC = () => {
         <div className="header-content">
           <div>
             <h1 className="page-title">Quản lý người dùng</h1>
-            <p className="page-subtitle">Quản lý và giám sát tất cả người dùng trong hệ thống</p>
+            <p className="page-subtitle">
+              Quản lý và giám sát tất cả người dùng trong hệ thống
+            </p>
           </div>
           <motion.button
             className="create-user-btn"
@@ -140,10 +151,7 @@ const UserManagementPage: React.FC = () => {
       />
 
       {/* Table */}
-      <UserTableModern
-        users={paginatedUsers}
-        onEdit={handleEdit}
-      />
+      <UserTableModern users={paginatedUsers} onEdit={handleEdit}  />
 
       {/* Pagination */}
       {totalPages > 1 && (

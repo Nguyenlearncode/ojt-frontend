@@ -37,7 +37,7 @@ const menuItems = [
     name: "Cài đặt",
     icon: <FiSettings size={22} />,
     submenu: [
-      { name: "Profile", path: "/UpdateUserProfile" },
+      { name: "Profile", path: "/Profile" },
       { name: "Preferences", path: "/preferences" },
     ],
   },

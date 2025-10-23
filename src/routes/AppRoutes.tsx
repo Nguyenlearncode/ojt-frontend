@@ -40,15 +40,16 @@ const AppRoutes: React.FC = () => {
         />
 
         <Route
-          path="/UpdateUserProfile"
-          element={
-            <PrivateRoute>
-              <DashboardLayout>
-                <UpdateUserProfile />
-              </DashboardLayout>
-            </PrivateRoute>
-          }
-        />
+  path="/UpdateUserProfile/:id"
+  element={
+    <PrivateRoute>
+      <DashboardLayout>
+        <UpdateUserProfile />
+      </DashboardLayout>
+    </PrivateRoute>
+  }
+/>
+
 
         <Route
           path="/CreateUser"
