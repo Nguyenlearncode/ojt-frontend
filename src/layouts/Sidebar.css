@@ -198,11 +198,15 @@
   padding: 10px;
   cursor: pointer;
   transition: background 0.2s, transform 0.1s;
+  position: relative;
+  z-index: 10;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 .logout-btn:hover {
   background-color: #b91c1c;
   transform: scale(1.02);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4);
 }
 
 /* Prevent horizontal scroll globally */
