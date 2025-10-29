@@ -118,15 +118,10 @@ const SidebarChakra: React.FC<SidebarProps> = ({ onToggle }) => {
       overflow="hidden"
       css={{
         "&::-webkit-scrollbar": {
-          width: "4px",
+          display: "none",
         },
-        "&::-webkit-scrollbar-track": {
-          width: "6px",
-        },
-        "&::-webkit-scrollbar-thumb": {
-          background: "#CBD5E0",
-          borderRadius: "24px",
-        },
+        scrollbarWidth: "none",
+        msOverflowStyle: "none",
       }}
     >
       {/* Shooting Stars Background */}
@@ -141,15 +136,10 @@ const SidebarChakra: React.FC<SidebarProps> = ({ onToggle }) => {
         overflowY="auto"
         css={{
           "&::-webkit-scrollbar": {
-            width: "4px",
+            display: "none",
           },
-          "&::-webkit-scrollbar-track": {
-            width: "6px",
-          },
-          "&::-webkit-scrollbar-thumb": {
-            background: "#CBD5E0",
-            borderRadius: "24px",
-          },
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
         }}
       >
         <VStack spacing={0} align="stretch" flex={1} minH="0">
@@ -183,7 +173,20 @@ const SidebarChakra: React.FC<SidebarProps> = ({ onToggle }) => {
         </Flex>
 
         {/* Menu Items */}
-        <VStack spacing={2} p={4} flex="1 1 auto" align="stretch" overflowY="auto">
+        <VStack 
+          spacing={2} 
+          p={4} 
+          flex="1 1 auto" 
+          align="stretch" 
+          overflowY="auto"
+          css={{
+            "&::-webkit-scrollbar": {
+              display: "none",
+            },
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+          }}
+        >
           {menuItems.map((item) => (
             <Box key={item.name}>
               <Tooltip

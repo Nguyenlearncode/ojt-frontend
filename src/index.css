@@ -30,6 +30,85 @@ body {
   min-height: 100vh;
 }
 
+/* ============================================
+   HIDE ALL SCROLLBARS - COMPLETE SOLUTION
+   ============================================ */
+
+/* Universal selector - hide for ALL elements */
+*,
+*::before,
+*::after {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE and Edge */
+}
+
+*::-webkit-scrollbar,
+*::before::-webkit-scrollbar,
+*::after::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  display: none !important;
+  background: transparent !important;
+}
+
+*::-webkit-scrollbar-track,
+*::-webkit-scrollbar-thumb,
+*::-webkit-scrollbar-corner {
+  display: none !important;
+  background: transparent !important;
+}
+
+/* HTML element */
+html {
+  overflow-y: scroll !important;
+  overflow-x: hidden !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+html::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  display: none !important;
+}
+
+/* Body element */
+body {
+  overflow-x: hidden !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+body::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  display: none !important;
+}
+
+/* Root element */
+#root {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+#root::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  display: none !important;
+}
+
+/* All divs */
+div {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+div::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  display: none !important;
+}
+
 h1 {
   font-size: 3.2em;
   line-height: 1.1;

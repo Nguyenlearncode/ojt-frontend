@@ -1,4 +1,14 @@
+/* Force hide scrollbar everywhere */
+:root {
+  overflow-y: scroll;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
 
+:root::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+}
 
 @keyframes logo-spin {
   from {

@@ -19,6 +19,12 @@
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+.view-modal-content::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
 }
 
 /* Header */
