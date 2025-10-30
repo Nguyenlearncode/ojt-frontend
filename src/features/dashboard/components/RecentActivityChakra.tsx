@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { FiCheckCircle, FiAlertCircle, FiInfo, FiXCircle } from "react-icons/fi";
 import type { Activity } from "../api/dashboardApi";
 
-const MotionBox = motion(Box);
 const MotionFlex = motion(Flex);
 
 interface RecentActivityChakraProps {

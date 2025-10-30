@@ -3,7 +3,7 @@
  * Enhanced Button component with Material Dashboard styling
  */
 
-import { forwardRef, ReactNode } from "react";
+import { forwardRef, type ReactNode } from "react";
 import Button from "@mui/material/Button";
 import type { ButtonProps } from "@mui/material/Button";
 import { styled } from "@mui/material/styles";

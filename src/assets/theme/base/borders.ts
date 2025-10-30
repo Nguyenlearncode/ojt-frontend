@@ -4,7 +4,8 @@
  */
 
 import colors from "./colors";
-import pxToRem from "../functions/pxToRem";
+
+const pxToRem = (px: number): string => `${px / 16}rem`;
 
 const { grey } = colors;
 
