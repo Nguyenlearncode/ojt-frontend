@@ -19,6 +19,7 @@ import { FiMail, FiPhone, FiEye, FiEdit2 } from "react-icons/fi";
 import type { User } from "../api/userApi";
 import { formatGender } from "../../../utils/genderUtils";
 import UserDetailModalChakra from "./UserDetailModalChakra";
+import { UserStatusToggleButton } from "./Button/UserStatusToggleButton"; 
 
 const MotionTr = motion(Tr);
 const MotionBox = motion(Box);
@@ -33,9 +34,6 @@ export const UserTableChakra: React.FC<UserTableChakraProps> = ({
   onEdit,
 }) => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-
-  const getStatusColor = (isActive?: boolean) =>
-    isActive !== false ? "green" : "red";
 
   if (users.length === 0) {
     return (
@@ -104,13 +102,15 @@ export const UserTableChakra: React.FC<UserTableChakraProps> = ({
                   {/* Thông tin người dùng */}
                   <Td>
                     <HStack spacing={3}>
-                      <Avatar name={user.fullName} size="md" bg="blue.500" color="white" />
+                      <Avatar
+                        name={user.fullName}
+                        size="md"
+                        bg="blue.500"
+                        color="white"
+                      />
                       <VStack align="flex-start" spacing={0}>
                         <Text fontWeight="600" color="gray.800">
                           {user.fullName}
-                        </Text>
-                        <Text fontSize="xs" color="gray.500">
-                          ID: {user.userId.slice(0, 8)}...
                         </Text>
                       </VStack>
                     </HStack>
@@ -134,7 +134,7 @@ export const UserTableChakra: React.FC<UserTableChakraProps> = ({
                     </VStack>
                   </Td>
 
-                  {/* Vai trò (logic giữ nguyên, bỏ style) */}
+                  {/* Vai trò */}
                   <Td>
                     <Text fontSize="sm" color="gray.800">
                       {user.role?.roleName || "N/A"}
@@ -148,15 +148,13 @@ export const UserTableChakra: React.FC<UserTableChakraProps> = ({
                     </Text>
                   </Td>
 
-                  {/* Trạng thái */}
+                  {/* ✅ Trạng thái — thay text bằng button */}
                   <Td>
-                    <Text
-                      fontSize="sm"
-                      color={getStatusColor(user.isActive)}
-                      fontWeight="600"
-                    >
-                      {user.isActive !== false ? "Hoạt động" : "Không hoạt động"}
-                    </Text>
+                    <UserStatusToggleButton
+                      userId={user.userId}
+                      fullName={user.fullName}
+                      initialActive={user.isActive ?? false}
+                    />
                   </Td>
 
                   {/* Hành động */}

@@ -196,33 +196,49 @@ const UpdateUserProfileChakra: React.FC = () => {
 
                   {/* Email */}
                   <FormControl isRequired isInvalid={!!errors.email}>
-                    <FormLabel fontWeight="600" color="gray.700" display="flex" alignItems="center">
+                    <FormLabel
+                      fontWeight="600"
+                      color="gray.700"
+                      display="flex"
+                      alignItems="center"
+                    >
                       <Icon as={FiMail} color="purple.500" mr={2} />
                       <Text as="span">Email</Text>
                     </FormLabel>
+
                     <MotionBox whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                       <InputGroup size="lg">
                         <InputLeftElement pointerEvents="none">
                           <Icon as={FiMail} color="gray.400" />
                         </InputLeftElement>
+
                         <Input
                           type="email"
                           name="email"
                           value={formData.email || ""}
-                          onChange={handleChange}
-                          onFocus={() => setFocusedField("email")}
-                          onBlur={() => setFocusedField(null)}
-                          placeholder="Nhập email"
+                          isDisabled      
+                          placeholder="Email không thể thay đổi"
                           focusBorderColor="purple.400"
-                          bg={focusedField === "email" ? "purple.50" : "gray.50"}
-                          transition="all 0.3s"
-                          _hover={{ bg: "purple.50" }}
+                          bg="gray.100"   
+                          cursor="not-allowed"
+                          height="48px"   
+                          _disabled={{
+                            opacity: 1,   
+                            bg: "gray.100",
+                            color: "gray.700",
+                          }}
                         />
                       </InputGroup>
                     </MotionBox>
+
                     <AnimatePresence>
                       {errors.email && (
-                        <MotionBox initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+                        <MotionBox
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0 }}
+                          minH="20px" // ✅ giữ chỗ tránh nút bị nhảy khi lỗi xuất hiện
+                        >
                           <Text color="red.500" fontSize="sm" mt={1}>
                             {errors.email}
                           </Text>
@@ -230,6 +246,7 @@ const UpdateUserProfileChakra: React.FC = () => {
                       )}
                     </AnimatePresence>
                   </FormControl>
+
 
                   {/* Phone */}
                   <FormControl isRequired isInvalid={!!errors.phoneNumber}>

@@ -15,8 +15,19 @@ import {
   Divider,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
-import { FiMail, FiPhone, FiMapPin, FiCalendar, FiUser, FiX } from "react-icons/fi";
+import {
+  FiMail,
+  FiPhone,
+  FiMapPin,
+  FiCalendar,
+  FiUser,
+  FiCreditCard,
+  FiX,
+} from "react-icons/fi";
 import type { User } from "../api/userApi";
+import DeleteUserButton from "./Button/DeleteUserButton";
+import { formatGender } from "../../../utils/formatGender";
+
 
 const MotionBox = motion(Box);
 
@@ -29,21 +40,10 @@ const UserDetailModalChakra: React.FC<UserDetailModalChakraProps> = ({
   user,
   onClose,
 }) => {
-  const getRoleBadgeColor = (roleName?: string) => {
-    switch (roleName?.toLowerCase()) {
-      case "administrator":
-        return "purple";
-      case "lab manager":
-        return "blue";
-      case "service":
-        return "green";
-      case "lab user":
-        return "cyan";
-      default:
-        return "gray";
-    }
-  };
+  // ✅ Màu mặc định cho avatar và badge
+  const defaultColorScheme = "blue";
 
+  // ✅ Danh sách thông tin hiển thị
   const infoItems = [
     { icon: FiMail, label: "Email", value: user.email },
     { icon: FiPhone, label: "Số điện thoại", value: user.phoneNumber },
@@ -54,40 +54,38 @@ const UserDetailModalChakra: React.FC<UserDetailModalChakraProps> = ({
         ? new Date(user.dateOfBirth).toLocaleDateString("vi-VN")
         : "N/A",
     },
-    { icon: FiUser, label: "Giới tính", value: user.gender },
+    { icon: FiUser, label: "Giới tính", value: formatGender(user.gender) },
     { icon: FiUser, label: "Tuổi", value: user.age },
+    { icon: FiCreditCard, label: "CMND/CCCD", value: user.identifyNumber },
     { icon: FiMapPin, label: "Địa chỉ", value: user.address },
   ];
 
   return (
     <Modal isOpen={true} onClose={onClose} size="lg" isCentered>
       <ModalOverlay bg="blackAlpha.700" backdropFilter="blur(10px)" />
-      
-      {/* Card Container */}
+
       <ModalContent bg="transparent" boxShadow="none" maxW="480px">
         <MotionBox
           initial={{ opacity: 0, y: 50, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.3, type: "spring" }}
         >
-          {/* Card Background Image */}
+          {/* Header Background */}
           <Box position="relative" borderTopRadius="xl" overflow="hidden">
             <Image
               src="https://images.unsplash.com/photo-1557683316-973673baf926?w=800"
               alt="Profile background"
               w="full"
-              h="120px"
+              h="90px"
               objectFit="cover"
               fallback={
                 <Box
                   w="full"
-                  h="120px"
-                  bgGradient="linear(135deg, purple.400, blue.500, teal.400)"
+                  h="90px"
+                  bgGradient="linear(135deg, blue.400, cyan.500)"
                 />
               }
             />
-            
-            {/* Close button on image */}
             <Button
               position="absolute"
               top={4}
@@ -101,18 +99,18 @@ const UserDetailModalChakra: React.FC<UserDetailModalChakraProps> = ({
               backdropFilter="blur(10px)"
               _hover={{ bg: "whiteAlpha.400" }}
             >
-              Close
+              Đóng
             </Button>
           </Box>
 
-          {/* Card Body */}
-          <Box bg="white" px={6} pb={4} borderBottomRadius="xl" boxShadow="2xl">
-            {/* User Avatar & Info */}
+          {/* Nội dung chính */}
+          <Box bg="white" px={6} pb={5} borderBottomRadius="xl" boxShadow="2xl">
+            {/* Thông tin người dùng */}
             <VStack spacing={2} textAlign="center" mb={4}>
               <Avatar
                 name={user.fullName}
                 size="lg"
-                bg={`${getRoleBadgeColor(user.role?.roleName)}.500`}
+                bg={`${defaultColorScheme}.500`}
                 color="white"
                 mt={-6}
                 border="3px solid white"
@@ -123,7 +121,7 @@ const UserDetailModalChakra: React.FC<UserDetailModalChakraProps> = ({
                   {user.fullName}
                 </Text>
                 <Badge
-                  colorScheme={getRoleBadgeColor(user.role?.roleName)}
+                  colorScheme={defaultColorScheme}
                   fontSize="xs"
                   px={2.5}
                   py={0.5}
@@ -137,12 +135,8 @@ const UserDetailModalChakra: React.FC<UserDetailModalChakraProps> = ({
 
             <Divider mb={4} />
 
-            {/* User Details - 2 Columns Grid */}
-            <Box
-              display="grid"
-              gridTemplateColumns="repeat(2, 1fr)"
-              gap={3}
-            >
+            {/* Grid thông tin */}
+            <Box display="grid" gridTemplateColumns="repeat(2, 1fr)" gap={3}>
               {infoItems.map((item, index) => (
                 <MotionBox
                   key={index}
@@ -198,16 +192,20 @@ const UserDetailModalChakra: React.FC<UserDetailModalChakraProps> = ({
               ))}
             </Box>
 
-            {/* User ID (small text at bottom) */}
-            <Text
-              fontSize="xs"
-              color="gray.400"
-              textAlign="center"
-              mt={4}
-              fontStyle="italic"
-            >
-              User ID: {user.userId}
-            </Text>
+            {/* User ID và nút Xóa */}
+            <VStack spacing={3} mt={5}>
+              <Text
+                fontSize="xs"
+                color="gray.400"
+                textAlign="center"
+                fontStyle="italic"
+              >
+                User ID: {user.userId}
+              </Text>
+
+              {/* ✅ Nút xóa người dùng */}
+              <DeleteUserButton userId={user.userId} fullName={user.fullName} />
+            </VStack>
           </Box>
         </MotionBox>
       </ModalContent>
@@ -216,4 +214,3 @@ const UserDetailModalChakra: React.FC<UserDetailModalChakraProps> = ({
 };
 
 export default UserDetailModalChakra;
-

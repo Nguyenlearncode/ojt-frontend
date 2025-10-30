@@ -83,7 +83,7 @@ export const useCreateUserForm = () => {
       };
 
       const res = await userApi.createUser(payload);
-      toast.success(res.message || "✅ Tạo tài khoản thành công!");
+      toast.success(res.message || "Tạo tài khoản thành công!");
       navigate("/UserManagement");
     } catch (err: any) {
       const msg = err.response?.data?.message || "❌ Không thể tạo tài khoản!";

@@ -16,6 +16,7 @@ export interface User {
   age: number;
   address: string;
   dateOfBirth: string;
+  identifyNumber: string;
   role: Role;
   isActive?: boolean;
 }

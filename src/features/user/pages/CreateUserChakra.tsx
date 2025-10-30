@@ -1,3 +1,4 @@
+// src/features/user/pages/CreateUserChakra.tsx
 import React from "react";
 import {
   Box,
@@ -56,7 +57,7 @@ const CreateUserChakra: React.FC = () => {
   return (
     <Box minH="100vh" py={8}>
       <Container maxW="container.xl">
-        {/* Header */}
+        {/* Tiêu đề */}
         <MotionBox initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} mb={6}>
           <HStack spacing={4}>
             <Box
@@ -71,10 +72,10 @@ const CreateUserChakra: React.FC = () => {
             </Box>
             <VStack align="flex-start" spacing={0}>
               <Heading size="xl" color="white">
-                Create New User
+                Tạo người dùng mới
               </Heading>
               <Text color="whiteAlpha.900" fontSize="md">
-                Add a new member to your laboratory team
+                Thêm thành viên mới vào đội ngũ phòng xét nghiệm
               </Text>
             </VStack>
           </HStack>
@@ -90,16 +91,16 @@ const CreateUserChakra: React.FC = () => {
             borderColor="gray.200"
             overflow="hidden"
           >
-            {/* Role */}
+            {/* Thiết lập tài khoản */}
             <MotionBox variants={itemVariants} p={8} borderBottom="1px" borderColor="gray.100">
               <HStack mb={6} spacing={3}>
                 <Icon as={FiShield} boxSize={6} color="green.500" />
                 <Heading size="lg" color="gray.800">
-                  Account Setup
+                  Thiết lập tài khoản
                 </Heading>
               </HStack>
               <FormControl isRequired isInvalid={!!errors.roleCode}>
-                <FormLabel fontWeight="600" color="gray.700">Role</FormLabel>
+                <FormLabel fontWeight="600" color="gray.700">Vai trò</FormLabel>
                 <Select
                   name="roleCode"
                   value={formData.roleCode}
@@ -108,31 +109,31 @@ const CreateUserChakra: React.FC = () => {
                   focusBorderColor="green.400"
                   bg="gray.50"
                 >
-                  <option value="">Select role</option>
-                  <option value="LAB_USER">Lab User</option>
-                  <option value="LAB_MANAGER">Lab Manager</option>
-                  <option value="ADMIN">Administrator</option>
-                  <option value="SERVICE">Service</option>
+                  <option value="">Chọn vai trò</option>
+                  <option value="LAB_USER">Nhân viên phòng thí nghiệm</option>
+                  <option value="LAB_MANAGER">Quản lý phòng thí nghiệm</option>
+                  <option value="ADMIN">Quản trị viên</option>
+                  <option value="SERVICE">Nhân viên dịch vụ</option>
                 </Select>
               </FormControl>
             </MotionBox>
 
-            {/* Personal Info */}
+            {/* Thông tin cá nhân */}
             <MotionBox variants={itemVariants} p={8}>
               <Heading size="lg" mb={6} color="gray.800">
-                Personal Details
+                Thông tin cá nhân
               </Heading>
 
               <VStack spacing={6} align="stretch">
                 <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
-                  {/* Full Name */}
+                  {/* Họ và tên */}
                   <FormControl isRequired isInvalid={!!errors.fullName}>
-                    <FormLabel>Full Name</FormLabel>
+                    <FormLabel>Họ và tên</FormLabel>
                     <Input
                       name="fullName"
                       value={formData.fullName}
                       onChange={handleChange}
-                      placeholder="Enter full name"
+                      placeholder="Nhập họ và tên"
                       focusBorderColor="blue.400"
                       bg="gray.50"
                     />
@@ -146,53 +147,53 @@ const CreateUserChakra: React.FC = () => {
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
-                      placeholder="Enter email"
+                      placeholder="Nhập địa chỉ email"
                       focusBorderColor="blue.400"
                       bg="gray.50"
                     />
                   </FormControl>
 
-                  {/* Phone */}
+                  {/* Số điện thoại */}
                   <FormControl isRequired isInvalid={!!errors.phoneNumber}>
-                    <FormLabel>Phone Number</FormLabel>
+                    <FormLabel>Số điện thoại</FormLabel>
                     <Input
                       name="phoneNumber"
                       value={formData.phoneNumber}
                       onChange={handleChange}
-                      placeholder="Enter phone number"
+                      placeholder="Nhập số điện thoại"
                       focusBorderColor="blue.400"
                       bg="gray.50"
                     />
                   </FormControl>
 
-                  {/* Address */}
+                  {/* Địa chỉ */}
                   <FormControl isRequired isInvalid={!!errors.address}>
-                    <FormLabel>Address</FormLabel>
+                    <FormLabel>Địa chỉ</FormLabel>
                     <Input
                       name="address"
                       value={formData.address}
                       onChange={handleChange}
-                      placeholder="Enter address"
+                      placeholder="Nhập địa chỉ"
                       focusBorderColor="blue.400"
                       bg="gray.50"
                     />
                   </FormControl>
                 </SimpleGrid>
 
-                {/* Gender - DOB - Age */}
+                {/* Giới tính - Ngày sinh - Tuổi */}
                 <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
-                  {/* Gender */}
+                  {/* Giới tính */}
                   <FormControl isRequired>
-                    <FormLabel>Gender</FormLabel>
+                    <FormLabel>Giới tính</FormLabel>
                     <GenderSelect
                       value={formData.gender}
                       onChange={(value) => setFormData({ ...formData, gender: value })}
                     />
                   </FormControl>
 
-                  {/* Date of Birth */}
+                  {/* Ngày sinh */}
                   <FormControl isRequired isInvalid={!!errors.dateOfBirth}>
-                    <FormLabel>Date of Birth</FormLabel>
+                    <FormLabel>Ngày sinh</FormLabel>
                     <Input
                       type="date"
                       name="dateOfBirth"
@@ -209,9 +210,9 @@ const CreateUserChakra: React.FC = () => {
                     />
                   </FormControl>
 
-                  {/* Age */}
+                  {/* Tuổi */}
                   <FormControl isRequired isInvalid={!!errors.age}>
-                    <FormLabel>Age</FormLabel>
+                    <FormLabel>Tuổi</FormLabel>
                     <Input
                       type="number"
                       name="age"
@@ -225,12 +226,12 @@ const CreateUserChakra: React.FC = () => {
 
                 {/* CCCD */}
                 <FormControl isRequired isInvalid={!!errors.cccd}>
-                  <FormLabel>CCCD / Identify Number</FormLabel>
+                  <FormLabel>Số CCCD / CMND</FormLabel>
                   <Input
                     name="cccd"
                     value={formData.cccd}
                     onChange={handleChange}
-                    placeholder="Enter identify number"
+                    placeholder="Nhập số CCCD hoặc CMND"
                     focusBorderColor="blue.400"
                     bg="gray.50"
                   />
@@ -238,7 +239,7 @@ const CreateUserChakra: React.FC = () => {
               </VStack>
             </MotionBox>
 
-            {/* Actions */}
+            {/* Nút hành động */}
             <Box p={8} bg="gray.50" borderTop="1px" borderColor="gray.200">
               <MotionFlex gap={4} justify="space-between">
                 <Button
@@ -248,10 +249,10 @@ const CreateUserChakra: React.FC = () => {
                   size="lg"
                   onClick={handleBack}
                 >
-                  Back
+                  Quay lại
                 </Button>
                 <HStack spacing={4}>
-                  <Tooltip label="Clear all fields">
+                  <Tooltip label="Xóa toàn bộ dữ liệu trong form">
                     <Button
                       leftIcon={<FiRefreshCw />}
                       variant="outline"
@@ -259,7 +260,7 @@ const CreateUserChakra: React.FC = () => {
                       size="lg"
                       onClick={handleReset}
                     >
-                      Reset
+                      Làm mới
                     </Button>
                   </Tooltip>
                   <Button
@@ -269,14 +270,14 @@ const CreateUserChakra: React.FC = () => {
                     color="white"
                     size="lg"
                     isLoading={loading}
-                    loadingText="Creating..."
+                    loadingText="Đang tạo..."
                     _hover={{
                       bgGradient: "linear(to-r, green.500, teal.600)",
                       transform: "scale(1.05)",
                       boxShadow: "xl",
                     }}
                   >
-                    Create User
+                    Tạo người dùng
                   </Button>
                 </HStack>
               </MotionFlex>
