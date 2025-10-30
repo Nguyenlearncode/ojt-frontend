@@ -18,7 +18,7 @@ interface Particle {
 const ParticlesBackground: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Particle[]>([]);
-  const animationFrameRef = useRef<number>();
+  const animationFrameRef = useRef<number | null>(null);
 
   const randomInt = (min: number, max: number): number => {
     return Math.floor(Math.random() * (max - min + 1) + min);

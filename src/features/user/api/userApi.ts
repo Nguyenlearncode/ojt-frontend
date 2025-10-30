@@ -30,7 +30,6 @@ export interface CreateUserPayload {
   age: number;
   address: string;
   dateOfBirth: string;
-  password: string;
 }
 
 export interface CreateUserResult {

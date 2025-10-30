@@ -16,10 +16,9 @@ import {
   Flex,
   Spinner,
   Center,
-  Divider,
   SimpleGrid,
 } from "@chakra-ui/react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, type Variants } from "framer-motion";
 import {
   FiUserCheck,
   FiMail,
@@ -31,9 +30,7 @@ import {
   FiSave,
   FiArrowLeft,
 } from "react-icons/fi";
-
 import GenderSelect from "../../../components/common/GenderSelect";
-import DateField from "../../../components/common/DateField";
 import { useUpdateUserProfile } from "../hooks/useUpdateUserProfile";
 
 const MotionBox = motion(Box);
@@ -53,7 +50,7 @@ const UpdateUserProfileChakra: React.FC = () => {
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
   // Animation variants
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -63,13 +60,13 @@ const UpdateUserProfileChakra: React.FC = () => {
     },
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { y: 20, opacity: 0 },
     visible: {
       y: 0,
       opacity: 1,
       transition: {
-        type: "spring",
+        type: "spring" as const,
         stiffness: 100,
       },
     },
@@ -91,12 +88,8 @@ const UpdateUserProfileChakra: React.FC = () => {
   return (
     <Box minH="100vh" py={8}>
       <Container maxW="container.xl">
-        {/* Simple Header */}
-        <MotionBox
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          mb={6}
-        >
+        {/* Header */}
+        <MotionBox initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} mb={6}>
           <HStack spacing={4} mb={6}>
             <Box
               p={3}
@@ -124,7 +117,7 @@ const UpdateUserProfileChakra: React.FC = () => {
           </HStack>
         </MotionBox>
 
-        {/* Main Form Card */}
+        {/* Form */}
         <MotionBox
           as="form"
           onSubmit={handleSubmit}
@@ -141,7 +134,7 @@ const UpdateUserProfileChakra: React.FC = () => {
             borderColor="gray.200"
             overflow="hidden"
           >
-            {/* Personal Information Section */}
+            {/* Personal Information */}
             <MotionBox variants={itemVariants} p={8}>
               <HStack mb={6} spacing={3}>
                 <Box
@@ -171,10 +164,7 @@ const UpdateUserProfileChakra: React.FC = () => {
                       <Icon as={FiUser} color="purple.500" mr={2} />
                       <Text as="span">Họ và tên</Text>
                     </FormLabel>
-                    <MotionBox
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
+                    <MotionBox whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                       <InputGroup size="lg">
                         <InputLeftElement pointerEvents="none">
                           <Icon as={FiUser} color="gray.400" />
@@ -195,11 +185,7 @@ const UpdateUserProfileChakra: React.FC = () => {
                     </MotionBox>
                     <AnimatePresence>
                       {errors.fullName && (
-                        <MotionBox
-                          initial={{ opacity: 0, y: -10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0 }}
-                        >
+                        <MotionBox initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
                           <Text color="red.500" fontSize="sm" mt={1}>
                             {errors.fullName}
                           </Text>
@@ -214,10 +200,7 @@ const UpdateUserProfileChakra: React.FC = () => {
                       <Icon as={FiMail} color="purple.500" mr={2} />
                       <Text as="span">Email</Text>
                     </FormLabel>
-                    <MotionBox
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
+                    <MotionBox whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                       <InputGroup size="lg">
                         <InputLeftElement pointerEvents="none">
                           <Icon as={FiMail} color="gray.400" />
@@ -239,11 +222,7 @@ const UpdateUserProfileChakra: React.FC = () => {
                     </MotionBox>
                     <AnimatePresence>
                       {errors.email && (
-                        <MotionBox
-                          initial={{ opacity: 0, y: -10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0 }}
-                        >
+                        <MotionBox initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
                           <Text color="red.500" fontSize="sm" mt={1}>
                             {errors.email}
                           </Text>
@@ -258,10 +237,7 @@ const UpdateUserProfileChakra: React.FC = () => {
                       <Icon as={FiPhone} color="purple.500" mr={2} />
                       <Text as="span">Số điện thoại</Text>
                     </FormLabel>
-                    <MotionBox
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
+                    <MotionBox whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                       <InputGroup size="lg">
                         <InputLeftElement pointerEvents="none">
                           <Icon as={FiPhone} color="gray.400" />
@@ -282,11 +258,7 @@ const UpdateUserProfileChakra: React.FC = () => {
                     </MotionBox>
                     <AnimatePresence>
                       {errors.phoneNumber && (
-                        <MotionBox
-                          initial={{ opacity: 0, y: -10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0 }}
-                        >
+                        <MotionBox initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
                           <Text color="red.500" fontSize="sm" mt={1}>
                             {errors.phoneNumber}
                           </Text>
@@ -301,10 +273,7 @@ const UpdateUserProfileChakra: React.FC = () => {
                       <Icon as={FiMapPin} color="purple.500" mr={2} />
                       <Text as="span">Địa chỉ</Text>
                     </FormLabel>
-                    <MotionBox
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
+                    <MotionBox whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                       <InputGroup size="lg">
                         <InputLeftElement pointerEvents="none">
                           <Icon as={FiMapPin} color="gray.400" />
@@ -325,11 +294,7 @@ const UpdateUserProfileChakra: React.FC = () => {
                     </MotionBox>
                     <AnimatePresence>
                       {errors.address && (
-                        <MotionBox
-                          initial={{ opacity: 0, y: -10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0 }}
-                        >
+                        <MotionBox initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
                           <Text color="red.500" fontSize="sm" mt={1}>
                             {errors.address}
                           </Text>
@@ -339,16 +304,14 @@ const UpdateUserProfileChakra: React.FC = () => {
                   </FormControl>
                 </SimpleGrid>
 
-                {/* Gender, DOB, Age Row */}
+                {/* Gender - DOB - Age */}
                 <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
+                  {/* Gender */}
                   <FormControl isRequired isInvalid={!!errors.gender}>
                     <FormLabel fontWeight="600" color="gray.700">
                       Giới tính
                     </FormLabel>
-                    <MotionBox
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
+                    <MotionBox whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                       <GenderSelect
                         value={formData.gender || ""}
                         onChange={(value) =>
@@ -358,11 +321,7 @@ const UpdateUserProfileChakra: React.FC = () => {
                     </MotionBox>
                     <AnimatePresence>
                       {errors.gender && (
-                        <MotionBox
-                          initial={{ opacity: 0, y: -10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0 }}
-                        >
+                        <MotionBox initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
                           <Text color="red.500" fontSize="sm" mt={1}>
                             {errors.gender}
                           </Text>
@@ -371,46 +330,72 @@ const UpdateUserProfileChakra: React.FC = () => {
                     </AnimatePresence>
                   </FormControl>
 
-                  <FormControl isRequired isInvalid={!!errors.dob}>
-                    <FormLabel fontWeight="600" color="gray.700" display="flex" alignItems="center">
+                  {/* Date of Birth */}
+                  <FormControl isRequired isInvalid={!!errors.dateOfBirth}>
+                    <FormLabel
+                      fontWeight="600"
+                      color="gray.700"
+                      display="flex"
+                      alignItems="center"
+                    >
                       <Icon as={FiCalendar} color="purple.500" mr={2} />
                       <Text as="span">Ngày sinh</Text>
                     </FormLabel>
-                    <MotionBox
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      <DateField
-                        value={formData.dob || ""}
-                        onChange={(value) =>
-                          setFormData({ ...formData, dob: value })
-                        }
-                      />
+                    <MotionBox whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                      <InputGroup size="lg">
+                        <InputLeftElement pointerEvents="none">
+                          <Icon as={FiCalendar} color="gray.400" />
+                        </InputLeftElement>
+                        <Input
+                          type="date"
+                          name="dateOfBirth"
+                          value={formData.dateOfBirth || ""}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              dateOfBirth: e.target.value,
+                            })
+                          }
+                          onFocus={() => setFocusedField("dateOfBirth")}
+                          onBlur={() => setFocusedField(null)}
+                          focusBorderColor="purple.400"
+                          bg={
+                            focusedField === "dateOfBirth"
+                              ? "purple.50"
+                              : "gray.50"
+                          }
+                          transition="all 0.3s"
+                          _hover={{ bg: "purple.50" }}
+                        />
+                      </InputGroup>
                     </MotionBox>
                     <AnimatePresence>
-                      {errors.dob && (
+                      {errors.dateOfBirth && (
                         <MotionBox
                           initial={{ opacity: 0, y: -10 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0 }}
                         >
                           <Text color="red.500" fontSize="sm" mt={1}>
-                            {errors.dob}
+                            {errors.dateOfBirth}
                           </Text>
                         </MotionBox>
                       )}
                     </AnimatePresence>
                   </FormControl>
 
+                  {/* Age */}
                   <FormControl isRequired isInvalid={!!errors.age}>
-                    <FormLabel fontWeight="600" color="gray.700" display="flex" alignItems="center">
+                    <FormLabel
+                      fontWeight="600"
+                      color="gray.700"
+                      display="flex"
+                      alignItems="center"
+                    >
                       <Icon as={FiHash} color="purple.500" mr={2} />
                       <Text as="span">Tuổi</Text>
                     </FormLabel>
-                    <MotionBox
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
+                    <MotionBox whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                       <InputGroup size="lg">
                         <InputLeftElement pointerEvents="none">
                           <Icon as={FiHash} color="gray.400" />
@@ -419,24 +404,15 @@ const UpdateUserProfileChakra: React.FC = () => {
                           type="number"
                           name="age"
                           value={formData.age || ""}
-                          onChange={handleChange}
-                          onFocus={() => setFocusedField("age")}
-                          onBlur={() => setFocusedField(null)}
-                          placeholder="Tuổi"
+                          readOnly
                           focusBorderColor="purple.400"
-                          bg={focusedField === "age" ? "purple.50" : "gray.50"}
-                          transition="all 0.3s"
-                          _hover={{ bg: "purple.50" }}
+                          bg="gray.100"
                         />
                       </InputGroup>
                     </MotionBox>
                     <AnimatePresence>
                       {errors.age && (
-                        <MotionBox
-                          initial={{ opacity: 0, y: -10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0 }}
-                        >
+                        <MotionBox initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
                           <Text color="red.500" fontSize="sm" mt={1}>
                             {errors.age}
                           </Text>

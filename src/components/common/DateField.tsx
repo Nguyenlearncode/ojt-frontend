@@ -1,51 +1,94 @@
 import React from "react";
+import {
+  FormControl,
+  FormLabel,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  Icon,
+} from "@chakra-ui/react";
+import { FiCalendar } from "react-icons/fi";
 import { toInputDateFormat } from "../../utils/formatDate";
 
 interface DateFieldProps {
-  label?: string;
-  name?: string;
+  label: string;
+  name: string;
   value?: string;
-  onChange: (value: string) => void;
-  className?: string;
-  disabled?: boolean;
+  onChange: (value: string, age: number) => void;
+  colorScheme?: "blue" | "purple";
+  format?: "MM/dd/yyyy" | "dd/MM/yyyy";
+  isInvalid?: boolean;
+  error?: string;
 }
 
-const DateField: React.FC<DateFieldProps> = ({
+export const DateField: React.FC<DateFieldProps> = ({
   label,
   name,
   value = "",
   onChange,
-  className = "form-control",
-  disabled = false,
+  colorScheme = "blue",
+  format = "MM/dd/yyyy",
+  isInvalid,
+  error,
 }) => {
-  // Hàm xử lý khi người dùng chọn ngày
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value; // yyyy-MM-dd
-    onChange(newValue); // ✅ Truyền chính xác cho formData.dateOfBirth
+  // 🔹 Hàm tính tuổi
+  const calcAge = (dob: string): number => {
+    if (!dob) return 0;
+    const [year, month, day] = dob.split("-").map(Number);
+    const birth = new Date(year, month - 1, day);
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) age--;
+    return age;
   };
 
-  const formattedValue = value && /^\d{4}-\d{2}-\d{2}$/.test(value)
-  ? value
-  : toInputDateFormat(value);
+  // 🔹 Xử lý thay đổi ngày
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+    if (!raw) {
+      onChange("", 0);
+      return;
+    }
+    const [year, month, day] = raw.split("-");
+    let formatted = "";
+    if (format === "MM/dd/yyyy") formatted = `${month}/${day}/${year}`;
+    else formatted = `${day}/${month}/${year}`;
+    const age = calcAge(raw);
+    onChange(formatted, age);
+  };
+
+  // 🔹 Hiển thị value trong input dưới dạng yyyy-MM-dd
+  const inputValue =
+    value && /^\d{2}[/]\d{2}[/]\d{4}$/.test(value)
+      ? toInputDateFormat(value)
+      : toInputDateFormat(value);
 
   return (
-    <div className="date-field">
-      {label && (
-        <label htmlFor={name} className="form-label" style={{ fontWeight: 500 }}>
-          {label}
-        </label>
+    <FormControl isInvalid={isInvalid} isRequired>
+      <FormLabel fontWeight="600" color="gray.700" display="flex" alignItems="center">
+        <Icon as={FiCalendar} color={`${colorScheme}.500`} mr={2} />
+        {label}
+      </FormLabel>
+      <InputGroup size="lg">
+        <InputLeftElement pointerEvents="none">
+          <Icon as={FiCalendar} color="gray.400" />
+        </InputLeftElement>
+        <Input
+          type="date"
+          id={name}
+          name={name}
+          value={inputValue || ""}
+          onChange={handleChange}
+          focusBorderColor={`${colorScheme}.400`}
+          bg="gray.50"
+          transition="all 0.3s"
+          _hover={{ bg: `${colorScheme}.50` }}
+        />
+      </InputGroup>
+      {error && (
+        <p style={{ color: "red", fontSize: "0.875rem", marginTop: "4px" }}>{error}</p>
       )}
-      <input
-        id={name}
-        name={name}
-        type="date"
-        className={className}
-        value={formattedValue}
-        onChange={handleChange}
-        disabled={disabled}
-      />
-    </div>
+    </FormControl>
   );
 };
-
-export default DateField;

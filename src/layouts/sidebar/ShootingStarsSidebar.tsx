@@ -44,7 +44,6 @@ interface ShootingStar {
 
 // Generate 20 shooting stars with random positions
 const generateStars = (): ShootingStar[] => {
-  const stars: ShootingStar[] = [];
   const positions = [
     { top: "calc(50% - -79px)", left: "calc(50% - 16px)", delay: 5599 },
     { top: "calc(50% - -11px)", left: "calc(50% - 287px)", delay: 7809 },
@@ -67,7 +66,7 @@ const generateStars = (): ShootingStar[] => {
     { top: "calc(50% - 151px)", left: "calc(50% - 4px)", delay: 4238 },
     { top: "calc(50% - -125px)", left: "calc(50% - 161px)", delay: 8472 },
   ];
-  
+
   return positions;
 };
 
@@ -109,9 +108,10 @@ const ShootingStarsSidebar: React.FC = () => {
             background="linear-gradient(-45deg, #5f91ff, rgba(0, 0, 255, 0))"
             borderRadius="999px"
             filter="drop-shadow(0 0 6px #699bff)"
-            animation={`${tail} 3000ms ease-in-out infinite, ${shooting} 3000ms ease-in-out infinite`}
-            animationDelay={`${star.delay}ms`}
             sx={{
+              // root-level animations
+              animation: `${tail} 3000ms ease-in-out infinite, ${shooting} 3000ms ease-in-out infinite`,
+              animationDelay: `${star.delay}ms`,
               // Before pseudo-element (star head 1)
               "&::before": {
                 content: '""',

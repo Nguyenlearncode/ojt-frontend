@@ -3,7 +3,8 @@
  * Enhanced Typography component with Material Dashboard styling
  */
 
-import { forwardRef, ReactNode } from "react";
+import { forwardRef } from "react";
+import type { ReactNode } from "react";
 import Typography from "@mui/material/Typography";
 import type { TypographyProps } from "@mui/material/Typography";
 import { styled } from "@mui/material/styles";

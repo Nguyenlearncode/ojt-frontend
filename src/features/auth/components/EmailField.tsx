@@ -1,35 +1,41 @@
-// src/features/auth/components/EmailField.tsx
 import React from "react";
+import {
+  FormControl,
+  FormLabel,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  Icon,
+} from "@chakra-ui/react";
+import { FiMail } from "react-icons/fi";
 
 interface EmailFieldProps {
-  id?: string;
-  label?: string;
-  placeholder?: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const EmailField: React.FC<EmailFieldProps> = ({
-  id = "email",
-  label = "Email Address",
-  placeholder = "Enter your email",
-  value,
-  onChange,
-}) => {
+const EmailField: React.FC<EmailFieldProps> = ({ value, onChange }) => {
   return (
-    <div className="input-group" data-testid="email-field">
-      <label htmlFor={id}>{label}</label>
-      <input
-        type="email"
-        id={id}
-        name={id}
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-        autoComplete="email"
-        required
-      />
-    </div>
+    <FormControl isRequired>
+      <FormLabel fontWeight="600" color="gray.700">
+        Email Address
+      </FormLabel>
+      <InputGroup>
+        <InputLeftElement pointerEvents="none">
+          <Icon as={FiMail} color="gray.400" />
+        </InputLeftElement>
+        <Input
+          id="email"
+          type="email"
+          placeholder="Enter your email"
+          value={value}
+          onChange={onChange}
+          size="lg"
+          bg="white"
+          focusBorderColor="brand.500"
+        />
+      </InputGroup>
+    </FormControl>
   );
 };
 

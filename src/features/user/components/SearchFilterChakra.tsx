@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import {
   Box,
   Input,
-  InputGroup,
-  InputLeftElement,
   Icon,
   VStack,
   Text,
@@ -116,7 +114,7 @@ const SearchFilterChakra: React.FC<SearchFilterChakraProps> = ({
                 onMouseEnter={() => setIsSearchFocused(true)}
                 onMouseLeave={() => !searchTerm && setIsSearchFocused(false)}
                 whileHover={{
-                  skew: [0, 5, -5, 5, -5, 0],
+                  skewX: [0, 5, -5, 5, -5, 0],
                 }}
                 // @ts-ignore
                 transition={{ duration: 0.45, ease: "linear" }}

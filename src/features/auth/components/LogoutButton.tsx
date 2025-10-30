@@ -1,7 +1,7 @@
 // src/features/auth/components/LogoutButton.tsx
 
 import React from "react";
-import { Button, Icon, HStack, Text } from "@chakra-ui/react";
+import { Button, Icon, Text } from "@chakra-ui/react";
 import { FiLogOut } from "react-icons/fi";
 import { motion } from "framer-motion";
 import { useLogout } from "../hooks/useLogout";

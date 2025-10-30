@@ -9,12 +9,10 @@ import {
   Td,
   Avatar,
   Text,
-  Badge,
   HStack,
   VStack,
   IconButton,
   Tooltip,
-  Flex,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { FiMail, FiPhone, FiEye, FiEdit2 } from "react-icons/fi";
@@ -36,24 +34,8 @@ export const UserTableChakra: React.FC<UserTableChakraProps> = ({
 }) => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
-  const getRoleBadgeColor = (roleName?: string) => {
-    switch (roleName?.toLowerCase()) {
-      case "administrator":
-        return "purple";
-      case "lab manager":
-        return "blue";
-      case "service":
-        return "green";
-      case "lab user":
-        return "cyan";
-      default:
-        return "gray";
-    }
-  };
-
-  const getStatusColor = (isActive?: boolean) => {
-    return isActive !== false ? "green" : "red";
-  };
+  const getStatusColor = (isActive?: boolean) =>
+    isActive !== false ? "green" : "red";
 
   if (users.length === 0) {
     return (
@@ -67,27 +49,13 @@ export const UserTableChakra: React.FC<UserTableChakraProps> = ({
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
       >
-        <MotionBox
-          initial={{ scale: 0 }}
-          animate={{ scale: 1, rotate: [0, 10, -10, 10, 0] }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-        >
-          <Text fontSize="6xl" mb={4}>
-            👥
-          </Text>
-        </MotionBox>
-        <MotionBox
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-        >
-          <Text fontSize="xl" fontWeight="bold" color="gray.700" mb={2}>
-            Không tìm thấy người dùng
-          </Text>
-          <Text color="gray.500">
-            Thử điều chỉnh tìm kiếm hoặc bộ lọc của bạn
-          </Text>
-        </MotionBox>
+        <Text fontSize="6xl" mb={4}>
+          👥
+        </Text>
+        <Text fontSize="xl" fontWeight="bold" color="gray.700" mb={2}>
+          Không tìm thấy người dùng
+        </Text>
+        <Text color="gray.500">Thử điều chỉnh tìm kiếm hoặc bộ lọc của bạn</Text>
       </MotionBox>
     );
   }
@@ -109,29 +77,16 @@ export const UserTableChakra: React.FC<UserTableChakraProps> = ({
           <Table variant="simple">
             <Thead bg="gray.50">
               <Tr>
-                <Th textTransform="uppercase" fontSize="xs" letterSpacing="wide">
-                  #
-                </Th>
-                <Th textTransform="uppercase" fontSize="xs" letterSpacing="wide">
-                  Thông tin
-                </Th>
-                <Th textTransform="uppercase" fontSize="xs" letterSpacing="wide">
-                  Liên hệ
-                </Th>
-                <Th textTransform="uppercase" fontSize="xs" letterSpacing="wide">
-                  Vai trò
-                </Th>
-                <Th textTransform="uppercase" fontSize="xs" letterSpacing="wide">
-                  Giới tính
-                </Th>
-                <Th textTransform="uppercase" fontSize="xs" letterSpacing="wide">
-                  Trạng thái
-                </Th>
-                <Th textTransform="uppercase" fontSize="xs" letterSpacing="wide">
-                  Hành động
-                </Th>
+                <Th>#</Th>
+                <Th>Thông tin</Th>
+                <Th>Liên hệ</Th>
+                <Th>Vai trò</Th>
+                <Th>Giới tính</Th>
+                <Th>Trạng thái</Th>
+                <Th>Hành động</Th>
               </Tr>
             </Thead>
+
             <Tbody>
               {users.map((user, index) => (
                 <MotionTr
@@ -141,26 +96,15 @@ export const UserTableChakra: React.FC<UserTableChakraProps> = ({
                   transition={{ duration: 0.3, delay: index * 0.05 }}
                   _hover={{ bg: "gray.50" }}
                 >
-                  {/* Index */}
+                  {/* STT */}
                   <Td fontWeight="600" color="gray.600">
                     {index + 1}
                   </Td>
 
-                  {/* User Info */}
+                  {/* Thông tin người dùng */}
                   <Td>
                     <HStack spacing={3}>
-                      <Box
-                        as={motion.div}
-                        whileHover={{ scale: 1.1, rotate: 5 }}
-                        transition="0.2s"
-                      >
-                        <Avatar
-                          name={user.fullName}
-                          size="md"
-                          bg="brand.500"
-                          color="white"
-                        />
-                      </Box>
+                      <Avatar name={user.fullName} size="md" bg="blue.500" color="white" />
                       <VStack align="flex-start" spacing={0}>
                         <Text fontWeight="600" color="gray.800">
                           {user.fullName}
@@ -172,7 +116,7 @@ export const UserTableChakra: React.FC<UserTableChakraProps> = ({
                     </HStack>
                   </Td>
 
-                  {/* Contact */}
+                  {/* Liên hệ */}
                   <Td>
                     <VStack align="flex-start" spacing={1}>
                       <HStack spacing={2}>
@@ -190,93 +134,54 @@ export const UserTableChakra: React.FC<UserTableChakraProps> = ({
                     </VStack>
                   </Td>
 
-                  {/* Role */}
+                  {/* Vai trò (logic giữ nguyên, bỏ style) */}
                   <Td>
-                    <Box
-                      as={motion.div}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <Badge
-                        colorScheme={getRoleBadgeColor(user.role?.roleName)}
-                        fontSize="sm"
-                        px={3}
-                        py={1}
-                        borderRadius="full"
-                        cursor="pointer"
-                      >
-                        {user.role?.roleName || "N/A"}
-                      </Badge>
-                    </Box>
+                    <Text fontSize="sm" color="gray.800">
+                      {user.role?.roleName || "N/A"}
+                    </Text>
                   </Td>
 
-                  {/* Gender */}
+                  {/* Giới tính */}
                   <Td>
-                    <Box
-                      as={motion.div}
-                      whileHover={{ scale: 1.05 }}
-                    >
-                      <Badge colorScheme="gray" fontSize="sm" px={3} py={1} borderRadius="md">
-                        {formatGender(user.gender)}
-                      </Badge>
-                    </Box>
+                    <Text fontSize="sm" color="gray.800">
+                      {formatGender(user.gender)}
+                    </Text>
                   </Td>
 
-                  {/* Status */}
+                  {/* Trạng thái */}
                   <Td>
-                    <Box
-                      as={motion.div}
-                      whileHover={{ scale: 1.1 }}
-                      animate={{ scale: [1, 1.05, 1] }}
-                      transition={{ duration: 2, repeat: Infinity }}
+                    <Text
+                      fontSize="sm"
+                      color={getStatusColor(user.isActive)}
+                      fontWeight="600"
                     >
-                      <Badge
-                        colorScheme={getStatusColor(user.isActive)}
-                        fontSize="sm"
-                        px={3}
-                        py={1}
-                        borderRadius="full"
-                      >
-                        {user.isActive !== false ? "Hoạt động" : "Không hoạt động"}
-                      </Badge>
-                    </Box>
+                      {user.isActive !== false ? "Hoạt động" : "Không hoạt động"}
+                    </Text>
                   </Td>
 
-                  {/* Actions */}
+                  {/* Hành động */}
                   <Td>
                     <HStack spacing={2}>
                       <Tooltip label="Xem chi tiết" placement="top" hasArrow>
-                        <Box
-                          as={motion.div}
-                          whileHover={{ scale: 1.2, rotate: 10 }}
-                          whileTap={{ scale: 0.9 }}
-                        >
-                          <IconButton
-                            aria-label="View details"
-                            icon={<FiEye />}
-                            size="sm"
-                            colorScheme="blue"
-                            variant="ghost"
-                            onClick={() => setSelectedUser(user)}
-                          />
-                        </Box>
+                        <IconButton
+                          aria-label="View details"
+                          icon={<FiEye />}
+                          size="sm"
+                          colorScheme="blue"
+                          variant="ghost"
+                          onClick={() => setSelectedUser(user)}
+                        />
                       </Tooltip>
                       {onEdit && (
                         <Tooltip label="Chỉnh sửa" placement="top" hasArrow>
-                          <Box
-                            as={motion.div}
-                            whileHover={{ scale: 1.2, rotate: -10 }}
-                            whileTap={{ scale: 0.9 }}
-                          >
-                            <IconButton
-                              aria-label="Edit user"
-                              icon={<FiEdit2 />}
-                              size="sm"
-                              colorScheme="green"
-                              variant="ghost"
-                              onClick={() => onEdit(user)}
-                            />
-                          </Box>
+                          <IconButton
+                            aria-label="Edit user"
+                            icon={<FiEdit2 />}
+                            size="sm"
+                            colorScheme="green"
+                            variant="ghost"
+                            onClick={() => onEdit(user)}
+                          />
                         </Tooltip>
                       )}
                     </HStack>
@@ -288,7 +193,7 @@ export const UserTableChakra: React.FC<UserTableChakraProps> = ({
         </Box>
       </MotionBox>
 
-      {/* User Detail Modal */}
+      {/* Modal chi tiết */}
       {selectedUser && (
         <UserDetailModalChakra
           user={selectedUser}
@@ -298,4 +203,3 @@ export const UserTableChakra: React.FC<UserTableChakraProps> = ({
     </>
   );
 };
-

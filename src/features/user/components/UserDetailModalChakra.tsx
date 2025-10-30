@@ -3,7 +3,6 @@ import {
   Modal,
   ModalOverlay,
   ModalContent,
-  ModalCloseButton,
   Button,
   VStack,
   HStack,
@@ -14,7 +13,6 @@ import {
   Icon,
   Image,
   Divider,
-  Flex,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { FiMail, FiPhone, FiMapPin, FiCalendar, FiUser, FiX } from "react-icons/fi";

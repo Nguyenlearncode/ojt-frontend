@@ -90,7 +90,7 @@ const PaginationChakra: React.FC<PaginationChakraProps> = ({
                   <Box
                     as={motion.div}
                     animate={{ y: [0, -5, 0] }}
-                    transition={{ duration: 1, repeat: Infinity }}
+                    transition={{ duration: 1, repeat: Infinity } as any}
                   >
                     <Text px={2} color="gray.400">
                       ...
@@ -108,7 +108,7 @@ const PaginationChakra: React.FC<PaginationChakraProps> = ({
                           }
                         : {}
                     }
-                    transition={{ duration: 0.5 }}
+                    transition={{ duration: 0.5 } as any}
                   >
                     <Button
                       size="sm"
