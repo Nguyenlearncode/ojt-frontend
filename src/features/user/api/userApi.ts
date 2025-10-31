@@ -16,6 +16,7 @@ export interface User {
   age: number;
   address: string;
   dateOfBirth: string;
+  identifyNumber: string;
   role: Role;
   isActive?: boolean;
 }
@@ -30,7 +31,6 @@ export interface CreateUserPayload {
   age: number;
   address: string;
   dateOfBirth: string;
-  password: string;
 }
 
 export interface CreateUserResult {

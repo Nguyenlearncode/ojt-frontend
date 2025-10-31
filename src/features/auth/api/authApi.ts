@@ -11,6 +11,11 @@ interface LoginResponse {
   refreshToken: string;
 }
 
+interface RefreshResponse {
+  accessToken: string;
+  refreshToken: string;
+}
+
 export const authApi = {
   // 🔐 Đăng nhập
   login: async (data: LoginRequest): Promise<LoginResponse> => {
@@ -19,10 +24,12 @@ export const authApi = {
   },
 
   // 🔄 Làm mới AccessToken
-  refresh: async (refreshToken: string): Promise<{ accessToken: string }> => {
-    const res = await axiosAuth.post("/auth/refresh", JSON.stringify(refreshToken), {
-      headers: { "Content-Type": "application/json" },
-    });
+  refresh: async (refreshToken: string, accessToken?: string): Promise<RefreshResponse> => {
+    const body = {
+      refreshToken,
+      accessToken, // optional
+    };
+    const res = await axiosAuth.post("/auth/refresh", body);
     return res.data.data;
   },
 };

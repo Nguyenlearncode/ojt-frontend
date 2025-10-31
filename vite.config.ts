@@ -9,6 +9,22 @@ export default defineConfig({
       },
     }),
   ],
+
+  // ================= BUILD CONFIG =================
+  build: {
+    outDir: "dist", // thư mục xuất build
+    sourcemap: true,
+    emptyOutDir: true,
+    rollupOptions: {
+      input: "./index.html",
+      output: {
+        manualChunks: undefined, // tránh splitting không cần thiết trong CI
+      },
+    },
+    chunkSizeWarningLimit: 1500, // tăng giới hạn để tránh cảnh báo "chunk > 500kb"
+  },
+
+  // ================= TEST CONFIG =================
   test: {
     globals: true,
     environment: "jsdom",
@@ -16,27 +32,18 @@ export default defineConfig({
       "src/tests/setup/testUtils.tsx",
       "src/tests/setup/testSetup.ts",
     ],
-
-    // 🧩 Các thư mục test bạn cho phép
     include: [
       "src/**/*.test.{ts,tsx}",
       "src/**/__tests__/**/*.{ts,tsx}",
       "src/tests/unit/**/*.{test,spec}.{ts,tsx}",
       "src/tests/integration/**/*.{test,spec}.{ts,tsx}",
     ],
-
-    // 🚫 Loại bỏ các thư mục build, coverage, node_modules
     exclude: ["node_modules", "dist", "coverage", "**/build/**"],
-
     coverage: {
-      provider: "v8", // nhanh và tương thích tốt với Vitest
-      reporter: ["text", "html", "lcov"], // xuất HTML + file lcov cho CI/CD
+      provider: "v8",
+      reporter: ["text", "html", "lcov"],
       reportsDirectory: "./coverage",
-
-      // ✅ Chỉ đo coverage trong src
       include: ["src/**/*.{ts,tsx}"],
-
-      // 🚫 Loại bỏ hook, API, test setup, axios client, và file test
       exclude: [
         "src/tests/**",
         "src/**/__tests__/**",
@@ -44,11 +51,7 @@ export default defineConfig({
         "src/features/**/api/**",
         "src/api/**",
       ],
-
-      // ❗ Không ép đo coverage cho file chưa import
       all: false,
-
-      // ✅ Ngưỡng coverage nghiêm ngặt cho UI logic
       thresholds: {
         statements: 90,
         branches: 80,
@@ -56,5 +59,7 @@ export default defineConfig({
         lines: 90,
       },
     },
+    silent: true, // tránh spam log quá nhiều trong Jenkins
+    maxConcurrency: 4, // giới hạn số test song song, giúp ổn định CI
   },
 });

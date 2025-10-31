@@ -1,57 +1,60 @@
-// src/features/auth/components/PasswordField.tsx
-import React, { useState, useContext } from "react";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { ParticleContext } from "../contexts/ParticleContext";
+import React from "react";
+import {
+  FormControl,
+  FormLabel,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  InputRightElement,
+  Button,
+  Icon,
+} from "@chakra-ui/react";
+import { FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 
 interface PasswordFieldProps {
-  id?: string;
-  label?: string;
-  placeholder?: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  showPassword: boolean;
+  onTogglePassword: () => void;
 }
 
 const PasswordField: React.FC<PasswordFieldProps> = ({
-  id = "password",
-  label = "Password",
-  placeholder = "Enter your password",
   value,
   onChange,
+  showPassword,
+  onTogglePassword,
 }) => {
-  const [showPassword, setShowPassword] = useState(false);
-  const context = useContext(ParticleContext);
-  const triggerGather = context?.triggerGather ?? (() => {});
-
-  const handleToggle = () => {
-    setShowPassword((prev) => !prev);
-    // Giữ nguyên logic trigger nhưng đơn giản hoá để test dễ
-    triggerGather(50, 50);
-  };
-
   return (
-    <div className="input-group password-group">
-      <label htmlFor={id}>{label}</label>
-      <div className="password-wrapper">
-        <input
+    <FormControl isRequired>
+      <FormLabel fontWeight="600" color="gray.700">
+        Password
+      </FormLabel>
+      <InputGroup>
+        <InputLeftElement pointerEvents="none">
+          <Icon as={FiLock} color="gray.400" />
+        </InputLeftElement>
+        <Input
+          id="password"
           type={showPassword ? "text" : "password"}
-          id={id}
-          name={id}
-          placeholder={placeholder}
+          placeholder="Enter your password"
           value={value}
           onChange={onChange}
-          autoComplete="current-password"
-          required
+          size="lg"
+          bg="white"
+          focusBorderColor="brand.500"
         />
-        <button
-          type="button"
-          className="toggle-password"
-          onClick={handleToggle}
-          aria-label={showPassword ? "Hide password" : "Show password"}
-        >
-          {showPassword ? <FaEyeSlash /> : <FaEye />}
-        </button>
-      </div>
-    </div>
+        <InputRightElement width="3rem">
+          <Button
+            h="1.75rem"
+            size="sm"
+            variant="ghost"
+            onClick={onTogglePassword}
+          >
+            <Icon as={showPassword ? FiEyeOff : FiEye} />
+          </Button>
+        </InputRightElement>
+      </InputGroup>
+    </FormControl>
   );
 };
 

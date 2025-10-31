@@ -2,28 +2,28 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 
-import LoginPage from "../features/auth/pages/LoginPage";
-import DashboardPage from "../features/dashboard/pages/Dashboard";
-import UpdateUserProfile from "../features/user/pages/UpdateUserProfile";
-import CreateUser from "../features/user/pages/CreateUser";
-import UserManagementPage from "../features/user/pages/UserManagementPage";
+import LoginPageChakra from "../features/auth/pages/LoginPageChakra";
+import DashboardChakra from "../features/dashboard/pages/DashboardChakra";
+import UpdateUserProfileChakra from "../features/user/pages/UpdateUserProfileChakra";
+import CreateUserChakra from "../features/user/pages/CreateUserChakra";
+import UserManagementPageChakra from "../features/user/pages/UserManagementPageChakra";
 import PrivateRoute from "./PrivateRoute";
-import DashboardLayout from "../layouts/DashboardLayout";
+import DashboardLayoutChakra from "../layouts/DashboardLayoutChakra";
 
 const AppRoutes: React.FC = () => {
   return (
     <Routes>
       {/* Public routes */}
-      <Route path="/" element={<LoginPage />} />
+      <Route path="/" element={<LoginPageChakra />} />
 
       {/* Protected routes */}
       <Route
         path="/dashboard"
         element={
           <PrivateRoute>
-            <DashboardLayout>
-              <DashboardPage />
-            </DashboardLayout>
+            <DashboardLayoutChakra>
+              <DashboardChakra />
+            </DashboardLayoutChakra>
           </PrivateRoute>
         }
       />
@@ -32,9 +32,9 @@ const AppRoutes: React.FC = () => {
           path="/UserManagement"
           element={
             <PrivateRoute>
-              <DashboardLayout>
-                <UserManagementPage />
-              </DashboardLayout>
+              <DashboardLayoutChakra>
+                <UserManagementPageChakra />
+              </DashboardLayoutChakra>
             </PrivateRoute>
           }
         />
@@ -43,9 +43,9 @@ const AppRoutes: React.FC = () => {
   path="/UpdateUserProfile/:id"
   element={
     <PrivateRoute>
-      <DashboardLayout>
-        <UpdateUserProfile />
-      </DashboardLayout>
+      <DashboardLayoutChakra>
+        <UpdateUserProfileChakra />
+      </DashboardLayoutChakra>
     </PrivateRoute>
   }
 />
@@ -55,9 +55,9 @@ const AppRoutes: React.FC = () => {
           path="/CreateUser"
           element={
             <PrivateRoute>
-              <DashboardLayout>
-                <CreateUser />
-              </DashboardLayout>
+              <DashboardLayoutChakra>
+                <CreateUserChakra />
+              </DashboardLayoutChakra>
             </PrivateRoute>
           }
         /> 

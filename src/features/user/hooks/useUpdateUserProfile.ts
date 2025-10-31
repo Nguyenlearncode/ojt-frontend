@@ -1,9 +1,11 @@
+// src/features/user/hooks/useUpdateUserProfile.ts
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { userApi } from "../api/userApi";
 import axiosClient from "../../../api/axiosClient";
 import { normalizeDateForApi } from "../../../utils/formatDate";
+import { calcAge } from "../../../utils/calcAge"; // ✅ dùng chung
 
 export interface UpdateUserForm {
   userId: string;
@@ -24,18 +26,6 @@ export const useUpdateUserProfile = () => {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [loading, setLoading] = useState(false);
 
-  // 🧮 Tính tuổi
-  const calcAge = (dob: string): number => {
-    if (!dob) return 0;
-    const [year, month, day] = dob.split("-").map(Number);
-    const birth = new Date(year, month - 1, day);
-    const today = new Date();
-    let age = today.getFullYear() - birth.getFullYear();
-    const monthDiff = today.getMonth() - birth.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) age--;
-    return age;
-  };
-
   // 🧩 Fetch user info
   useEffect(() => {
     const fetchUser = async () => {
@@ -47,7 +37,10 @@ export const useUpdateUserProfile = () => {
         if (data.dateOfBirth) {
           const d = new Date(data.dateOfBirth);
           if (!isNaN(d.getTime()) && d.getFullYear() > 1900) {
-            cleanDate = data.dateOfBirth.split("T")[0];
+            const localDate = new Date(d.getTime() - d.getTimezoneOffset() * 60000)
+              .toISOString()
+              .split("T")[0];
+            cleanDate = localDate;
           }
         }
 
@@ -68,7 +61,7 @@ export const useUpdateUserProfile = () => {
     fetchUser();
   }, [id]);
 
-  // 🧩 Cập nhật tuổi khi đổi DOB
+  // 🧩 Tự động tính tuổi khi đổi DOB
   useEffect(() => {
     if (formData?.dateOfBirth) {
       setFormData((prev) =>
@@ -77,7 +70,6 @@ export const useUpdateUserProfile = () => {
     }
   }, [formData?.dateOfBirth]);
 
-  // 🧩 Xử lý nhập liệu
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -86,18 +78,11 @@ export const useUpdateUserProfile = () => {
     setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
-  // 🧩 Validate dữ liệu
   const validateForm = (): boolean => {
     if (!formData) return false;
     const newErrors: { [key: string]: string } = {};
 
-    const required = [
-      "fullName",
-      "email",
-      "phoneNumber",
-      "address",
-      "dateOfBirth",
-    ];
+    const required = ["fullName", "email", "phoneNumber", "address", "dateOfBirth"];
     required.forEach((f) => {
       if (!formData[f as keyof UpdateUserForm])
         newErrors[f] = "Vui lòng nhập thông tin!";
@@ -119,7 +104,6 @@ export const useUpdateUserProfile = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // 🚀 Gửi yêu cầu cập nhật
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData) return;
@@ -144,8 +128,7 @@ export const useUpdateUserProfile = () => {
       toast.success("✅ Cập nhật thông tin thành công!");
       navigate(-1);
     } catch (err: any) {
-      const msg =
-        err.response?.data?.message || "❌ Không thể cập nhật thông tin!";
+      const msg = err.response?.data?.message || "❌ Không thể cập nhật thông tin!";
       toast.error(msg);
     } finally {
       setLoading(false);

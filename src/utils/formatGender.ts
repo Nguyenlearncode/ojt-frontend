@@ -7,8 +7,6 @@ export const formatGender = (gender?: string): string => {
       return "Nam";
     case "female":
       return "Nữ";
-    case "other":
-      return "Khác";
     default:
       return "Không xác định";
   }
@@ -21,8 +19,6 @@ export const parseGender = (genderLabel: string): string => {
       return "Male";
     case "nữ":
       return "Female";
-    case "khác":
-      return "Other";
     default:
       return "";
   }
