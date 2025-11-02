@@ -28,6 +28,7 @@ import {
 
 import GenderSelect from "../../../components/common/GenderSelect";
 import { useCreateUserForm } from "../hooks/useCreateUserForm";
+import { useRoles } from "../../role/hooks/useRoles";
 
 const MotionBox = motion(Box);
 const MotionFlex = motion(Flex);
@@ -43,6 +44,8 @@ const CreateUserChakra: React.FC = () => {
     handleReset,
     handleBack,
   } = useCreateUserForm();
+  
+  const { roles, loading: rolesLoading } = useRoles();
 
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
@@ -108,13 +111,25 @@ const CreateUserChakra: React.FC = () => {
                   size="lg"
                   focusBorderColor="green.400"
                   bg="gray.50"
+                  isDisabled={rolesLoading}
                 >
-                  <option value="">Chọn vai trò</option>
-                  <option value="LAB_USER">Nhân viên phòng thí nghiệm</option>
-                  <option value="LAB_MANAGER">Quản lý phòng thí nghiệm</option>
-                  <option value="ADMIN">Quản trị viên</option>
-                  <option value="SERVICE">Nhân viên dịch vụ</option>
+                  <option value="">{rolesLoading ? "Đang tải..." : "Chọn vai trò"}</option>
+                  {roles.map((role) => (
+                    <option key={role.roleCode} value={role.roleCode}>
+                      {role.roleName}
+                    </option>
+                  ))}
                 </Select>
+                {rolesLoading && (
+                  <Text fontSize="xs" color="gray.500" mt={1}>
+                    Đang tải danh sách roles...
+                  </Text>
+                )}
+                {errors.roleCode && (
+                  <Text color="red.500" fontSize="sm" mt={1}>
+                    {errors.roleCode}
+                  </Text>
+                )}
               </FormControl>
             </MotionBox>
 
