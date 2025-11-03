@@ -3,15 +3,12 @@ import {
   Box,
   Input,
   Icon,
-  VStack,
-  Button,
   Flex,
 } from "@chakra-ui/react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { FiSearch } from "react-icons/fi";
 
 const MotionBox = motion(Box);
-const MotionButton = motion(Button);
 
 interface SearchFilterRoleChakraProps {
   searchTerm: string;
@@ -62,8 +59,7 @@ const SearchFilterRoleChakra: React.FC<SearchFilterRoleChakraProps> = ({
             transition={{ duration: 0.45, ease: "linear" }}
             minW="50px"
           >
-            <Box
-              as={motion.div}
+            <MotionBox
               mr={isSearchFocused || searchTerm ? 2 : 0}
               animate={{
                 rotate: searchTerm ? 360 : 0,
@@ -72,7 +68,7 @@ const SearchFilterRoleChakra: React.FC<SearchFilterRoleChakraProps> = ({
               transition={{ duration: 0.5 }}
             >
               <Icon as={FiSearch} color="#5cbdbb" boxSize={5} />
-            </Box>
+            </MotionBox>
             <Input
               placeholder="Tìm kiếm role..."
               value={searchTerm}

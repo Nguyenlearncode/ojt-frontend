@@ -12,7 +12,7 @@ import UserManagementPageChakra from "../features/user/pages/UserManagementPageC
 import RoleManagementPageChakra from "../features/role/pages/RoleManagementPageChakra";
 import CreateRolePageChakra from "../features/role/pages/CreateRolePageChakra";
 import UpdateRolePageChakra from "../features/role/pages/UpdateRolePageChakra";
-import ProfilePageChakra from "../features/profile/pages/ProfilePageChakra";
+import ProfilePageChakra from "../features/user/pages/ProfilePageChakra";
 import PrivateRoute from "./PrivateRoute";
 import DashboardLayoutChakra from "../layouts/DashboardLayoutChakra";
 

@@ -17,7 +17,6 @@ import {
   Checkbox,
   InputGroup,
   InputLeftElement,
-  Divider,
   Spinner,
   useColorModeValue,
   SimpleGrid,

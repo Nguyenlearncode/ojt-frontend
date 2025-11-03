@@ -12,8 +12,6 @@ import {
   IconButton,
   Tooltip,
   Badge,
-  Flex,
-  VStack,
   Wrap,
   WrapItem,
 } from "@chakra-ui/react";

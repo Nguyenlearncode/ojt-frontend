@@ -8,7 +8,6 @@ import {
   Button,
   Alert,
   AlertIcon,
-  Image,
   useColorModeValue,
   Flex,
 } from "@chakra-ui/react";
@@ -18,7 +17,7 @@ import { FiArrowLeft } from "react-icons/fi";
 import { useForgotPassword } from "../hooks/useForgotPassword";
 import CityParticlesBackground from "../components/backgrounds/CityParticlesBackground";
 import EmailField from "../components/EmailField";
-import logo from "../../../assets/react.svg";
+import LogoAnimation from "../components/LogoAnimation";
 
 const MotionBox = motion(Box);
 
@@ -63,7 +62,7 @@ const ForgotPasswordPageChakra: React.FC = () => {
           {/* Header */}
           <VStack spacing={6} mb={8}>
             <Flex align="center" gap={3}>
-              <Image src={logo} alt="Lab Logo" boxSize="50px" />
+              <LogoAnimation />
               <Heading
                 size="md"
                 bgGradient={bgGradient}

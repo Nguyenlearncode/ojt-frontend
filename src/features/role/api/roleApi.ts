@@ -1,6 +1,5 @@
 // src/features/role/api/roleApi.ts
 import axiosClient from "../../../api/axiosClient";
-import type { AxiosResponse } from "axios";
 
 export interface Privilege {
   privilegeId: number;

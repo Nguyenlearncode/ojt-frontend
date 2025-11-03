@@ -8,7 +8,6 @@ import {
   Button,
   Alert,
   AlertIcon,
-  Image,
   useColorModeValue,
   Flex,
   FormControl,
@@ -24,7 +23,7 @@ import { Link } from "react-router-dom";
 import { FiArrowLeft, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 import { useResetPassword } from "../hooks/useResetPassword";
 import CityParticlesBackground from "../components/backgrounds/CityParticlesBackground";
-import logo from "../../../assets/react.svg";
+import LogoAnimation from "../components/LogoAnimation";
 
 const MotionBox = motion(Box);
 
@@ -130,7 +129,7 @@ const ResetPasswordPageChakra: React.FC = () => {
           {/* Header */}
           <VStack spacing={6} mb={8}>
             <Flex align="center" gap={3}>
-              <Image src={logo} alt="Lab Logo" boxSize="50px" />
+              <LogoAnimation />
               <Heading
                 size="md"
                 bgGradient={bgGradient}
