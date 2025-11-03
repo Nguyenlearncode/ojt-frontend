@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Box,
   Container,
@@ -13,17 +13,16 @@ import {
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { useLogin } from "../hooks/useLogin";
+import { FiArrowLeft } from "react-icons/fi";
+import { useForgotPassword } from "../hooks/useForgotPassword";
 import CityParticlesBackground from "../components/backgrounds/CityParticlesBackground";
 import EmailField from "../components/EmailField";
-import PasswordField from "../components/PasswordField";
 import LogoAnimation from "../components/LogoAnimation";
 
 const MotionBox = motion(Box);
 
-const LoginPageChakra: React.FC = () => {
-  const { formData, loading, error, handleChange, handleSubmit } = useLogin();
-  const [showPassword, setShowPassword] = useState(false);
+const ForgotPasswordPageChakra: React.FC = () => {
+  const { email, loading, error, handleChange, handleSubmit } = useForgotPassword();
 
   const bgGradient = useColorModeValue(
     "linear(to-br, brand.500, primary.600)",
@@ -34,7 +33,7 @@ const LoginPageChakra: React.FC = () => {
 
   return (
     <Box position="relative" minH="100vh" overflow="hidden">
-      <CityParticlesBackground imageSrc="/backgrounds/laboratory.jpg" />
+      <CityParticlesBackground imageSrc="/backgrounds/lab.jpg" />
 
       <Container
         maxW="container.sm"
@@ -65,7 +64,7 @@ const LoginPageChakra: React.FC = () => {
             <Flex align="center" gap={3}>
               <LogoAnimation />
               <Heading
-                size="xl"
+                size="md"
                 bgGradient={bgGradient}
                 bgClip="text"
                 fontWeight="bold"
@@ -73,23 +72,22 @@ const LoginPageChakra: React.FC = () => {
                 Laboratory Management
               </Heading>
             </Flex>
-            <Text fontSize="lg" color="gray.600" fontWeight="medium">
-              LOGIN
-            </Text>
+            <VStack spacing={1}>
+              <Heading size="lg" color="gray.800">
+                Forgot Password?
+              </Heading>
+              <Text fontSize="sm" color="gray.600" textAlign="center">
+                Enter your email address and we'll send you a link to reset your password.
+              </Text>
+            </VStack>
           </VStack>
 
           {/* Form */}
           <form onSubmit={handleSubmit}>
             <VStack spacing={5}>
               <EmailField
-                value={formData.email}
+                value={email}
                 onChange={handleChange}
-              />
-              <PasswordField
-                value={formData.password}
-                onChange={handleChange}
-                showPassword={showPassword}
-                onTogglePassword={() => setShowPassword(!showPassword)}
               />
 
               {error && (
@@ -99,32 +97,31 @@ const LoginPageChakra: React.FC = () => {
                 </Alert>
               )}
 
-              <Flex w="full" justify="flex-end">
-                <Button
-                  as={Link}
-                  to="/forgot-password"
-                  variant="link"
-                  colorScheme="brand"
-                  size="sm"
-                >
-                  Forgot password?
-                </Button>
-              </Flex>
-
               <Button
                 type="submit"
                 size="lg"
                 w="full"
                 variant="gradient"
                 isLoading={loading}
-                loadingText="Logging in..."
+                loadingText="Sending..."
                 transition="all 0.2s"
                 _hover={{
                   transform: "translateY(-2px)",
                   boxShadow: "xl",
                 }}
               >
-                Login
+                Send Reset Link
+              </Button>
+
+              <Button
+                as={Link}
+                to="/"
+                variant="ghost"
+                size="sm"
+                leftIcon={<FiArrowLeft />}
+                colorScheme="gray"
+              >
+                Back to Login
               </Button>
             </VStack>
           </form>
@@ -134,4 +131,5 @@ const LoginPageChakra: React.FC = () => {
   );
 };
 
-export default LoginPageChakra;
+export default ForgotPasswordPageChakra;
+

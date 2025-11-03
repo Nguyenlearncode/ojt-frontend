@@ -63,9 +63,9 @@ describe("🧠 UserDetailModalChakra (logic only)", () => {
     expect(screen.getByText(/User ID:/)).toHaveTextContent("u001");
   });
 
-  test("🟢 gọi onClose khi bấm nút Đóng", () => {
+  test("🟢 gọi onClose khi bấm nút Close (X)", () => {
     renderWithProvider();
-    const closeBtn = screen.getByText("Đóng");
+    const closeBtn = screen.getByRole("button", { name: /close/i }); // ✅ dùng aria-label
     fireEvent.click(closeBtn);
     expect(mockOnClose).toHaveBeenCalledTimes(1);
   });

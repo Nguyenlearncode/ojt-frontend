@@ -1,4 +1,4 @@
-import { FiHome, FiPieChart, FiUsers, FiSettings } from "react-icons/fi";
+import { FiHome, FiPieChart, FiUsers, FiSettings, FiShield } from "react-icons/fi";
 import type { MenuItem } from "./types";
 
 export const menuItems: MenuItem[] = [
@@ -13,6 +13,7 @@ export const menuItems: MenuItem[] = [
     ],
   },
   { name: "Quản lí tài khoản", icon: FiUsers, path: "/UserManagement" },
+  { name: "Quản lý Roles", icon: FiShield, path: "/RoleManagement" },
   {
     name: "Cài đặt",
     icon: FiSettings,
