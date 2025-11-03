@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lottie Test</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: #f5f5f5;
+      margin: 0;
+    }
+    .container {
+      text-align: center;
+    }
+    h1 {
+      font-family: Arial, sans-serif;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Eye Animation Test</h1>
+    <dotlottie-wc
+      src="https://lottie.host/344716ad-50b2-427d-b51b-a25abe012fd2/Xx6F679FHF.lottie"
+      style="width: 300px; height: 300px"
+      autoplay
+      loop
+    ></dotlottie-wc>
+    
+    <div style="margin-top: 30px;">
+      <h2>Small Size (32px) - For Password Field</h2>
+      <dotlottie-wc
+        src="https://lottie.host/344716ad-50b2-427d-b51b-a25abe012fd2/Xx6F679FHF.lottie"
+        style="width: 32px; height: 32px"
+        autoplay
+        loop
+      ></dotlottie-wc>
+    </div>
+  </div>
+
+  <script
+    src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.5/dist/dotlottie-wc.js"
+    type="module"
+  ></script>
+</body>
+</html>
+

@@ -4,14 +4,10 @@ import {
   Divider,
   Avatar,
   Text,
-  Button,
-  Icon,
   VStack,
 } from "@chakra-ui/react";
-import { useState } from "react";
-import { FiSettings } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 import LogoutButton from "../../features/auth/components/LogoutButton";
-import ChangePasswordModal from "../../features/auth/components/ChangePasswordModal";
 
 interface Props {
   expanded: boolean;
@@ -19,7 +15,7 @@ interface Props {
 }
 
 const SidebarUserSection: React.FC<Props> = ({ expanded, user }) => {
-  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <Box flex="0 0 auto" mt="auto">
@@ -33,6 +29,14 @@ const SidebarUserSection: React.FC<Props> = ({ expanded, user }) => {
             borderRadius="lg"
             bg="whiteAlpha.200"
             backdropFilter="blur(10px)"
+            cursor="pointer"
+            onClick={() => navigate("/Profile")}
+            _hover={{
+              bg: "whiteAlpha.300",
+              transform: "translateY(-2px)",
+              boxShadow: "lg",
+            }}
+            transition="all 0.2s"
           >
             <Avatar name={user?.fullName || "User"} size="sm" bg="brand.500" color="white" />
             {expanded && (
@@ -58,32 +62,9 @@ const SidebarUserSection: React.FC<Props> = ({ expanded, user }) => {
             )}
           </Flex>
 
-          <Button
-            onClick={() => setIsChangePasswordOpen(true)}
-            size="md"
-            variant="outline"
-            colorScheme="whiteAlpha"
-            leftIcon={<Icon as={FiSettings} />}
-            justifyContent={expanded ? "flex-start" : "center"}
-            pl={expanded ? 4 : 0}
-            borderColor="whiteAlpha.300"
-            color="white"
-            _hover={{
-              bg: "whiteAlpha.200",
-              borderColor: "whiteAlpha.400",
-            }}
-          >
-            {expanded ? "Change Password" : ""}
-          </Button>
-
           <LogoutButton expanded={expanded} />
         </VStack>
       </Box>
-
-      <ChangePasswordModal
-        isOpen={isChangePasswordOpen}
-        onClose={() => setIsChangePasswordOpen(false)}
-      />
     </Box>
   );
 };

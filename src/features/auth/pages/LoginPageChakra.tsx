@@ -8,7 +8,6 @@ import {
   Button,
   Alert,
   AlertIcon,
-  Image,
   useColorModeValue,
   Flex,
 } from "@chakra-ui/react";
@@ -18,7 +17,7 @@ import { useLogin } from "../hooks/useLogin";
 import CityParticlesBackground from "../components/backgrounds/CityParticlesBackground";
 import EmailField from "../components/EmailField";
 import PasswordField from "../components/PasswordField";
-import logo from "../../../assets/react.svg";
+import LogoAnimation from "../components/LogoAnimation";
 
 const MotionBox = motion(Box);
 
@@ -35,7 +34,7 @@ const LoginPageChakra: React.FC = () => {
 
   return (
     <Box position="relative" minH="100vh" overflow="hidden">
-      <CityParticlesBackground imageSrc="/backgrounds/lab.jpg" />
+      <CityParticlesBackground imageSrc="/backgrounds/laboratory.jpg" />
 
       <Container
         maxW="container.sm"
@@ -64,9 +63,9 @@ const LoginPageChakra: React.FC = () => {
           {/* Header */}
           <VStack spacing={6} mb={8}>
             <Flex align="center" gap={3}>
-              <Image src={logo} alt="Lab Logo" boxSize="50px" />
+              <LogoAnimation />
               <Heading
-                size="md"
+                size="xl"
                 bgGradient={bgGradient}
                 bgClip="text"
                 fontWeight="bold"

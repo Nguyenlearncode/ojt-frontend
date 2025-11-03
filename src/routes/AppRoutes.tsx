@@ -12,6 +12,7 @@ import UserManagementPageChakra from "../features/user/pages/UserManagementPageC
 import RoleManagementPageChakra from "../features/role/pages/RoleManagementPageChakra";
 import CreateRolePageChakra from "../features/role/pages/CreateRolePageChakra";
 import UpdateRolePageChakra from "../features/role/pages/UpdateRolePageChakra";
+import ProfilePageChakra from "../features/profile/pages/ProfilePageChakra";
 import PrivateRoute from "./PrivateRoute";
 import DashboardLayoutChakra from "../layouts/DashboardLayoutChakra";
 
@@ -97,6 +98,17 @@ const AppRoutes: React.FC = () => {
                   <PrivateRoute>
                     <DashboardLayoutChakra>
                       <UpdateRolePageChakra />
+                    </DashboardLayoutChakra>
+                  </PrivateRoute>
+                }
+              />
+
+              <Route
+                path="/Profile"
+                element={
+                  <PrivateRoute>
+                    <DashboardLayoutChakra>
+                      <ProfilePageChakra />
                     </DashboardLayoutChakra>
                   </PrivateRoute>
                 }

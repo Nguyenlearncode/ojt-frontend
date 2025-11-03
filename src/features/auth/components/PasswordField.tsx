@@ -6,10 +6,10 @@ import {
   InputGroup,
   InputLeftElement,
   InputRightElement,
-  Button,
-  Icon,
+  IconButton,
 } from "@chakra-ui/react";
-import { FiLock, FiEye, FiEyeOff } from "react-icons/fi";
+import { LockIcon } from "@chakra-ui/icons";
+import EyeLottie from "./EyeLottie";
 
 interface PasswordFieldProps {
   value: string;
@@ -31,7 +31,7 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
       </FormLabel>
       <InputGroup>
         <InputLeftElement pointerEvents="none">
-          <Icon as={FiLock} color="gray.400" />
+          <LockIcon color="gray.400" />
         </InputLeftElement>
         <Input
           id="password"
@@ -43,15 +43,19 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
           bg="white"
           focusBorderColor="brand.500"
         />
-        <InputRightElement width="3rem">
-          <Button
-            h="1.75rem"
-            size="sm"
+        <InputRightElement width="4rem">
+          <IconButton
+            aria-label={showPassword ? "Hide password" : "Show password"}
+            icon={<EyeLottie />}
             variant="ghost"
+            size="md"
             onClick={onTogglePassword}
-          >
-            <Icon as={showPassword ? FiEyeOff : FiEye} />
-          </Button>
+            _hover={{ bg: "gray.100" }}
+            transition="all 0.2s"
+            minW="auto"
+            h="auto"
+            p={1}
+          />
         </InputRightElement>
       </InputGroup>
     </FormControl>
