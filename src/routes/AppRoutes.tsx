@@ -15,6 +15,8 @@ import UpdateRolePageChakra from "../features/role/pages/UpdateRolePageChakra";
 import ProfilePageChakra from "../features/user/pages/ProfilePageChakra";
 import PrivateRoute from "./PrivateRoute";
 import DashboardLayoutChakra from "../layouts/DashboardLayoutChakra";
+import PatientMedicalRecordPageChakra from "../features/patient/pages/PatientMedicalRecordPageChakra";
+
 
 const AppRoutes: React.FC = () => {
   return (
@@ -37,85 +39,98 @@ const AppRoutes: React.FC = () => {
       />
 
       <Route
-          path="/UserManagement"
-          element={
-            <PrivateRoute>
-              <DashboardLayoutChakra>
-                <UserManagementPageChakra />
-              </DashboardLayoutChakra>
-            </PrivateRoute>
-          }
-        />
+        path="/UserManagement"
+        element={
+          <PrivateRoute>
+            <DashboardLayoutChakra>
+              <UserManagementPageChakra />
+            </DashboardLayoutChakra>
+          </PrivateRoute>
+        }
+      />
 
-        <Route
-  path="/UpdateUserProfile/:id"
-  element={
-    <PrivateRoute>
-      <DashboardLayoutChakra>
-        <UpdateUserProfileChakra />
-      </DashboardLayoutChakra>
-    </PrivateRoute>
-  }
-/>
+      <Route
+        path="/UpdateUserProfile/:id"
+        element={
+          <PrivateRoute>
+            <DashboardLayoutChakra>
+              <UpdateUserProfileChakra />
+            </DashboardLayoutChakra>
+          </PrivateRoute>
+        }
+      />
 
 
-        <Route
-          path="/CreateUser"
-          element={
-            <PrivateRoute>
-              <DashboardLayoutChakra>
-                <CreateUserChakra />
-              </DashboardLayoutChakra>
-            </PrivateRoute>
-          }
-        />
+      <Route
+        path="/CreateUser"
+        element={
+          <PrivateRoute>
+            <DashboardLayoutChakra>
+              <CreateUserChakra />
+            </DashboardLayoutChakra>
+          </PrivateRoute>
+        }
+      />
 
-              <Route
-                path="/RoleManagement"
-                element={
-                  <PrivateRoute>
-                    <DashboardLayoutChakra>
-                      <RoleManagementPageChakra />
-                    </DashboardLayoutChakra>
-                  </PrivateRoute>
-                }
-              />
+      <Route
+        path="/RoleManagement"
+        element={
+          <PrivateRoute>
+            <DashboardLayoutChakra>
+              <RoleManagementPageChakra />
+            </DashboardLayoutChakra>
+          </PrivateRoute>
+        }
+      />
 
-              <Route
-                path="/CreateRole"
-                element={
-                  <PrivateRoute>
-                    <DashboardLayoutChakra>
-                      <CreateRolePageChakra />
-                    </DashboardLayoutChakra>
-                  </PrivateRoute>
-                }
-              />
+      <Route
+        path="/CreateRole"
+        element={
+          <PrivateRoute>
+            <DashboardLayoutChakra>
+              <CreateRolePageChakra />
+            </DashboardLayoutChakra>
+          </PrivateRoute>
+        }
+      />
 
-              <Route
-                path="/UpdateRole/:roleCode"
-                element={
-                  <PrivateRoute>
-                    <DashboardLayoutChakra>
-                      <UpdateRolePageChakra />
-                    </DashboardLayoutChakra>
-                  </PrivateRoute>
-                }
-              />
+      <Route
+        path="/UpdateRole/:roleCode"
+        element={
+          <PrivateRoute>
+            <DashboardLayoutChakra>
+              <UpdateRolePageChakra />
+            </DashboardLayoutChakra>
+          </PrivateRoute>
+        }
+      />
 
-              <Route
-                path="/Profile"
-                element={
-                  <PrivateRoute>
-                    <DashboardLayoutChakra>
-                      <ProfilePageChakra />
-                    </DashboardLayoutChakra>
-                  </PrivateRoute>
-                }
-              />
+      <Route
+        path="/Profile"
+        element={
+          <PrivateRoute>
+            <DashboardLayoutChakra>
+              <ProfilePageChakra />
+            </DashboardLayoutChakra>
+          </PrivateRoute>
+        }
+      />
 
-            {/* Redirect others */}
-            <Route path="*" element={<Navigate to="/dashboard" />} />
+
+      <Route
+        path="/PatientMedicalRecords"
+        element={
+          <PrivateRoute>
+            <DashboardLayoutChakra>
+              <PatientMedicalRecordPageChakra />
+            </DashboardLayoutChakra>
+          </PrivateRoute>
+        }
+      />
+
+
+      {/* Redirect others */}
+      <Route path="*" element={<Navigate to="/dashboard" />} />
     </Routes>
   );
 };

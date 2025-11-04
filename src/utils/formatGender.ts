@@ -1,6 +1,4 @@
-// src/utils/formatGender.ts
-
-// Chuyển giá trị DB (Male/Female/Other) → text hiển thị
+// Chuyển giá trị DB (male/female/other) → text hiển thị
 export const formatGender = (gender?: string): string => {
   switch (gender?.toLowerCase()) {
     case "male":
@@ -16,10 +14,10 @@ export const formatGender = (gender?: string): string => {
 export const parseGender = (genderLabel: string): string => {
   switch (genderLabel.toLowerCase()) {
     case "nam":
-      return "Male";
+      return "male";
     case "nữ":
-      return "Female";
+      return "female";
     default:
-      return "";
+      return "other";
   }
 };

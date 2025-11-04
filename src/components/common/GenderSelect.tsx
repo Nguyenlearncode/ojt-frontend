@@ -1,25 +1,27 @@
 import React from "react";
-import SelectField from "./SelectField";
-import { formatGender, parseGender } from "../../utils/formatGender";
+import { Select, FormControl, FormLabel } from "@chakra-ui/react";
 
+/**
+ * Component chọn giới tính chuẩn Chakra UI
+ */
 interface GenderSelectProps {
+  label?: string;
   value: string;
   onChange: (value: string) => void;
 }
 
-const GenderSelect: React.FC<GenderSelectProps> = ({ value, onChange }) => {
-  const options = [
-    { label: "Nam", value: "Male" },
-    { label: "Nữ", value: "Female" },
-  ];
-
+const GenderSelect: React.FC<GenderSelectProps> = ({ label = "Giới tính", value, onChange }) => {
   return (
-    <SelectField
-      name="gender"
-      value={parseGender(formatGender(value)) ? value : parseGender(value)}
-      onChange={(val) => onChange(val)}
-      options={options}
-    />
+    <FormControl>
+      <FormLabel>{label}</FormLabel>
+      <Select
+        value={value.toLowerCase()}
+        onChange={(e) => onChange(e.target.value)}
+      >
+        <option value="male">Nam</option>
+        <option value="female">Nữ</option>
+      </Select>
+    </FormControl>
   );
 };
 
