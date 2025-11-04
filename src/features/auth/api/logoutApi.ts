@@ -1,4 +1,3 @@
-// src/features/auth/api/logoutApi.ts
 import axiosClient from "../../../api/axiosClient";
 
 export interface LogoutRequest {
@@ -6,5 +5,5 @@ export interface LogoutRequest {
 }
 
 export const logoutApi = async (data: LogoutRequest): Promise<void> => {
-  await axiosClient.post("/auth/logout", data);
+  await axiosClient.post("/iam/auth/logout", data);
 };

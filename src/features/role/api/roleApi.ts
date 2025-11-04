@@ -1,4 +1,3 @@
-// src/features/role/api/roleApi.ts
 import axiosClient from "../../../api/axiosClient";
 
 export interface Privilege {
@@ -36,9 +35,8 @@ export interface ApiResponse<T> {
 }
 
 export const roleApi = {
-  // Lấy danh sách tất cả roles
   getAllRoles: async (): Promise<Role[]> => {
-    const response: any = await axiosClient.get("/role/all");
+    const response: any = await axiosClient.get("/iam/role/all");
     if (response?.data && Array.isArray(response.data)) {
       return response.data;
     }
@@ -48,23 +46,17 @@ export const roleApi = {
     return [];
   },
 
-  // Tạo role mới
   createRole: async (data: CreateRolePayload): Promise<Role> => {
-    const response: any = await axiosClient.post("/role/create", data);
-    // response đã là ApiResponse object từ interceptor
+    const response: any = await axiosClient.post("/iam/role/create", data);
     return response?.data || response;
   },
 
-  // Cập nhật role
   updateRole: async (data: UpdateRolePayload): Promise<Role> => {
-    const response: any = await axiosClient.post("/role/update", data);
-    // response đã là ApiResponse object từ interceptor
+    const response: any = await axiosClient.post("/iam/role/update", data);
     return response?.data || response;
   },
 
-  // Xóa role
   deleteRole: async (roleCode: string): Promise<void> => {
-    await axiosClient.delete(`/role/delete/${roleCode}`);
+    await axiosClient.delete(`/iam/role/delete/${roleCode}`);
   },
 };
-
