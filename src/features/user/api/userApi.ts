@@ -44,7 +44,12 @@ export interface ApiResponse<T> {
 
 export const userApi = {
   getAllUsers: async (): Promise<User[]> => {
-    const response: AxiosResponse<any> = await axiosClient.get("/iam/users/getalluser");
+    // Thử các endpoint path có thể đúng:
+    // - /iam/users/getalluser (hiện tại - 404)
+    // - /iam/users/getall
+    // - /iam/users
+    // - /api/iam/users/getalluser
+    const response: AxiosResponse<any> = await axiosClient.get("/iam/users/getall");
     return response.data || [];
   },
 

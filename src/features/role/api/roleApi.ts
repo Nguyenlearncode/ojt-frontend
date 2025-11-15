@@ -36,7 +36,8 @@ export interface ApiResponse<T> {
 
 export const roleApi = {
   getAllRoles: async (): Promise<Role[]> => {
-    const response: any = await axiosClient.get("/iam/role/all");
+    // Thử endpoint path: /iam/role/getall thay vì /iam/role/all
+    const response: any = await axiosClient.get("/iam/role/getall");
     if (response?.data && Array.isArray(response.data)) {
       return response.data;
     }
