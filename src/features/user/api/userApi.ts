@@ -44,18 +44,27 @@ export interface ApiResponse<T> {
 
 export const userApi = {
   getAllUsers: async (): Promise<User[]> => {
-    // Thử các endpoint path có thể đúng:
-    // - /iam/users/getalluser (hiện tại - 404)
-    // - /iam/users/getall
-    // - /iam/users
-    // - /api/iam/users/getalluser
-    const response: AxiosResponse<any> = await axiosClient.get("/iam/users/getall");
-    return response.data || [];
+    // axiosClient interceptor đã return response.data, nên response đã là data rồi
+    // Backend trả về ApiResponse<IEnumerable<UserDTO>>, nên response có cấu trúc:
+    // { statusCode, message, data: [...users...], responsedAt }
+    const response: any = await axiosClient.get("/iam/users/getalluser");
+    // Nếu response là array (đã unwrap), return luôn
+    if (Array.isArray(response)) {
+      return response;
+    }
+    // Nếu response có cấu trúc ApiResponse, lấy data
+    return response?.data || [];
   },
 
   getUserById: async (userId: string): Promise<User> => {
+    // axiosClient interceptor đã return response.data
     const response: any = await axiosClient.get(`/iam/users/${userId}`);
-    return response.data;
+    // Nếu response đã là User object, return luôn
+    if (response?.userId) {
+      return response;
+    }
+    // Nếu response có cấu trúc ApiResponse, lấy data
+    return response?.data;
   },
 
   lockUser: async (userId: string) => axiosClient.post(`/iam/users/${userId}/lock`),
@@ -67,12 +76,20 @@ export const userApi = {
   },
 
   createUser: async (data: CreateUserPayload) => {
-    const res: AxiosResponse<any> = await axiosClient.post("/iam/users/create", data);
-    return res.data;
+    // axiosClient interceptor đã return response.data
+    const res: any = await axiosClient.post("/iam/users/create", data);
+    // Nếu res đã là CreateUserResultDto, return luôn
+    if (res?.userId) {
+      return res;
+    }
+    // Nếu res có cấu trúc ApiResponse, lấy data
+    return res?.data;
   },
 
   updateUser: async (userId: string, data: any) => {
-    const res = await axiosClient.put(`/iam/users/${userId}`, data);
-    return res.data;
+    // axiosClient interceptor đã return response.data
+    const res: any = await axiosClient.put(`/iam/users/${userId}`, data);
+    // Nếu res đã là object, return luôn
+    return res?.data || res;
   },
 };

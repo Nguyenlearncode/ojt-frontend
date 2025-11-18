@@ -14,22 +14,18 @@ export const decodeToken = (token: string): JwtPayload | null => {
   try {
     // Validate token format
     if (!token || typeof token !== 'string') {
-      console.warn('Invalid token: token is not a string');
       return null;
     }
     
     const parts = token.split('.');
     if (parts.length !== 3) {
-      console.warn('Invalid token format: JWT should have 3 parts');
       return null;
     }
     
     return jwtDecode<JwtPayload>(token);
   } catch (error: any) {
-    console.error("Decode token failed:", error);
     // Clear invalid token
     if (error?.message?.includes('Base-64') || error?.message?.includes('Invalid token')) {
-      console.warn('Invalid token detected, clearing from localStorage');
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
     }
@@ -45,7 +41,6 @@ export const getCurrentUserId = (): string | null => {
     const decoded = decodeToken(token);
     return decoded?.sub ?? null;
   } catch (error) {
-    console.error('Error getting current user ID:', error);
     return null;
   }
 };

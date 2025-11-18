@@ -36,13 +36,15 @@ export interface ApiResponse<T> {
 
 export const roleApi = {
   getAllRoles: async (): Promise<Role[]> => {
-    // Thử endpoint path: /iam/role/getall thay vì /iam/role/all
-    const response: any = await axiosClient.get("/iam/role/getall");
-    if (response?.data && Array.isArray(response.data)) {
-      return response.data;
-    }
+    // axiosClient interceptor đã return response.data
+    const response: any = await axiosClient.get("/iam/role/all");
+    // Nếu response là array (đã unwrap), return luôn
     if (Array.isArray(response)) {
       return response;
+    }
+    // Nếu response có cấu trúc ApiResponse, lấy data
+    if (response?.data && Array.isArray(response.data)) {
+      return response.data;
     }
     return [];
   },

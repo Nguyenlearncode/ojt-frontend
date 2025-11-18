@@ -32,6 +32,7 @@ export interface ListPatientDto {
   fullName: string;
   dateOfBirth: string;
   lastTestDate?: string | null;
+  phoneNumber?: string | null;
 }
 
 // 🧠 Interface cho dữ liệu MedicalRecord (khi load từ API)
@@ -46,6 +47,27 @@ export interface MedicalRecord {
   patient?: Patient;
 }
 
+// 🧠 Interface cho Update Medical Record Request
+export interface UpdateMedicalRecordRequest {
+  patient: Patient;
+  updatedBy: string;
+}
+
+// 🧠 Interface cho View Medical Record Detail Response
+export interface ViewMedicalRecordDetailResponse {
+  patientId: string;
+  patientName: string;
+  dateOfBirth: string;
+  phoneNumber: string;
+  testOrders: TestOrderResponse[];
+}
+
+export interface TestOrderResponse {
+  testOrderId: string;
+  orderDate: string;
+  status: string;
+}
+
 // 🧠 Custom hook chứa toàn bộ logic gọi API
 export const usePatientMedicalRecords = () => {
   const toast = useToast();
@@ -56,21 +78,40 @@ export const usePatientMedicalRecords = () => {
     setLoading(true);
     try {
       const res = await patientApi.getAllMedicalRecords();
-      // ApiResponse { statusCode, message, data, responsedAt }
-      // API trả về List<ListPatientDto?> với cấu trúc: { patientId, fullName, dateOfBirth, lastTestDate }
-      console.log("📥 API Response:", res);
-      console.log("📦 Records data:", res?.data);
-      const recordsData = (res?.data ?? []).filter((item): item is ListPatientDto => item !== null);
-      console.log("📋 Processed records:", recordsData);
-      setRecords(recordsData);
+      // axiosClient interceptor đã return response.data, nên res đã là data rồi
+      // Backend trả về ApiResponse<List<ListPatientDto?>>, nên res có cấu trúc:
+      // { statusCode, message, data: [...records...], responsedAt }
+      // Nếu res là array (đã unwrap), return luôn
+      if (Array.isArray(res)) {
+        const recordsData = res.filter((item): item is ListPatientDto => item !== null);
+        setRecords(recordsData);
+        return;
+      }
+      // Nếu res có cấu trúc ApiResponse, lấy data
+      if (res?.data && Array.isArray(res.data)) {
+        const recordsData = res.data.filter((item): item is ListPatientDto => item !== null);
+        setRecords(recordsData);
+        return;
+      }
+      // Nếu không có data, set empty array
+      setRecords([]);
     } catch (err: any) {
+      // Error từ backend: err.response.data đã được unwrap bởi interceptor
+      // Nếu error response có cấu trúc ApiResponse, message nằm trong err.response.data.message
+      // Nếu error response đã được unwrap, message có thể nằm trong err.response.data hoặc err.message
+      const errorMessage = err.response?.data?.message 
+        || err.response?.data?.Message 
+        || err.message 
+        || "Không thể tải danh sách hồ sơ.";
+      
       toast({
         title: "Lỗi tải dữ liệu",
-        description: err.response?.data?.message || "Không thể tải danh sách hồ sơ.",
+        description: errorMessage,
         status: "error",
-        duration: 3000,
+        duration: 5000,
         isClosable: true,
       });
+      setRecords([]); // Set empty array khi có lỗi
     } finally {
       setLoading(false);
     }
@@ -139,6 +180,146 @@ export const usePatientMedicalRecords = () => {
     }
   };
 
+    const updateRecord = async (patientId: string, form: UpdateMedicalRecordRequest) => {
+    try {
+      const user = getUserInfo();
+      
+      // Convert gender to lowercase (backend yêu cầu 'male' hoặc 'female')
+      const genderLower = form.patient.gender?.toLowerCase() || "male";
+      const normalizedGender = genderLower === "male" || genderLower === "female" 
+        ? genderLower 
+        : "male";
+      
+      // Convert dateOfBirth to MM/DD/YYYY format (backend yêu cầu)
+      const dateOfBirth = convertToMMDDYYYY(form.patient.dateOfBirth);
+      
+      // Convert lastTestDate to MM/DD/YYYY format nếu có
+      const lastTestDate = form.patient.lastTestDate 
+        ? convertToMMDDYYYY(form.patient.lastTestDate) 
+        : undefined;
+      
+      // Tạo patient object, chỉ include các field có giá trị
+      const patientData: any = {
+        fullName: form.patient.fullName,
+        dateOfBirth: dateOfBirth,
+        gender: normalizedGender,
+        phoneNumber: form.patient.phoneNumber,
+      };
+      
+      // Chỉ thêm optional fields nếu có giá trị
+      if (form.patient.userId || user?.sub) {
+        patientData.userId = form.patient.userId || user?.sub;
+      }
+      if (form.patient.email && form.patient.email.trim() !== "") {
+        patientData.email = form.patient.email;
+      }
+      if (form.patient.address && form.patient.address.trim() !== "") {
+        patientData.address = form.patient.address;
+      }
+      if (form.patient.identifyNumber && form.patient.identifyNumber.trim() !== "") {
+        patientData.identifyNumber = form.patient.identifyNumber;
+      }
+      if (lastTestDate && lastTestDate.trim() !== "") {
+        patientData.lastTestDate = lastTestDate;
+      }
+      
+      const updateData = {
+        patient: patientData,
+        updatedBy: form.updatedBy || user?.sub || "",
+      };
+
+      await patientApi.updateMedicalRecord(patientId, updateData);
+      toast({
+        title: "Thành công",
+        description: "Cập nhật hồ sơ bệnh nhân thành công!",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      fetchRecords();
+    } catch (err: any) {
+      toast({
+        title: "Cập nhật thất bại",
+        description: err.response?.data?.message || "Không thể cập nhật hồ sơ.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      throw err;
+    }
+  };
+
+  const deleteRecord = async (patientId: string) => {
+    try {
+      const user = getUserInfo();
+      const deletedBy = user?.sub || "";
+      
+      if (!deletedBy) {
+        toast({
+          title: "Lỗi",
+          description: "Không thể xác định người dùng.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+        return;
+      }
+
+      await patientApi.deleteMedicalRecord(patientId, deletedBy);
+      toast({
+        title: "Thành công",
+        description: "Xóa hồ sơ bệnh nhân thành công!",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      fetchRecords();
+    } catch (err: any) {
+      toast({
+        title: "Xóa thất bại",
+        description: err.response?.data?.message || "Không thể xóa hồ sơ.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      throw err;
+    }
+  };
+
+  const getRecordDetail = async (patientId: string): Promise<ViewMedicalRecordDetailResponse> => {
+    try {
+      const res = await patientApi.getMedicalRecordDetail(patientId);
+      
+      // Handle response structure (ApiResponse or direct data)
+      // Backend returns ApiResponse<ViewMedicalRecordDetailResponse>
+      // axiosClient interceptor may unwrap response.data
+      if (res?.data?.data) {
+        // ApiResponse wrapper: { statusCode, message, data: ViewMedicalRecordDetailResponse, ... }
+        return res.data.data;
+      }
+      if (res?.data) {
+        // Already unwrapped or direct data
+        return res.data;
+      }
+      // Fallback: if res is already the data (unwrapped by interceptor)
+      return res as unknown as ViewMedicalRecordDetailResponse;
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.message 
+        || err.response?.data?.Message 
+        || err.message 
+        || "Không thể tải chi tiết hồ sơ.";
+      
+      toast({
+        title: "Lỗi tải dữ liệu",
+        description: errorMessage,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+      throw err;
+    }
+  };
+
   useEffect(() => {
     fetchRecords();
   }, []);
@@ -148,5 +329,8 @@ export const usePatientMedicalRecords = () => {
     loading,
     fetchRecords,
     createRecord,
+    updateRecord,
+    deleteRecord,
+    getRecordDetail,
   };
 };

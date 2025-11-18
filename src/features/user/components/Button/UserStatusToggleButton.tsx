@@ -32,8 +32,6 @@ export const UserStatusToggleButton: React.FC<Props> = ({
         await userApi.unlockUser(userId);
         setIsActive(true);
       }
-    } catch (error) {
-      console.error("Toggle user status failed:", error);
     } finally {
       setLoading(false);
     }

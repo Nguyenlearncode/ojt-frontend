@@ -16,6 +16,8 @@ import ProfilePageChakra from "../features/user/pages/ProfilePageChakra";
 import PrivateRoute from "./PrivateRoute";
 import DashboardLayoutChakra from "../layouts/DashboardLayoutChakra";
 import PatientMedicalRecordPageChakra from "../features/patient/pages/PatientMedicalRecordPageChakra";
+import FlaggingSetManagementPage from "../features/flagging/pages/FlaggingSetManagementPage";
+import TestOrdersPage from "../features/patient/pages/TestOrdersPage";
 
 
 const AppRoutes: React.FC = () => {
@@ -123,6 +125,28 @@ const AppRoutes: React.FC = () => {
           <PrivateRoute>
             <DashboardLayoutChakra>
               <PatientMedicalRecordPageChakra />
+            </DashboardLayoutChakra>
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/FlaggingSets"
+        element={
+          <PrivateRoute>
+            <DashboardLayoutChakra>
+              <FlaggingSetManagementPage />
+            </DashboardLayoutChakra>
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/TestOrders"
+        element={
+          <PrivateRoute>
+            <DashboardLayoutChakra>
+              <TestOrdersPage />
             </DashboardLayoutChakra>
           </PrivateRoute>
         }

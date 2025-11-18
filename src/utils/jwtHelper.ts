@@ -21,23 +21,19 @@ export const decodeToken = (token: string): JwtPayload | null => {
   try {
     // Validate token format (JWT có 3 parts separated by dots)
     if (!token || typeof token !== 'string') {
-      console.warn('Invalid token: token is not a string');
       return null;
     }
     
     const parts = token.split('.');
     if (parts.length !== 3) {
-      console.warn('Invalid token format: JWT should have 3 parts');
       return null;
     }
     
     // Try to decode
     return jwtDecode<JwtPayload>(token);
   } catch (error: any) {
-    console.error('Error decoding token:', error);
     // Nếu token không hợp lệ, clear nó khỏi localStorage
     if (error?.message?.includes('Base-64') || error?.message?.includes('Invalid token')) {
-      console.warn('Invalid token detected, clearing from localStorage');
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
     }
@@ -52,14 +48,12 @@ export const getUserInfo = () => {
     
     // Validate token trước khi decode
     if (token.trim() === '') {
-      console.warn('Empty token found');
       localStorage.removeItem('accessToken');
       return null;
     }
     
     return decodeToken(token);
   } catch (error) {
-    console.error('Error getting user info:', error);
     return null;
   }
 };
@@ -97,7 +91,6 @@ export const getUserPrivileges = (): PrivilegeInfo[] => {
     
     return [];
   } catch (error) {
-    console.error('Error parsing privileges:', error);
     return [];
   }
 };
