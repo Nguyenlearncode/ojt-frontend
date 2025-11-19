@@ -1,8 +1,13 @@
 import axiosClient from "../../../api/axiosClient";
-import type { AxiosResponse } from "axios";
+
 
 export interface Role {
   roleName: string;
+}
+
+export interface Role {
+  roleName: string;
+  roleCode: string;
 }
 
 export interface User {

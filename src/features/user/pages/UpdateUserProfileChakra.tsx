@@ -325,9 +325,7 @@ const UpdateUserProfileChakra: React.FC = () => {
                 <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
                   {/* Gender */}
                   <FormControl isRequired isInvalid={!!errors.gender}>
-                    <FormLabel fontWeight="600" color="gray.700">
-                      Giới tính
-                    </FormLabel>
+                    
                     <MotionBox whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                       <GenderSelect
                         value={formData.gender || ""}

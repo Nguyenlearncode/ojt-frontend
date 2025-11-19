@@ -28,7 +28,7 @@ import { motion } from "framer-motion";
 import {
   FiUser,
   FiCalendar,
-  FiPhone,
+
   FiFileText,
   FiActivity,
   FiPlus,
@@ -39,7 +39,7 @@ import {
   type ViewMedicalRecordDetailResponse,
 } from "../hooks/usePatientMedicalRecords";
 import { useTestOrders } from "../hooks/useTestOrders";
-import { formatDate } from "../../../utils/formatDate";
+import { formatDate, formatDateTime } from "../../../utils/formatDate";
 
 interface Props {
   isOpen: boolean;
@@ -106,7 +106,7 @@ const MedicalRecordDetailModal: React.FC<Props> = ({
 
   const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
-      case "completed":
+      case "complete":
       case "hoàn thành":
         return "green";
       case "pending":
@@ -261,7 +261,7 @@ const MedicalRecordDetailModal: React.FC<Props> = ({
                               </HStack>
                             </Td>
                             <Td>
-                              {formatDate(order.orderDate, "dd/MM/yyyy HH:mm")}
+                              {formatDateTime(order.orderDate)}
                             </Td>
                             <Td>
                               <Badge

@@ -3,20 +3,20 @@ import axios, { AxiosError, type AxiosInstance, type AxiosResponse } from "axios
 import { authApi } from "../features/auth/api/authApi";
 
 const axiosClient: AxiosInstance = axios.create({
-  baseURL: "https://localhost:7000", // ✅ Gateway root
+  baseURL: "https://localhost:7000",
   headers: { "Content-Type": "application/json" },
 });
 
+/* ------------------------- REQUEST INTERCEPTOR ------------------------- */
 axiosClient.interceptors.request.use((config) => {
   const token = localStorage.getItem("accessToken");
   if (token && config.headers) {
-    // Chỉ validate và log, không block request
-    // Nếu token không hợp lệ, backend sẽ trả về 401 và interceptor sẽ xử lý
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
 
+/* ------------------------- REFRESH TOKEN LOGIC ------------------------- */
 let isRefreshing = false;
 let refreshSubscribers: ((token: string) => void)[] = [];
 
@@ -29,16 +29,33 @@ function onRefreshed(token: string) {
   refreshSubscribers = [];
 }
 
+/* ------------------------- RESPONSE INTERCEPTOR ------------------------- */
 axiosClient.interceptors.response.use(
-  (response: AxiosResponse) => response.data,
+  (response: AxiosResponse) => {
+    const contentType = response.headers["content-type"];
+
+    // Nếu response là file (PDF / Excel / CSV / BINARY)
+    if (
+      contentType?.includes("application/pdf") ||
+      contentType?.includes("application/octet-stream") ||
+      contentType?.includes("application/vnd") ||
+      contentType?.includes("text/csv")
+    ) {
+      return response; // ⬅ giữ nguyên full response (không unwrap)
+    }
+
+    return response.data; // unwrap JSON
+  },
+
   async (error: AxiosError) => {
     const originalRequest = error.config;
 
+    /* --------------------- 401: ACCESS TOKEN EXPIRED --------------------- */
     if (error.response?.status === 401 && !isRefreshing) {
       isRefreshing = true;
 
-      const refreshToken = localStorage.getItem("refreshToken") || undefined;
-      const oldAccessToken = localStorage.getItem("accessToken") || undefined;
+      const refreshToken = localStorage.getItem("refreshToken") ?? undefined;
+      const oldAccessToken = localStorage.getItem("accessToken") ?? undefined;
 
       if (!refreshToken) {
         localStorage.clear();
@@ -47,16 +64,17 @@ axiosClient.interceptors.response.use(
       }
 
       try {
-        const res = await authApi.refresh(refreshToken, oldAccessToken);
+        let res = await authApi.refresh(refreshToken, oldAccessToken);
         let newAccessToken = res.accessToken;
         let newRefreshToken = res.refreshToken;
 
+        // fallback nếu token null
         if (!newAccessToken || !newRefreshToken) {
-          const latestRefresh = localStorage.getItem("refreshToken");
-          if (latestRefresh && latestRefresh !== refreshToken) {
-            const retryRes = await authApi.refresh(latestRefresh, oldAccessToken);
-            newAccessToken = retryRes.accessToken;
-            newRefreshToken = retryRes.refreshToken;
+          const latest = localStorage.getItem("refreshToken");
+          if (latest && latest !== refreshToken) {
+            res = await authApi.refresh(latest, oldAccessToken);
+            newAccessToken = res.accessToken;
+            newRefreshToken = res.refreshToken;
           }
         }
 
@@ -66,6 +84,7 @@ axiosClient.interceptors.response.use(
           return Promise.reject(error);
         }
 
+        // lưu token mới
         localStorage.setItem("accessToken", newAccessToken);
         localStorage.setItem("refreshToken", newRefreshToken);
 
@@ -75,6 +94,7 @@ axiosClient.interceptors.response.use(
         if (originalRequest?.headers) {
           originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         }
+
         return axiosClient(originalRequest!);
       } catch (refreshErr) {
         localStorage.clear();
@@ -83,6 +103,7 @@ axiosClient.interceptors.response.use(
       }
     }
 
+    /* -------------- Các request chờ refresh sẽ đứng đợi tại đây -------------- */
     if (error.response?.status === 401 && isRefreshing) {
       return new Promise((resolve) => {
         subscribeTokenRefresh((token: string) => {

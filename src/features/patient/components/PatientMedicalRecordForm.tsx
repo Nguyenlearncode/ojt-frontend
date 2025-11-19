@@ -5,7 +5,6 @@ import {
   FormControl,
   FormLabel,
   Input,
-  Textarea,
   Button,
   VStack,
   HStack,
@@ -14,7 +13,6 @@ import {
   InputLeftElement,
   Icon,
   FormErrorMessage,
-  Text,
   useColorModeValue,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
@@ -25,8 +23,6 @@ import {
   FiMail,
   FiMapPin,
   FiCreditCard,
-  FiFileText,
-  FiActivity,
   FiSave,
   FiX,
 } from "react-icons/fi";
@@ -86,7 +82,7 @@ const PatientMedicalRecordForm: React.FC<Props> = ({
   };
 
   return (
-    <Box>
+    <Box bg={bgColor}>
       <VStack spacing={6} align="stretch">
         {/* Thông tin bệnh nhân */}
         <MotionBox
@@ -167,9 +163,7 @@ const PatientMedicalRecordForm: React.FC<Props> = ({
 
             {/* Giới tính */}
             <FormControl isRequired>
-              <FormLabel fontWeight="600" color="gray.700">
-                Giới tính
-              </FormLabel>
+
               <GenderSelect
                 value={form.patient.gender}
                 onChange={(val) =>

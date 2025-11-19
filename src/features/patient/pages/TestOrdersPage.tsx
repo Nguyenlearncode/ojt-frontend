@@ -36,7 +36,7 @@ import { FiEye, FiFileText, FiPlus, FiSearch, FiActivity } from "react-icons/fi"
 import { useTestOrders, type TestOrderListDto } from "../hooks/useTestOrders";
 import TestOrderDetailModal from "../components/TestOrderDetailModal";
 import CreateTestOrderModal from "../components/CreateTestOrderModal";
-import { formatDate } from "../../../utils/formatDate";
+import { formatDateTime } from "../../../utils/formatDate";
 
 const MotionBox = motion(Box);
 
@@ -94,7 +94,7 @@ const TestOrdersPage: React.FC = () => {
         return "green";
       case "pending":
         return "yellow";
-      case "reviewed":
+      case "review":
         return "blue";
       case "cancelled":
         return "red";
@@ -109,7 +109,7 @@ const TestOrdersPage: React.FC = () => {
         return "Hoàn thành";
       case "pending":
         return "Đang chờ";
-      case "reviewed":
+      case "review":
         return "Đã review";
       case "cancelled":
         return "Đã hủy";
@@ -132,7 +132,7 @@ const TestOrdersPage: React.FC = () => {
   const totalOrders = testOrders.length;
   const completedOrders = testOrders.filter((o) => o.status?.toLowerCase() === "completed").length;
   const pendingOrders = testOrders.filter((o) => o.status?.toLowerCase() === "pending").length;
-  const reviewedOrders = testOrders.filter((o) => o.status?.toLowerCase() === "reviewed").length;
+  const reviewedOrders = testOrders.filter((o) => o.status?.toLowerCase() === "review").length;
 
   return (
     <Box minH="100vh" py={{ base: 8, md: 12 }} px={{ base: 4, md: 8 }} bg={pageBg}>
@@ -327,7 +327,7 @@ const TestOrdersPage: React.FC = () => {
                         </Td>
                         <Td>
                           <Text fontSize="sm">
-                            {order.createdAt ? formatDate(order.createdAt, "dd/MM/yyyy HH:mm") : "N/A"}
+                            {order.createdAt ? formatDateTime(order.createdAt) : "N/A"}
                           </Text>
                         </Td>
                         <Td>

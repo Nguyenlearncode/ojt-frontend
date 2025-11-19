@@ -40,7 +40,6 @@ import {
   type UpdateMedicalRecordRequest,
   type ViewMedicalRecordDetailResponse,
 } from "../hooks/usePatientMedicalRecords";
-import { formatDate } from "../../../utils/formatDate";
 
 interface Props {
   isOpen: boolean;
@@ -186,7 +185,7 @@ const UpdateMedicalRecordModal: React.FC<Props> = ({
           </HStack>
         </ModalHeader>
         <ModalCloseButton color="white" size="lg" _hover={{ bg: "whiteAlpha.200" }} />
-        <ModalBody p={8} bg="gray.50">
+        <ModalBody p={8} bg={bgColor}>
           {loadingDetail ? (
             <VStack spacing={4} py={8}>
               <Spinner size="xl" color="blue.500" />
@@ -390,7 +389,7 @@ const UpdateMedicalRecordModal: React.FC<Props> = ({
             </MotionBox>
           )}
         </ModalBody>
-        <ModalFooter bg="gray.50" borderTop="1px" borderColor="gray.200">
+        <ModalFooter bg={bgColor} borderTop="1px" borderColor="gray.200">
           <HStack spacing={4}>
             <Button
               leftIcon={<FiX />}

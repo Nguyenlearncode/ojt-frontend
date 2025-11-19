@@ -65,7 +65,6 @@ const FlaggingSetManagementPage: React.FC = () => {
   };
 
   const accentBg = useColorModeValue("purple.500", "purple.300");
-  const accentSoft = useColorModeValue("purple.400", "purple.200");
   const cardBg = useColorModeValue("white", "gray.800");
   const subText = useColorModeValue("gray.600", "gray.300");
 

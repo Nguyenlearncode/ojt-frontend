@@ -50,7 +50,9 @@ const UserManagementPageChakra: React.FC = () => {
         user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.phoneNumber?.includes(searchTerm);
 
-      const matchesRole = roleFilter === "" || user.role?.roleName === roleFilter;
+      const matchesRole =
+  roleFilter === "" || user.role?.roleCode === roleFilter;
+
       const matchesGender = genderFilter === "" || user.gender === genderFilter;
 
       return matchesSearch && matchesRole && matchesGender;
