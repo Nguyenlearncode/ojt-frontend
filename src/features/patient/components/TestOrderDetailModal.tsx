@@ -550,84 +550,84 @@ const TestOrderDetailModal: React.FC<Props> = ({
 
           {/* FOOTER */}
           <ModalFooter bg="gray.50" borderTopWidth="1px">
-  <HStack spacing={3} flexWrap="wrap">
+            <HStack spacing={3} flexWrap="wrap">
 
-    {/* Nhập kết quả */}
-    {detail?.testOrder &&
-      detail.testOrder.status?.toLowerCase() === "pending" && (
-        <Button
-          leftIcon={<FiActivity />}
-          colorScheme="green"
-          onClick={onCreateResultOpen}
-        >
-          Nhập kết quả
-        </Button>
-      )}
+              {/* Nhập kết quả */}
+              {detail?.testOrder &&
+                detail.testOrder.status?.toLowerCase() === "pending" && (
+                  <Button
+                    leftIcon={<FiActivity />}
+                    colorScheme="green"
+                    onClick={onCreateResultOpen}
+                  >
+                    Nhập kết quả
+                  </Button>
+                )}
 
-    {/* Hủy đơn */}
-    {detail?.testOrder?.status?.toLowerCase() !== "complete" && (
-      <Button
-        leftIcon={<FiTrash2 />}
-        colorScheme="red"
-        onClick={handleDeleteClick}
-      >
-        Hủy đơn
-      </Button>
-    )}
+              {/* Hủy đơn */}
+              {detail?.testOrder?.status?.toLowerCase() !== "complete" && (
+                <Button
+                  leftIcon={<FiTrash2 />}
+                  colorScheme="red"
+                  onClick={handleDeleteClick}
+                >
+                  Hủy đơn
+                </Button>
+              )}
 
-    {/* REVIEW ĐƠN */}
-    <Button
-      leftIcon={<FiActivity />}
-      colorScheme="purple"
-      variant="solid"
-      onClick={async () => {
-        try {
-          await reviewTestOrder(testOrderId);
-          await loadDetail();
-          onSuccess?.();
-        } catch {}
-      }}
-    >
-      Review đơn
-    </Button>
+              {/* REVIEW ĐƠN */}
+              <Button
+                leftIcon={<FiActivity />}
+                colorScheme="purple"
+                variant="solid"
+                onClick={async () => {
+                  try {
+                    await reviewTestOrder(testOrderId);
+                    await loadDetail();
+                    onSuccess?.();
+                  } catch { }
+                }}
+              >
+                Xác nhận kết quả
+              </Button>
 
-    {/* Thêm bình luận */}
-    <Button
-      leftIcon={<FiMessageSquare />}
-      variant="outline"
-      onClick={onCommentModalOpen}
-    >
-      Thêm bình luận
-    </Button>
+              {/* Thêm bình luận */}
+              <Button
+                leftIcon={<FiMessageSquare />}
+                variant="outline"
+                onClick={onCommentModalOpen}
+              >
+                Thêm bình luận
+              </Button>
 
-    {/* Menu Thao tác khác */}
-    <Menu>
-      <MenuButton
-        as={IconButton}
-        icon={<FiMoreVertical />}
-        variant="outline"
-        aria-label="Thao tác khác"
-      />
-      <MenuList>
-        <MenuItem icon={<FiEdit />} onClick={onModifyModalOpen}>
-          Chỉnh sửa đơn
-        </MenuItem>
+              {/* Menu Thao tác khác */}
+              <Menu>
+                <MenuButton
+                  as={IconButton}
+                  icon={<FiMoreVertical />}
+                  variant="outline"
+                  aria-label="Thao tác khác"
+                />
+                <MenuList>
+                  <MenuItem icon={<FiEdit />} onClick={onModifyModalOpen}>
+                    Chỉnh sửa đơn
+                  </MenuItem>
 
-        <MenuItem icon={<FiRefreshCw />} onClick={onSyncResultOpen}>
-          Đồng bộ kết quả
-        </MenuItem>
+                  <MenuItem icon={<FiRefreshCw />} onClick={onSyncResultOpen}>
+                    Đồng bộ kết quả
+                  </MenuItem>
 
-        <MenuItem icon={<FiUpload />} onClick={handleExportExcel}>
-          Xuất Excel
-        </MenuItem>
+                  <MenuItem icon={<FiUpload />} onClick={handleExportExcel}>
+                    Xuất Excel
+                  </MenuItem>
 
-        <MenuItem icon={<FiPrinter />} onClick={handleDownloadPdf}>
-          In PDF
-        </MenuItem>
-      </MenuList>
-    </Menu>
-  </HStack>
-</ModalFooter>
+                  <MenuItem icon={<FiPrinter />} onClick={handleDownloadPdf}>
+                    In PDF
+                  </MenuItem>
+                </MenuList>
+              </Menu>
+            </HStack>
+          </ModalFooter>
 
         </ModalContent>
       </Modal>

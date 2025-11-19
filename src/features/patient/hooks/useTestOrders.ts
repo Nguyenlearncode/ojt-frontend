@@ -309,9 +309,10 @@ const reviewTestOrder = async (
   try {
     const user = getUserInfo();
     const payload = {
-      reviewedBy: user?.sub || "Unknown",
-      resultUpdates: resultUpdates ?? null,
-    };
+  reviewedBy: user?.sub ?? null,
+  resultUpdates: resultUpdates ?? null,
+};
+
 
     await testOrderApi.reviewTestOrder(testOrderId, payload);
 
