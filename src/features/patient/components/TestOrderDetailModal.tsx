@@ -495,7 +495,7 @@ const TestOrderDetailModal: React.FC<Props> = ({
                           borderRadius="md"
                         >
                           <Text fontSize="sm" color="gray.600">
-                            {c.createdBy || "Unknown"} -{" "}
+                            {c.userName || "Unknown"} -{" "}
                             {formatDate(c.createdAt, "dd/MM/yyyy HH:mm")}
                           </Text>
                           <Text>{c.content}</Text>

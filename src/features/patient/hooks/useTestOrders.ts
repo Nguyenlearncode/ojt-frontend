@@ -49,7 +49,6 @@ export interface TestResultDetailDto {
 export interface TestOrderCommentDto {
   commentId: string;
   content: string;
-  createdBy?: string;
   userName?: string;
   createdAt: string;
   updatedAt?: string;
