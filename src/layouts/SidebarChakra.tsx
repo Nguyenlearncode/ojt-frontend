@@ -1,3 +1,4 @@
+// src/layouts/SidebarChakra.tsx
 import React, { useState, useEffect } from "react";
 import { Box } from "@chakra-ui/react";
 import { motion } from "framer-motion";

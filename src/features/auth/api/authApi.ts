@@ -1,4 +1,3 @@
-// src/features/auth/api/authApi.ts
 import axiosAuth from "../../../api/axiosAuth";
 import axiosClient from "../../../api/axiosClient";
 
@@ -32,34 +31,26 @@ interface ChangePasswordRequest {
 }
 
 export const authApi = {
-  // 🔐 Đăng nhập
   login: async (data: LoginRequest): Promise<LoginResponse> => {
     const res = await axiosAuth.post("/auth/login", data);
     return res.data.data;
   },
 
-  // 🔄 Làm mới AccessToken
   refresh: async (refreshToken: string, accessToken?: string): Promise<RefreshResponse> => {
-    const body = {
-      refreshToken,
-      accessToken, // optional
-    };
+    const body = { refreshToken, accessToken };
     const res = await axiosAuth.post("/auth/refresh", body);
     return res.data.data;
   },
 
-  // 🔑 Quên mật khẩu
   forgotPassword: async (data: ForgotPasswordRequest): Promise<void> => {
     await axiosAuth.post("/auth/forgetPassword", data);
   },
 
-  // 🔄 Reset mật khẩu từ token
   resetPassword: async (data: ResetPasswordRequest): Promise<void> => {
     await axiosAuth.post("/auth/resetPassword", data);
   },
 
-  // 🔐 Đổi mật khẩu (yêu cầu đăng nhập)
   changePassword: async (data: ChangePasswordRequest): Promise<void> => {
-    await axiosClient.post("/auth/changePassword", data);
+    await axiosClient.post("/iam/auth/changePassword", data);
   },
 };

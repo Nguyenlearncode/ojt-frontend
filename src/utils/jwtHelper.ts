@@ -19,16 +19,43 @@ interface JwtPayload {
 
 export const decodeToken = (token: string): JwtPayload | null => {
   try {
+    // Validate token format (JWT có 3 parts separated by dots)
+    if (!token || typeof token !== 'string') {
+      return null;
+    }
+    
+    const parts = token.split('.');
+    if (parts.length !== 3) {
+      return null;
+    }
+    
+    // Try to decode
     return jwtDecode<JwtPayload>(token);
-  } catch (error) {
+  } catch (error: any) {
+    // Nếu token không hợp lệ, clear nó khỏi localStorage
+    if (error?.message?.includes('Base-64') || error?.message?.includes('Invalid token')) {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+    }
     return null;
   }
 };
 
 export const getUserInfo = () => {
-  const token = localStorage.getItem('accessToken');
-  if (!token) return null;
-  return decodeToken(token);
+  try {
+    const token = localStorage.getItem('accessToken');
+    if (!token) return null;
+    
+    // Validate token trước khi decode
+    if (token.trim() === '') {
+      localStorage.removeItem('accessToken');
+      return null;
+    }
+    
+    return decodeToken(token);
+  } catch (error) {
+    return null;
+  }
 };
 
 export const getUserPrivileges = (): PrivilegeInfo[] => {
@@ -64,7 +91,6 @@ export const getUserPrivileges = (): PrivilegeInfo[] => {
     
     return [];
   } catch (error) {
-    console.error('Error parsing privileges:', error);
     return [];
   }
 };

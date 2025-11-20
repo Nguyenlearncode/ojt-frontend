@@ -1,10 +1,13 @@
-// src/features/user/api/userApi.ts
-
 import axiosClient from "../../../api/axiosClient";
-import type { AxiosResponse } from "axios";
+
 
 export interface Role {
   roleName: string;
+}
+
+export interface Role {
+  roleName: string;
+  roleCode: string;
 }
 
 export interface User {
@@ -33,17 +36,8 @@ export interface CreateUserPayload {
   dateOfBirth: string;
 }
 
-export interface CreateUserResult {
+export interface CreateUserResult extends CreateUserPayload {
   userId: string;
-  roleCode: string;
-  email: string;
-  phoneNumber: string;
-  fullName: string;
-  identifyNumber: string;
-  gender: string;
-  age: number;
-  address: string;
-  dateOfBirth: string;
 }
 
 export interface ApiResponse<T> {
@@ -53,39 +47,54 @@ export interface ApiResponse<T> {
   responsedAt: string;
 }
 
-// Gọi API lấy danh sách user
 export const userApi = {
   getAllUsers: async (): Promise<User[]> => {
-    const response: AxiosResponse<any> = await axiosClient.get("/users/getalluser");
-    return response.data || [];
+    // axiosClient interceptor đã return response.data, nên response đã là data rồi
+    // Backend trả về ApiResponse<IEnumerable<UserDTO>>, nên response có cấu trúc:
+    // { statusCode, message, data: [...users...], responsedAt }
+    const response: any = await axiosClient.get("/iam/users/getalluser");
+    // Nếu response là array (đã unwrap), return luôn
+    if (Array.isArray(response)) {
+      return response;
+    }
+    // Nếu response có cấu trúc ApiResponse, lấy data
+    return response?.data || [];
   },
 
   getUserById: async (userId: string): Promise<User> => {
-    const response: any = await axiosClient.get(`/users/${userId}`);
-    return response.data;
+    // axiosClient interceptor đã return response.data
+    const response: any = await axiosClient.get(`/iam/users/${userId}`);
+    // Nếu response đã là User object, return luôn
+    if (response?.userId) {
+      return response;
+    }
+    // Nếu response có cấu trúc ApiResponse, lấy data
+    return response?.data;
   },
 
-  async lockUser(userId: string) {
-    return axiosClient.post(`/users/${userId}/lock`);
-  },
+  lockUser: async (userId: string) => axiosClient.post(`/iam/users/${userId}/lock`),
 
-  async unlockUser(userId: string) {
-    return axiosClient.post(`/users/${userId}/unlock`);
-  },
+  unlockUser: async (userId: string) => axiosClient.post(`/iam/users/${userId}/unlock`),
 
-  // 🔹 Xóa vĩnh viễn (API mới)
   deleteUserPermanently: async (userId: string): Promise<void> => {
-    await axiosClient.delete(`/users/${userId}/permanent`);
+    await axiosClient.delete(`/iam/users/${userId}/permanent`);
   },
 
-  async createUser(data: CreateUserPayload) {
-    const res: AxiosResponse<any> = await axiosClient.post("/users/create", data);
-    return res.data;
+  createUser: async (data: CreateUserPayload) => {
+    // axiosClient interceptor đã return response.data
+    const res: any = await axiosClient.post("/iam/users/create", data);
+    // Nếu res đã là CreateUserResultDto, return luôn
+    if (res?.userId) {
+      return res;
+    }
+    // Nếu res có cấu trúc ApiResponse, lấy data
+    return res?.data;
   },
 
   updateUser: async (userId: string, data: any) => {
-    const res = await axiosClient.put(`/users/${userId}`, data);
-    return res.data;
+    // axiosClient interceptor đã return response.data
+    const res: any = await axiosClient.put(`/iam/users/${userId}`, data);
+    // Nếu res đã là object, return luôn
+    return res?.data || res;
   },
 };
-

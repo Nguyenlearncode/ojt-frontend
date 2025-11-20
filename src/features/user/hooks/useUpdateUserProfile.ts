@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { userApi } from "../api/userApi";
-import axiosClient from "../../../api/axiosClient";
 import { normalizeDateForApi } from "../../../utils/formatDate";
 import { calcAge } from "../../../utils/calcAge"; // ✅ dùng chung
 
@@ -124,7 +123,8 @@ export const useUpdateUserProfile = () => {
         phoneNumber: formData.phoneNumber,
       };
 
-      await axiosClient.put(`/users/${formData.userId}`, payload);
+      await userApi.updateUser(formData.userId, payload);
+
       toast.success("✅ Cập nhật thông tin thành công!");
       navigate(-1);
     } catch (err: any) {

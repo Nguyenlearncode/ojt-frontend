@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Input,
@@ -14,6 +14,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { FiSearch, FiUsers, FiX } from "react-icons/fi";
 import { BsGenderMale, BsGenderFemale } from "react-icons/bs";
+import { roleApi } from "../../role/api/roleApi"; 
 
 const MotionBox = motion(Box);
 const MotionButton = motion(Button);
@@ -26,14 +27,6 @@ interface SearchFilterChakraProps {
   genderFilter: string;
   onGenderFilterChange: (value: string) => void;
 }
-
-const roles = [
-  { value: "Administrator", label: "Administrator", color: "purple" },
-  { value: "Lab Manager", label: "Lab Manager", color: "blue" },
-  { value: "Service", label: "Service", color: "green" },
-  { value: "Lab User", label: "Lab User", color: "orange" },
-  { value: "Custom Role", label: "Custom Role", color: "pink" },
-];
 
 const genders = [
   { value: "Male", label: "Nam", icon: BsGenderMale, color: "blue" },
@@ -52,15 +45,36 @@ const SearchFilterChakra: React.FC<SearchFilterChakraProps> = ({
   const [showGenders, setShowGenders] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
 
+  // ⬇️ ROLE LIST TỪ API
+  const [roles, setRoles] = useState<
+    { value: string; label: string; color: string }[]
+  >([]);
+
+  // Load roles từ API
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const data = await roleApi.getAllRoles();
+
+        setRoles(
+          data.map((role, index) => ({
+            value: role.roleCode,
+            label: role.roleName,
+            color: ["purple", "blue", "green", "orange", "pink", "teal", "red"][index % 7],
+          }))
+        );
+      } catch (error) {
+        console.error("⚠️ Failed to fetch roles:", error);
+      }
+    };
+
+    fetchRoles();
+  }, []);
+
   const activeFiltersCount = [roleFilter, genderFilter].filter(Boolean).length;
 
   return (
-    <MotionBox
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      mb={6}
-    >
+    <MotionBox initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} mb={6}>
       <Box
         bg="white"
         p={6}
@@ -71,8 +85,8 @@ const SearchFilterChakra: React.FC<SearchFilterChakraProps> = ({
         border="1px"
         borderColor="gray.100"
       >
-        {/* Animated background gradient */}
-        <Box
+        {/* gradient background */}
+        <MotionBox
           position="absolute"
           top="-50%"
           right="-10%"
@@ -82,24 +96,14 @@ const SearchFilterChakra: React.FC<SearchFilterChakraProps> = ({
           opacity={0.15}
           borderRadius="full"
           filter="blur(60px)"
-          as={motion.div}
-          animate={{
-            scale: [1, 1.3, 1],
-            rotate: [0, 180, 360],
-          }}
-          // @ts-ignore - Framer Motion transition prop
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: "linear",
-          }}
+          animate={{ scale: [1, 1.3, 1], rotate: [0, 180, 360] }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
         />
 
         <VStack spacing={5} align="stretch" position="relative" zIndex={1}>
-          {/* Filter Section */}
           <Box>
             <Flex gap={3} mb={3} align="center" flexWrap="wrap">
-              {/* Modern Neumorphic Search Box */}
+              {/* Search Box */}
               <MotionBox
                 bg="white"
                 h="40px"
@@ -107,35 +111,31 @@ const SearchFilterChakra: React.FC<SearchFilterChakraProps> = ({
                 px={4}
                 py={2}
                 display="flex"
-                justifyContent="flex-start"
                 alignItems="center"
                 cursor="pointer"
-                boxShadow="4px 4px 6px 0 rgba(255,255,255,.3), -4px -4px 6px 0 rgba(116, 125, 136, .2), inset -4px -4px 6px 0 rgba(255,255,255,.2), inset 4px 4px 6px 0 rgba(0, 0, 0, .2)"
+                boxShadow="4px 4px 6px 0 rgba(255,255,255,.3), -4px -4px 6px rgba(116,125,136,.2), inset -4px -4px 6px rgba(255,255,255,.2), inset 4px 4px 6px rgba(0,0,0,.2)"
                 onMouseEnter={() => setIsSearchFocused(true)}
                 onMouseLeave={() => !searchTerm && setIsSearchFocused(false)}
-                whileHover={{
-                  skewX: [0, 5, -5, 5, -5, 0],
-                }}
-                // @ts-ignore
+                whileHover={{ skewX: [0, 5, -5, 5, -5, 0] }}
                 transition={{ duration: 0.45, ease: "linear" }}
                 minW="50px"
               >
-                <Box
-                  as={motion.div}
+                <MotionBox
                   mr={isSearchFocused || searchTerm ? 2 : 0}
                   animate={{
                     rotate: searchTerm ? 360 : 0,
                     scale: isSearchFocused ? [1, 1.2, 1] : 1,
                   }}
-                  // @ts-ignore
                   transition={{ duration: 0.5 }}
+                  display="inline-block"
                 >
                   <Icon as={FiSearch} color="#5cbdbb" boxSize={5} />
-                </Box>
-              <Input
-                  placeholder="Search..."
-                value={searchTerm}
-                onChange={(e) => onSearchChange(e.target.value)}
+                </MotionBox>
+
+                <Input
+                  placeholder="Tìm kiếm theo tên/email/sđt"
+                  value={searchTerm}
+                  onChange={(e) => onSearchChange(e.target.value)}
                   onFocus={() => setIsSearchFocused(true)}
                   onBlur={() => !searchTerm && setIsSearchFocused(false)}
                   bg="transparent"
@@ -145,22 +145,14 @@ const SearchFilterChakra: React.FC<SearchFilterChakraProps> = ({
                   fontWeight="500"
                   fontSize="15px"
                   transition="width 0.8s"
-                  _placeholder={{
-                    color: "gray.400",
-                  }}
-                _focus={{
-                    boxShadow: "none",
-                    border: "none",
-                  }}
                   px={isSearchFocused || searchTerm ? 2 : 0}
+                  _focus={{ boxShadow: "none", border: "none" }}
                 />
               </MotionBox>
 
-              <Text fontSize="sm" fontWeight="600" color="gray.600">
-                Lọc theo:
-              </Text>
-              
-              {/* Role Filter Toggle */}
+              <Text fontSize="sm" fontWeight="600" color="gray.600">Lọc theo:</Text>
+
+              {/* Role Filter */}
               <MotionButton
                 size="sm"
                 variant={showRoles ? "solid" : "outline"}
@@ -173,14 +165,10 @@ const SearchFilterChakra: React.FC<SearchFilterChakraProps> = ({
                 boxShadow={showRoles ? "md" : "sm"}
               >
                 Vai trò
-                {roleFilter && (
-                  <Badge ml={2} colorScheme="purple" variant="solid">
-                    1
-                  </Badge>
-                )}
+                {roleFilter && <Badge ml={2} colorScheme="purple" variant="solid">1</Badge>}
               </MotionButton>
 
-              {/* Gender Filter Toggle */}
+              {/* Gender Filter */}
               <MotionButton
                 size="sm"
                 variant={showGenders ? "solid" : "outline"}
@@ -193,14 +181,10 @@ const SearchFilterChakra: React.FC<SearchFilterChakraProps> = ({
                 boxShadow={showGenders ? "md" : "sm"}
               >
                 Giới tính
-                {genderFilter && (
-                  <Badge ml={2} colorScheme="pink" variant="solid">
-                    1
-                  </Badge>
-                )}
+                {genderFilter && <Badge ml={2} colorScheme="pink" variant="solid">1</Badge>}
               </MotionButton>
 
-              {/* Clear All Filters */}
+              {/* Clear Filters */}
               <AnimatePresence>
                 {activeFiltersCount > 0 && (
                   <MotionButton
@@ -224,7 +208,7 @@ const SearchFilterChakra: React.FC<SearchFilterChakraProps> = ({
               </AnimatePresence>
             </Flex>
 
-            {/* Role Pills */}
+            {/* ROLE PILLS */}
             <AnimatePresence>
               {showRoles && (
                 <MotionBox
@@ -234,16 +218,11 @@ const SearchFilterChakra: React.FC<SearchFilterChakraProps> = ({
                   transition={{ duration: 0.3 }}
                   mb={3}
                 >
-                  <Box
-                    p={4}
-                    bg="purple.50"
-                    borderRadius="xl"
-                    border="1px"
-                    borderColor="purple.100"
-                  >
+                  <Box p={4} bg="purple.50" borderRadius="xl" border="1px" borderColor="purple.100">
                     <Text fontSize="xs" fontWeight="600" color="purple.700" mb={2}>
                       CHỌN VAI TRÒ
                     </Text>
+
                     <Wrap spacing={2}>
                       {roles.map((role, index) => (
                         <WrapItem key={role.value}>
@@ -252,9 +231,7 @@ const SearchFilterChakra: React.FC<SearchFilterChakraProps> = ({
                             variant={roleFilter === role.value ? "solid" : "outline"}
                             colorScheme={role.color}
                             onClick={() =>
-                              onRoleFilterChange(
-                                roleFilter === role.value ? "" : role.value
-                              )
+                              onRoleFilterChange(roleFilter === role.value ? "" : role.value)
                             }
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
@@ -270,12 +247,12 @@ const SearchFilterChakra: React.FC<SearchFilterChakraProps> = ({
                         </WrapItem>
                       ))}
                     </Wrap>
-            </Box>
+                  </Box>
                 </MotionBox>
               )}
             </AnimatePresence>
 
-            {/* Gender Pills */}
+            {/* GENDER PILLS */}
             <AnimatePresence>
               {showGenders && (
                 <MotionBox
@@ -284,16 +261,11 @@ const SearchFilterChakra: React.FC<SearchFilterChakraProps> = ({
                   exit={{ opacity: 0, height: 0 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <Box
-                    p={4}
-                    bg="pink.50"
-                    borderRadius="xl"
-                    border="1px"
-                    borderColor="pink.100"
-                  >
+                  <Box p={4} bg="pink.50" borderRadius="xl" border="1px" borderColor="pink.100">
                     <Text fontSize="xs" fontWeight="600" color="pink.700" mb={2}>
                       CHỌN GIỚI TÍNH
                     </Text>
+
                     <Wrap spacing={3}>
                       {genders.map((gender, index) => (
                         <WrapItem key={gender.value}>
@@ -326,7 +298,7 @@ const SearchFilterChakra: React.FC<SearchFilterChakraProps> = ({
                 </MotionBox>
               )}
             </AnimatePresence>
-            </Box>
+          </Box>
         </VStack>
       </Box>
     </MotionBox>
@@ -334,4 +306,3 @@ const SearchFilterChakra: React.FC<SearchFilterChakraProps> = ({
 };
 
 export default SearchFilterChakra;
-

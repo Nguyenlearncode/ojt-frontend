@@ -199,7 +199,7 @@ const CreateUserChakra: React.FC = () => {
                 <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
                   {/* Giới tính */}
                   <FormControl isRequired>
-                    <FormLabel>Giới tính</FormLabel>
+                    
                     <GenderSelect
                       value={formData.gender}
                       onChange={(value) => setFormData({ ...formData, gender: value })}
