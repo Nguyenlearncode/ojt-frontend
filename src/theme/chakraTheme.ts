@@ -89,11 +89,20 @@ const fonts = {
 const styles = {
   global: {
     body: {
-      bg: 'gray.50',
-      color: 'gray.800',
+      bg: 'transparent !important',
+      color: 'inherit !important',
+      margin: 0,
+      padding: 0,
+      lineHeight: "normal",
     },
+    "*": {
+      margin: 0,
+      padding: 0,
+      boxSizing: "border-box",
+    }
   },
 };
+
 
 const components = {
   Button: {

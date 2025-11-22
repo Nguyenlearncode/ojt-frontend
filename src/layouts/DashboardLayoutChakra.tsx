@@ -1,33 +1,28 @@
 import React, { useState } from "react";
-import { Box } from "@chakra-ui/react";
 import SidebarChakra from "./SidebarChakra";
 import ParticlesBackground from "../components/common/ParticlesBackground";
 
-interface DashboardLayoutChakraProps {
-  children: React.ReactNode;
-}
-
-const DashboardLayoutChakra: React.FC<DashboardLayoutChakraProps> = ({ children }) => {
+export default function DashboardLayoutChakra({ children }: { children?: React.ReactNode }) {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
 
   return (
-    <Box display="flex" minH="100vh" position="relative" overflow="hidden">
-      {/* Particles Background */}
-      <ParticlesBackground />
+    <div style={{ display: "flex", minHeight: "100vh", position: "relative", overflow: "hidden" }}>
       
+      <ParticlesBackground />
+
       <SidebarChakra onToggle={setIsSidebarExpanded} />
-      <Box
-        ml={isSidebarExpanded ? "250px" : "80px"}
-        w="full"
-        transition="margin-left 0.3s ease"
-        position="relative"
-        zIndex={1}
+
+      <div
+        style={{
+          marginLeft: isSidebarExpanded ? "250px" : "80px",
+          width: "100%",
+          transition: "margin-left 0.3s ease",
+          position: "relative",
+          zIndex: 1,
+        }}
       >
         {children}
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
-};
-
-export default DashboardLayoutChakra;
-
+}

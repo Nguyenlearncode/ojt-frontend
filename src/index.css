@@ -1,3 +1,7 @@
+/* //src/styles/index.css */
+@import "./tailwind.css";
+
+
 html, body {
   overflow-y: auto;           /* vẫn cho phép cuộn dọc */
   overflow-x: hidden;         /* ẩn cuộn ngang */
@@ -9,6 +13,47 @@ html::-webkit-scrollbar,
 body::-webkit-scrollbar {
   display: none;
 }
+
+.swiper-button-next,
+.swiper-button-prev {
+  background: none !important;          /* bỏ nền đen */
+  color: white !important;              /* icon màu trắng */
+  width: auto !important;               /* giữ kích thước icon */
+  height: auto !important;
+  padding: 20px !important;             /* tăng vùng click */
+  border-radius: 0 !important;
+  text-shadow: 0 0 6px rgba(0,0,0,0.6); /* tăng độ sáng */
+}
+
+/* Hover icon sáng hơn */
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  color: #ffffff !important;
+  text-shadow: 0 0 12px rgba(255,255,255,0.9);
+}
+
+/* ===== FIX: Swiper default arrow (SVG) ===== */
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  font-size: 32px !important;           /* tăng kích thước */
+  font-weight: bold !important;
+}
+
+/* ===== SWIPER PAGINATION DOTS ===== */
+.swiper-pagination-bullet {
+  background: rgba(255, 255, 255, 0.345) !important;
+  opacity: 1 !important;
+  width: 8px;
+  height: 8px;
+  transition: 0.25s ease;
+}
+
+.swiper-pagination-bullet-active {
+  background: #ffffff !important;             /* chấm active sáng hơn */
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.9);
+  transform: scale(1.2);
+}
+
 
 #root {
   overflow: visible;
