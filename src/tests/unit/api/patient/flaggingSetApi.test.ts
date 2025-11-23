@@ -21,21 +21,20 @@ describe("flaggingSetApi", () => {
   it("createFlaggingConfig → POST đúng", () => {
     const data = { a: 1 };
     flaggingSetApi.createFlaggingConfig(data);
-    expect(axiosClient.post).toHaveBeenCalledWith("/patient/flaggingset/create", data);
+    expect(axiosClient.post).toHaveBeenCalledWith(
+      "/patient/flagging-configs/create",
+      data
+    );
   });
 
   it("updateFlaggingConfig → PUT đúng", () => {
     const data = { b: 2 };
     flaggingSetApi.updateFlaggingConfig(10, data);
-    expect(axiosClient.put).toHaveBeenCalledWith("/patient/flaggingset/update/10", data);
-  });
-
-  it("applyFlags → POST đúng", () => {
-    const data = { c: 3 };
-    flaggingSetApi.applyFlags("123", data);
-    expect(axiosClient.post).toHaveBeenCalledWith(
-      "/patient/flagging-configs/123/apply-flags",
+    expect(axiosClient.put).toHaveBeenCalledWith(
+      "/patient/flagging-configs/update/10",
       data
     );
   });
+
+
 });

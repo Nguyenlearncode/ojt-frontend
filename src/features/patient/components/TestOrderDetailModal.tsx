@@ -38,6 +38,7 @@ import {
   MenuList,
   MenuItem,
   IconButton,
+  useToast,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import {
@@ -58,11 +59,13 @@ import {
   type TestOrderCommentDto,
 } from "../hooks/useTestOrders";
 import { formatDate } from "../../../utils/formatDate";
-import CreateTestResultModal from "./CreateTestResultModal";
+
 import SyncTestResultModal from "./SyncTestResultModal";
 import ModifyTestOrderModal from "./ModifyTestOrderModal";
 import CommentFormModal from "./CommentFormModal";
 import { useTestOrderComments } from "../hooks/useTestOrderComments";
+import { useTestOrderResults } from "../hooks/useTestOrderResults";
+
 
 interface Props {
   isOpen: boolean;
@@ -82,6 +85,7 @@ const TestOrderDetailModal: React.FC<Props> = ({
   const { getTestOrderDetail, deleteTestOrder, exportTestOrders, printTestOrder, reviewTestOrder } =
     useTestOrders();
 
+  const toast = useToast();
   const [loading, setLoading] = useState(false);
   const [detail, setDetail] =
     useState<ViewPatientTestOrderDetailResult | null>(null);
@@ -94,12 +98,6 @@ const TestOrderDetailModal: React.FC<Props> = ({
     isOpen: isDeleteOpen,
     onOpen: onDeleteOpen,
     onClose: onDeleteClose,
-  } = useDisclosure();
-
-  const {
-    isOpen: isCreateResultOpen,
-    onOpen: onCreateResultOpen,
-    onClose: onCreateResultClose,
   } = useDisclosure();
 
   const {
@@ -136,6 +134,8 @@ const TestOrderDetailModal: React.FC<Props> = ({
     loading: commentLoading,
   } = useTestOrderComments();
 
+  const { createTestOrderResult } = useTestOrderResults();
+
   const [editingComment, setEditingComment] =
     useState<TestOrderCommentDto | null>(null);
 
@@ -170,11 +170,6 @@ const TestOrderDetailModal: React.FC<Props> = ({
     } finally {
       setIsDeleting(false);
     }
-  };
-
-  const handleCreateResultSuccess = async () => {
-    await loadDetail();
-    await onSuccess?.();
   };
 
   const handleSyncResultSuccess = async () => {
@@ -377,6 +372,15 @@ const TestOrderDetailModal: React.FC<Props> = ({
 
                     <Box>
                       <Text fontWeight="600" color="gray.600" fontSize="sm">
+                        Số điện thoại
+                      </Text>
+                      <Text color="gray.800">
+                        {detail.testOrder.phoneNumber || "N/A"}
+                      </Text>
+                    </Box>
+
+                    <Box>
+                      <Text fontWeight="600" color="gray.600" fontSize="sm">
                         Ngày sinh
                       </Text>
                       <Text color="gray.800">
@@ -399,6 +403,68 @@ const TestOrderDetailModal: React.FC<Props> = ({
                         {detail.testOrder.gender === "male" ? "Nam" : "Nữ"}
                       </Text>
                     </Box>
+
+                    <Box>
+                      <Text fontWeight="600" color="gray.600" fontSize="sm">
+                        Người tạo
+                      </Text>
+                      <Text color="gray.800">
+                        {detail.testOrder.createdBy || "N/A"}
+                      </Text>
+                    </Box>
+
+                    <Box>
+                      <Text fontWeight="600" color="gray.600" fontSize="sm">
+                        Ngày tạo
+                      </Text>
+                      <Text color="gray.800">
+                        {formatDate(detail.testOrder.createdAt, "dd/MM/yyyy HH:mm")}
+                      </Text>
+                    </Box>
+
+                    {detail.testOrder.runBy && (
+                      <Box>
+                        <Text fontWeight="600" color="gray.600" fontSize="sm">
+                          Người thực hiện
+                        </Text>
+                        <Text color="gray.800">
+                          {detail.testOrder.runBy}
+                        </Text>
+                      </Box>
+                    )}
+
+                    {detail.testOrder.runOn && (
+                      <Box>
+                        <Text fontWeight="600" color="gray.600" fontSize="sm">
+                          Ngày thực hiện
+                        </Text>
+                        <Text color="gray.800">
+                          {formatDate(detail.testOrder.runOn, "dd/MM/yyyy HH:mm")}
+                        </Text>
+                      </Box>
+                    )}
+
+                    {detail.testOrder.reviewedBy && (
+                      <Box>
+                        <Text fontWeight="600" color="gray.600" fontSize="sm">
+                          Người xác nhận
+                        </Text>
+                        <Text color="gray.800">
+                          {detail.testOrder.reviewedBy}
+                        </Text>
+                      </Box>
+                    )}
+
+                    {detail.testOrder.reviewedAt && (
+                      <Box>
+                        <Text fontWeight="600" color="gray.600" fontSize="sm">
+                          Ngày xác nhận
+                        </Text>
+                        <Text color="gray.800">
+                          {formatDate(detail.testOrder.reviewedAt, "dd/MM/yyyy HH:mm")}
+                        </Text>
+                      </Box>
+                    )}
                   </SimpleGrid>
                 </MotionBox>
 
@@ -552,16 +618,42 @@ const TestOrderDetailModal: React.FC<Props> = ({
           <ModalFooter bg="gray.50" borderTopWidth="1px">
             <HStack spacing={3} flexWrap="wrap">
 
-              {/* Nhập kết quả */}
+              {/* Tiến hành xét nghiệm */}
               {detail?.testOrder &&
                 detail.testOrder.status?.toLowerCase() === "pending" && (
-                  <Button
-                    leftIcon={<FiActivity />}
-                    colorScheme="green"
-                    onClick={onCreateResultOpen}
-                  >
-                    Nhập kết quả
-                  </Button>
+                <Button
+                  leftIcon={<FiActivity />}
+                  colorScheme="green"
+                  onClick={async () => {
+                    try {
+                      const pid =
+                        detail?.testOrder?.patientId ??
+                        null;
+
+                      if (!pid) {
+                        toast({
+                          title: "Không thể tạo kết quả",
+                          description: "Không tìm thấy patientId từ backend.",
+                          status: "error",
+                        });
+                        return;
+                      }
+
+                      await createTestOrderResult({
+                        patientId: pid,
+                        testOrderId,
+                      });
+
+                      await loadDetail();
+                      onSuccess?.();
+                    } catch { }
+                  }}
+                  isLoading={loading}
+                  loadingText="Đang xử lý..."
+                >
+                  Tiến hành xét nghiệm
+                </Button>
+
                 )}
 
               {/* Hủy đơn */}
@@ -575,21 +667,23 @@ const TestOrderDetailModal: React.FC<Props> = ({
                 </Button>
               )}
 
-              {/* REVIEW ĐƠN */}
-              <Button
-                leftIcon={<FiActivity />}
-                colorScheme="purple"
-                variant="solid"
-                onClick={async () => {
-                  try {
-                    await reviewTestOrder(testOrderId);
-                    await loadDetail();
-                    onSuccess?.();
-                  } catch { }
-                }}
-              >
-                Xác nhận kết quả
-              </Button>
+              {/* REVIEW ĐƠN - Chỉ hiển thị khi status là Complete */}
+              {detail?.testOrder?.status?.toLowerCase() === "complete" && (
+                <Button
+                  leftIcon={<FiActivity />}
+                  colorScheme="purple"
+                  variant="solid"
+                  onClick={async () => {
+                    try {
+                      await reviewTestOrder(testOrderId);
+                      await loadDetail();
+                      onSuccess?.();
+                    } catch { }
+                  }}
+                >
+                  Xác nhận kết quả
+                </Button>
+              )}
 
               {/* Thêm bình luận */}
               <Button
@@ -661,16 +755,6 @@ const TestOrderDetailModal: React.FC<Props> = ({
         </AlertDialogOverlay>
       </AlertDialog>
 
-      {/* CREATE RESULT */}
-      {detail?.testOrder && (
-        <CreateTestResultModal
-          isOpen={isCreateResultOpen}
-          onClose={onCreateResultClose}
-          testOrderId={testOrderId}
-          patientId={detail.testOrder.patientId}
-          onSuccess={handleCreateResultSuccess}
-        />
-      )}
 
       {/* SYNC RESULT */}
       {detail?.testOrder && (

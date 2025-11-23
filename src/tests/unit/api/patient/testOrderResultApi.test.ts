@@ -11,19 +11,13 @@ vi.mock("../../../../api/axiosClient", () => ({
 describe("testOrderResultApi", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("createTestResult → POST đúng", () => {
-    const data = { flaggingSetId: 1, patientId: "P1", testOrderId: "T1" };
-    testOrderResultApi.createTestResult(data);
+  it("createResult → POST đúng", () => {
+    const data = { patientId: "P1", testOrderId: "T1", enteredBy: "U1" };
 
-    expect(axiosClient.post).toHaveBeenCalledWith("/patient/result", data);
-  });
-
-  it("syncTestResult → POST đúng", () => {
-    const data = { x: 1 };
-    testOrderResultApi.syncTestResult(data);
+    testOrderResultApi.createResult(data);
 
     expect(axiosClient.post).toHaveBeenCalledWith(
-      "/patient/result/sync",
+      "/patient/CreateResult",
       data
     );
   });

@@ -35,6 +35,8 @@ export interface TestOrderDetailDto {
   createdAt: string;
   runBy?: string;
   runOn?: string;
+  reviewedBy?: string;
+  reviewedAt?: string;
 }
 
 export interface TestResultDetailDto {
@@ -186,26 +188,6 @@ export const useTestOrders = () => {
     }
   };
 
-  // UPDATE STATUS — Pending | Complete | Cancel
-  const updateTestOrderStatus = async (testOrderId: string, newStatus: string) => {
-    try {
-      await testOrderApi.updateTestOrderStatus(testOrderId, { newStatus });
-
-      toast({
-        title: "Thành công",
-        description: "Trạng thái đơn đã được cập nhật.",
-        status: "success",
-      });
-    } catch (err: any) {
-      toast({
-        title: "Cập nhật thất bại",
-        description:
-          err.response?.data?.message || "Không thể cập nhật trạng thái đơn xét nghiệm.",
-        status: "error",
-      });
-      throw err;
-    }
-  };
 
   // APPLY FLAGGING
   const applyFlagging = async (testOrderId: string) => {
@@ -333,7 +315,6 @@ const reviewTestOrder = async (
 };
 
 
-  // EXPORT HOOK API
   return {
     loading,
     createTestOrder,
@@ -342,7 +323,6 @@ const reviewTestOrder = async (
     getAllTestOrders,
     modifyTestOrder,
     deleteTestOrder,
-    updateTestOrderStatus,
     applyFlagging,
     exportTestOrders,
     printTestOrder,

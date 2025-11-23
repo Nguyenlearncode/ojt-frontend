@@ -42,11 +42,6 @@ describe("testOrderApi", () => {
     expect(axiosClient.patch).toHaveBeenCalledWith("/patient/testorder/modify/T02", data);
   });
 
-  it("updateTestOrderStatus → PATCH đúng", () => {
-    const data = { st: "done" };
-    testOrderApi.updateTestOrderStatus("T03", data);
-    expect(axiosClient.patch).toHaveBeenCalledWith("/patient/testorder/status/T03", data);
-  });
 
   it("deleteTestOrder → DELETE đúng", () => {
     testOrderApi.deleteTestOrder("T04");

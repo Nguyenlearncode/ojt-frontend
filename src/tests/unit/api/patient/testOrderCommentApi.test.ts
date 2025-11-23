@@ -15,26 +15,31 @@ describe("testOrderCommentApi", () => {
 
   it("addComment → POST đúng", () => {
     const data = { content: "hello" };
+
     testOrderCommentApi.addComment("T01", data);
+
     expect(axiosClient.post).toHaveBeenCalledWith(
-      "/patient/test-orders/T01/comments",
+      "/testorder/test-orders/T01/comments",
       data
     );
   });
 
   it("updateComment → PUT đúng", () => {
     const data = { newContent: "updated" };
+
     testOrderCommentApi.updateComment("T01", "C99", data);
+
     expect(axiosClient.put).toHaveBeenCalledWith(
-      "/patient/test-orders/T01/comments/C99",
+      "/testorder/test-orders/T01/comments/C99",
       data
     );
   });
 
   it("deleteComment → DELETE đúng", () => {
     testOrderCommentApi.deleteComment("T01", "C01");
+
     expect(axiosClient.delete).toHaveBeenCalledWith(
-      "/patient/test-orders/T01/comments/C01"
+      "/testorder/test-orders/T01/comments/C01"
     );
   });
 });

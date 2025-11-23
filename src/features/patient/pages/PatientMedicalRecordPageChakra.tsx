@@ -210,34 +210,34 @@ const PatientMedicalRecordPageChakra: React.FC = () => {
             py={{ base: 6, md: 8 }}
             border="1px solid"
             borderColor={blurBorder}
-          >
+        >
             <Flex justify="space-between" align={{ base: "flex-start", md: "center" }} flexWrap="wrap" gap={6}>
               <VStack align="flex-start" spacing={3}>
                 <HStack spacing={4}>
                   <Box bg="purple.500" p={4} borderRadius="xl" color="white" boxShadow="md">
-                    <FiFileText size={28} />
-                  </Box>
-                  <Box>
-                    <Heading
-                      size="xl"
+                  <FiFileText size={28} />
+                </Box>
+                <Box>
+                  <Heading
+                    size="xl"
                       bgGradient="linear(to-r, purple.500, pink.400, orange.300)"
-                      bgClip="text"
-                      fontWeight="extrabold"
-                    >
-                      Quản lý hồ sơ bệnh nhân
-                    </Heading>
+                    bgClip="text"
+                    fontWeight="extrabold"
+                  >
+                    Quản lý hồ sơ bệnh nhân
+                  </Heading>
                     <Text color="gray.600">
                       Theo dõi thông tin bệnh nhân, lịch sử xét nghiệm và hồ sơ y tế
-                    </Text>
-                  </Box>
-                </HStack>
-              </VStack>
+                  </Text>
+                </Box>
+              </HStack>
+            </VStack>
               <MotionBox whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
                 <Button leftIcon={<FiPlus />} variant="gradient" size="lg" onClick={onOpen}>
-                  Tạo hồ sơ mới
-                </Button>
-              </MotionBox>
-            </Flex>
+                Tạo hồ sơ mới
+              </Button>
+            </MotionBox>
+          </Flex>
             <Divider my={6} borderColor="gray.200" />
             <SimpleGrid columns={{ base: 1, sm: 3 }} gap={4}>
               <Stat
@@ -311,7 +311,7 @@ const PatientMedicalRecordPageChakra: React.FC = () => {
               boxShadow="md"
             >
               <Icon as={FiActivity} color="green.500" />
-              <Text fontWeight="semibold">{testedRecords} đơn đã xét nghiệm</Text>
+              <Text fontWeight="semibold">{testedRecords} đơn xét nghiệm</Text>
             </HStack>
           </HStack>
         </Flex>

@@ -56,15 +56,15 @@ const PatientMedicalRecordTable: React.FC<Props> = ({
     <TableContainer>
       <Table variant="simple" size="md">
         <Thead>
-          <Tr>
+            <Tr>
             <Th>Mã bệnh nhân</Th>
             <Th>Họ và tên</Th>
             <Th>Ngày sinh</Th>
-            <Th>Ngày test gần nhất</Th>
+            <Th>Ngày xét nghiệm gần nhất</Th>
             <Th textAlign="center">Thao tác</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
+            </Tr>
+          </Thead>
+          <Tbody>
           {records.map((r, index) => {
             let formattedDateOfBirth = "N/A";
             let formattedLastTestDate = "Chưa có";
@@ -83,15 +83,10 @@ const PatientMedicalRecordTable: React.FC<Props> = ({
               }
             }
 
-            const badgeColor = r.lastTestDate ? "green" : "purple";
-
             return (
               <Tr key={r.patientId || `patient-${index}`} _hover={{ bg: hoverBg }}>
                 <Td>
                   <VStack align="flex-start" spacing={0}>
-                    <Text fontSize="sm" fontWeight="bold" fontFamily="mono">
-                      {r.patientId ? r.patientId.substring(0, 8).toUpperCase() : "N/A"}
-                    </Text>
                     <Text fontSize="xs" color="gray.500">
                       {r.patientId || "Không có ID"}
                     </Text>
@@ -111,9 +106,7 @@ const PatientMedicalRecordTable: React.FC<Props> = ({
                 <Td>
                   <VStack align="flex-start" spacing={1}>
                     <Text fontSize="sm">{formattedLastTestDate}</Text>
-                    <Badge colorScheme={badgeColor} borderRadius="full" px={3}>
-                      {r.lastTestDate ? "Đã xét nghiệm" : "Chưa xét nghiệm"}
-                    </Badge>
+                    
                   </VStack>
                 </Td>
                 <Td>
@@ -159,8 +152,8 @@ const PatientMedicalRecordTable: React.FC<Props> = ({
               </Tr>
             );
           })}
-        </Tbody>
-      </Table>
+          </Tbody>
+        </Table>
     </TableContainer>
   );
 

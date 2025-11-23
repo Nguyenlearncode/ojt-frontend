@@ -107,10 +107,10 @@ const UpdateMedicalRecordModal: React.FC<Props> = ({
           gender: "Male", // Default, sẽ cần lấy từ API nếu có
           phoneNumber: detail.phoneNumber || "",
           userId: detail.patientId,
-          address: "",
-          email: "",
-          identifyNumber: "",
-          lastTestDate: "",
+          address: detail.address || "",
+          email: detail.email || "",
+          identifyNumber: detail.identifyNumber || "",
+          lastTestDate: convertDateForInput(detail.lastTestDate || ""),
         },
         updatedBy: "",
       });
@@ -250,9 +250,7 @@ const UpdateMedicalRecordModal: React.FC<Props> = ({
 
                 {/* Giới tính */}
                 <FormControl isRequired>
-                  <FormLabel fontWeight="600" color="gray.700">
-                    Giới tính
-                  </FormLabel>
+                  
                   <GenderSelect
                     value={form.patient.gender}
                     onChange={(val) =>
@@ -306,7 +304,7 @@ const UpdateMedicalRecordModal: React.FC<Props> = ({
                           patient: { ...form.patient, email: e.target.value },
                         })
                       }
-                      placeholder="Nhập địa chỉ email (tùy chọn)"
+                      placeholder="Nhập địa chỉ email"
                       focusBorderColor="orange.400"
                       bg="white"
                     />
@@ -330,7 +328,7 @@ const UpdateMedicalRecordModal: React.FC<Props> = ({
                           patient: { ...form.patient, address: e.target.value },
                         })
                       }
-                      placeholder="Nhập địa chỉ (tùy chọn)"
+                      placeholder="Nhập địa chỉ"
                       focusBorderColor="orange.400"
                       bg="white"
                     />
@@ -354,7 +352,7 @@ const UpdateMedicalRecordModal: React.FC<Props> = ({
                           patient: { ...form.patient, identifyNumber: e.target.value },
                         })
                       }
-                      placeholder="Nhập số CCCD/CMND (tùy chọn)"
+                      placeholder="Nhập số CCCD/CMND"
                       focusBorderColor="orange.400"
                       bg="white"
                     />
@@ -379,7 +377,7 @@ const UpdateMedicalRecordModal: React.FC<Props> = ({
                           patient: { ...form.patient, lastTestDate: e.target.value },
                         })
                       }
-                      placeholder="Ngày test gần nhất (tùy chọn)"
+                      placeholder="Ngày xét nghiệm gần nhất"
                       focusBorderColor="orange.400"
                       bg="white"
                     />
