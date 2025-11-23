@@ -311,7 +311,7 @@ const PatientMedicalRecordPageChakra: React.FC = () => {
               boxShadow="md"
             >
               <Icon as={FiActivity} color="green.500" />
-              <Text fontWeight="semibold">{testedRecords} đơn đã xét nghiệm</Text>
+              <Text fontWeight="semibold">{testedRecords} đơn xét nghiệm</Text>
             </HStack>
           </HStack>
         </Flex>

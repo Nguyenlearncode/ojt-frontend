@@ -2,7 +2,6 @@ import { renderHook, act } from "@testing-library/react";
 import { vi, describe, it, expect } from "vitest";
 import { useTestOrders } from "../../../../features/patient/hooks/useTestOrders";
 import { testOrderApi } from "../../../../features/patient/api/testOrderApi";
-import { flaggingSetApi } from "../../../../features/patient/api/flaggingSetApi";
 
 vi.mock("../../../../features/patient/api/testOrderApi", () => ({
   testOrderApi: {
@@ -46,18 +45,6 @@ describe("useTestOrders", () => {
     await act(async () => await result.current.getAllTestOrders());
 
     expect(testOrderApi.getAllTestOrders).toHaveBeenCalled();
-  });
-
-  it("applyFlagging → gọi API", async () => {
-    (flaggingSetApi.applyFlags as any).mockResolvedValue({});
-
-    const { result } = renderHook(() => useTestOrders());
-
-    await act(async () => {
-      await result.current.applyFlagging("T1");
-    });
-
-    expect(flaggingSetApi.applyFlags).toHaveBeenCalled();
   });
 
   it("deleteTestOrder → gọi API", async () => {

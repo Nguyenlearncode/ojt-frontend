@@ -59,13 +59,13 @@ import {
   type TestOrderCommentDto,
 } from "../hooks/useTestOrders";
 import { formatDate } from "../../../utils/formatDate";
-import CreateTestResultModal from "./CreateTestResultModal";
+
 import SyncTestResultModal from "./SyncTestResultModal";
 import ModifyTestOrderModal from "./ModifyTestOrderModal";
 import CommentFormModal from "./CommentFormModal";
 import { useTestOrderComments } from "../hooks/useTestOrderComments";
 import { useTestOrderResults } from "../hooks/useTestOrderResults";
-import { flaggingSetApi } from "../api/flaggingSetApi";
+
 
 interface Props {
   isOpen: boolean;
@@ -98,12 +98,6 @@ const TestOrderDetailModal: React.FC<Props> = ({
     isOpen: isDeleteOpen,
     onOpen: onDeleteOpen,
     onClose: onDeleteClose,
-  } = useDisclosure();
-
-  const {
-    isOpen: isCreateResultOpen,
-    onOpen: onCreateResultOpen,
-    onClose: onCreateResultClose,
   } = useDisclosure();
 
   const {
@@ -140,7 +134,7 @@ const TestOrderDetailModal: React.FC<Props> = ({
     loading: commentLoading,
   } = useTestOrderComments();
 
-  const { createTestResult, loading: creatingResult } = useTestOrderResults();
+  const { createTestOrderResult } = useTestOrderResults();
 
   const [editingComment, setEditingComment] =
     useState<TestOrderCommentDto | null>(null);
@@ -176,11 +170,6 @@ const TestOrderDetailModal: React.FC<Props> = ({
     } finally {
       setIsDeleting(false);
     }
-  };
-
-  const handleCreateResultSuccess = async () => {
-    await loadDetail();
-    await onSuccess?.();
   };
 
   const handleSyncResultSuccess = async () => {
@@ -632,52 +621,39 @@ const TestOrderDetailModal: React.FC<Props> = ({
               {/* Tiến hành xét nghiệm */}
               {detail?.testOrder &&
                 detail.testOrder.status?.toLowerCase() === "pending" && (
-                  <Button
-                    leftIcon={<FiActivity />}
-                    colorScheme="green"
-                    onClick={async () => {
-                      try {
-                        // Lấy danh sách flagging sets
-                        const flaggingSetsRes = await flaggingSetApi.getAllFlaggingConfigs();
-                        const flaggingSets = Array.isArray(flaggingSetsRes?.data) 
-                          ? flaggingSetsRes.data 
-                          : Array.isArray(flaggingSetsRes) 
-                          ? flaggingSetsRes 
-                          : [];
-                        
-                        if (flaggingSets.length === 0) {
-                          toast({
-                            title: "Không thể tiến hành xét nghiệm",
-                            description: "Chưa có cấu hình flagging set. Vui lòng tạo cấu hình trước.",
-                            status: "error",
-                            duration: 3000,
-                            isClosable: true,
-                          });
-                          return;
-                        }
+                <Button
+                  leftIcon={<FiActivity />}
+                  colorScheme="green"
+                  onClick={async () => {
+                    try {
+                      const pid =
+                        detail?.testOrder?.patientId ??
+                        null;
 
-                        // Lấy flagging set đầu tiên
-                        const firstFlaggingSet = flaggingSets[0];
-                        
-                        // Gọi API tạo kết quả
-                        await createTestResult({
-                          flaggingSetId: firstFlaggingSet.configId,
-                          patientId: detail.testOrder.patientId,
-                          testOrderId: testOrderId,
+                      if (!pid) {
+                        toast({
+                          title: "Không thể tạo kết quả",
+                          description: "Không tìm thấy patientId từ backend.",
+                          status: "error",
                         });
-                        
-                        // Reload detail sau khi tạo thành công
-                        await loadDetail();
-                        onSuccess?.();
-                      } catch (err) {
-                        // Error đã được xử lý trong hook
+                        return;
                       }
-                    }}
-                    isLoading={creatingResult}
-                    loadingText="Đang xử lý..."
-                  >
-                    Tiến hành xét nghiệm
-                  </Button>
+
+                      await createTestOrderResult({
+                        patientId: pid,
+                        testOrderId,
+                      });
+
+                      await loadDetail();
+                      onSuccess?.();
+                    } catch { }
+                  }}
+                  isLoading={loading}
+                  loadingText="Đang xử lý..."
+                >
+                  Tiến hành xét nghiệm
+                </Button>
+
                 )}
 
               {/* Hủy đơn */}
@@ -691,8 +667,8 @@ const TestOrderDetailModal: React.FC<Props> = ({
                 </Button>
               )}
 
-              {/* REVIEW ĐƠN - Chỉ hiển thị khi status là Completed */}
-              {detail?.testOrder?.status?.toLowerCase() === "completed" && (
+              {/* REVIEW ĐƠN - Chỉ hiển thị khi status là Complete */}
+              {detail?.testOrder?.status?.toLowerCase() === "complete" && (
                 <Button
                   leftIcon={<FiActivity />}
                   colorScheme="purple"
@@ -779,16 +755,6 @@ const TestOrderDetailModal: React.FC<Props> = ({
         </AlertDialogOverlay>
       </AlertDialog>
 
-      {/* CREATE RESULT */}
-      {detail?.testOrder && (
-        <CreateTestResultModal
-          isOpen={isCreateResultOpen}
-          onClose={onCreateResultClose}
-          testOrderId={testOrderId}
-          patientId={detail.testOrder.patientId}
-          onSuccess={handleCreateResultSuccess}
-        />
-      )}
 
       {/* SYNC RESULT */}
       {detail?.testOrder && (

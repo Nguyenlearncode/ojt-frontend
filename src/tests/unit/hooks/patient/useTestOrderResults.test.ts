@@ -5,41 +5,26 @@ import { testOrderResultApi } from "../../../../features/patient/api/testOrderRe
 
 vi.mock("../../../../features/patient/api/testOrderResultApi", () => ({
   testOrderResultApi: {
-    createTestResult: vi.fn(),
-    syncTestResult: vi.fn(),
+    createResult: vi.fn(),
   },
 }));
 
 describe("useTestOrderResults", () => {
-  it("createTestResult → gọi API", async () => {
-    (testOrderResultApi.createTestResult as any).mockResolvedValue({});
+  it("createTestOrderResult → gọi API createResult", async () => {
+    (testOrderResultApi.createResult as any).mockResolvedValue({});
 
     const { result } = renderHook(() => useTestOrderResults());
 
     await act(async () => {
-      await result.current.createTestResult({
-        flaggingSetId: 1,
+      await result.current.createTestOrderResult({
         patientId: "P1",
         testOrderId: "T1",
       });
     });
 
-    expect(testOrderResultApi.createTestResult).toHaveBeenCalled();
-  });
-
-  it("syncTestResult → gọi API", async () => {
-    (testOrderResultApi.syncTestResult as any).mockResolvedValue({ status: "ok" });
-
-    const { result } = renderHook(() => useTestOrderResults());
-
-    await act(async () => {
-      await result.current.syncTestResult({
-        testOrderId: "T1",
-        testName: "CBC",
-        value: "12",
-      });
+    expect(testOrderResultApi.createResult).toHaveBeenCalledWith({
+      patientId: "P1",
+      testOrderId: "T1",
     });
-
-    expect(testOrderResultApi.syncTestResult).toHaveBeenCalled();
   });
 });

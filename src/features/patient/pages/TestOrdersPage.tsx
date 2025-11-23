@@ -90,7 +90,7 @@ const TestOrdersPage: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
-      case "completed":
+      case "complete":
         return "green";
       case "pending":
         return "yellow";
@@ -130,7 +130,7 @@ const TestOrdersPage: React.FC = () => {
   }, [testOrders, searchTerm]);
 
   const totalOrders = testOrders.length;
-  const completedOrders = testOrders.filter((o) => o.status?.toLowerCase() === "completed").length;
+  const completedOrders = testOrders.filter((o) => o.status?.toLowerCase() === "complete").length;
   const pendingOrders = testOrders.filter((o) => o.status?.toLowerCase() === "pending").length;
   const reviewedOrders = testOrders.filter((o) => o.status?.toLowerCase() === "review").length;
 
@@ -296,9 +296,6 @@ const TestOrdersPage: React.FC = () => {
                       <Tr key={order.testOrderId} _hover={{ bg: hoverBg }}>
                         <Td>
                           <VStack align="flex-start" spacing={0}>
-                            <Text fontSize="sm" fontWeight="bold" fontFamily="mono">
-                              {order.testOrderId.substring(0, 8).toUpperCase()}
-                            </Text>
                             <Text fontSize="xs" color="gray.500">
                               {order.testOrderId}
                             </Text>

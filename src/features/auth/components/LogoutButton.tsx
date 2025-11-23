@@ -9,7 +9,7 @@ interface LogoutButtonProps {
   expanded: boolean;
 }
 
-const LogoutButton: React.FC<LogoutButtonProps> = ({ expanded }) => {
+const LogoutButton: React.FC<LogoutButtonProps> = () => {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const { logout = async () => {}, loading = false } = useLogout() || {};
 

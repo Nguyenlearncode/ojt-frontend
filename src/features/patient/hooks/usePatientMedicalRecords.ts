@@ -59,6 +59,11 @@ export interface ViewMedicalRecordDetailResponse {
   patientName: string;
   dateOfBirth: string;
   phoneNumber: string;
+  email?: string;
+  address?: string;
+  identifyNumber?: string;
+  gender?: string;
+  lastTestDate?: string;
   testOrders: TestOrderResponse[];
 }
 
