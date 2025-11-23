@@ -56,15 +56,15 @@ const PatientMedicalRecordTable: React.FC<Props> = ({
     <TableContainer>
       <Table variant="simple" size="md">
         <Thead>
-          <Tr>
+            <Tr>
             <Th>Mã bệnh nhân</Th>
             <Th>Họ và tên</Th>
             <Th>Ngày sinh</Th>
             <Th>Ngày test gần nhất</Th>
             <Th textAlign="center">Thao tác</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
+            </Tr>
+          </Thead>
+          <Tbody>
           {records.map((r, index) => {
             let formattedDateOfBirth = "N/A";
             let formattedLastTestDate = "Chưa có";
@@ -159,8 +159,8 @@ const PatientMedicalRecordTable: React.FC<Props> = ({
               </Tr>
             );
           })}
-        </Tbody>
-      </Table>
+          </Tbody>
+        </Table>
     </TableContainer>
   );
 

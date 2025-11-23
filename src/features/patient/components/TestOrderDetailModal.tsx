@@ -38,6 +38,7 @@ import {
   MenuList,
   MenuItem,
   IconButton,
+  useToast,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import {
@@ -63,6 +64,8 @@ import SyncTestResultModal from "./SyncTestResultModal";
 import ModifyTestOrderModal from "./ModifyTestOrderModal";
 import CommentFormModal from "./CommentFormModal";
 import { useTestOrderComments } from "../hooks/useTestOrderComments";
+import { useTestOrderResults } from "../hooks/useTestOrderResults";
+import { flaggingSetApi } from "../api/flaggingSetApi";
 
 interface Props {
   isOpen: boolean;
@@ -82,6 +85,7 @@ const TestOrderDetailModal: React.FC<Props> = ({
   const { getTestOrderDetail, deleteTestOrder, exportTestOrders, printTestOrder, reviewTestOrder } =
     useTestOrders();
 
+  const toast = useToast();
   const [loading, setLoading] = useState(false);
   const [detail, setDetail] =
     useState<ViewPatientTestOrderDetailResult | null>(null);
@@ -135,6 +139,8 @@ const TestOrderDetailModal: React.FC<Props> = ({
     deleteComment: deleteCommentApi,
     loading: commentLoading,
   } = useTestOrderComments();
+
+  const { createTestResult, loading: creatingResult } = useTestOrderResults();
 
   const [editingComment, setEditingComment] =
     useState<TestOrderCommentDto | null>(null);
@@ -377,6 +383,15 @@ const TestOrderDetailModal: React.FC<Props> = ({
 
                     <Box>
                       <Text fontWeight="600" color="gray.600" fontSize="sm">
+                        Số điện thoại
+                      </Text>
+                      <Text color="gray.800">
+                        {detail.testOrder.phoneNumber || "N/A"}
+                      </Text>
+                    </Box>
+
+                    <Box>
+                      <Text fontWeight="600" color="gray.600" fontSize="sm">
                         Ngày sinh
                       </Text>
                       <Text color="gray.800">
@@ -399,6 +414,68 @@ const TestOrderDetailModal: React.FC<Props> = ({
                         {detail.testOrder.gender === "male" ? "Nam" : "Nữ"}
                       </Text>
                     </Box>
+
+                    <Box>
+                      <Text fontWeight="600" color="gray.600" fontSize="sm">
+                        Người tạo
+                      </Text>
+                      <Text color="gray.800">
+                        {detail.testOrder.createdBy || "N/A"}
+                      </Text>
+                    </Box>
+
+                    <Box>
+                      <Text fontWeight="600" color="gray.600" fontSize="sm">
+                        Ngày tạo
+                      </Text>
+                      <Text color="gray.800">
+                        {formatDate(detail.testOrder.createdAt, "dd/MM/yyyy HH:mm")}
+                      </Text>
+                    </Box>
+
+                    {detail.testOrder.runBy && (
+                      <Box>
+                        <Text fontWeight="600" color="gray.600" fontSize="sm">
+                          Người thực hiện
+                        </Text>
+                        <Text color="gray.800">
+                          {detail.testOrder.runBy}
+                        </Text>
+                      </Box>
+                    )}
+
+                    {detail.testOrder.runOn && (
+                      <Box>
+                        <Text fontWeight="600" color="gray.600" fontSize="sm">
+                          Ngày thực hiện
+                        </Text>
+                        <Text color="gray.800">
+                          {formatDate(detail.testOrder.runOn, "dd/MM/yyyy HH:mm")}
+                        </Text>
+                      </Box>
+                    )}
+
+                    {detail.testOrder.reviewedBy && (
+                      <Box>
+                        <Text fontWeight="600" color="gray.600" fontSize="sm">
+                          Người xác nhận
+                        </Text>
+                        <Text color="gray.800">
+                          {detail.testOrder.reviewedBy}
+                        </Text>
+                      </Box>
+                    )}
+
+                    {detail.testOrder.reviewedAt && (
+                      <Box>
+                        <Text fontWeight="600" color="gray.600" fontSize="sm">
+                          Ngày xác nhận
+                        </Text>
+                        <Text color="gray.800">
+                          {formatDate(detail.testOrder.reviewedAt, "dd/MM/yyyy HH:mm")}
+                        </Text>
+                      </Box>
+                    )}
                   </SimpleGrid>
                 </MotionBox>
 
@@ -552,15 +629,54 @@ const TestOrderDetailModal: React.FC<Props> = ({
           <ModalFooter bg="gray.50" borderTopWidth="1px">
             <HStack spacing={3} flexWrap="wrap">
 
-              {/* Nhập kết quả */}
+              {/* Tiến hành xét nghiệm */}
               {detail?.testOrder &&
                 detail.testOrder.status?.toLowerCase() === "pending" && (
                   <Button
                     leftIcon={<FiActivity />}
                     colorScheme="green"
-                    onClick={onCreateResultOpen}
+                    onClick={async () => {
+                      try {
+                        // Lấy danh sách flagging sets
+                        const flaggingSetsRes = await flaggingSetApi.getAllFlaggingConfigs();
+                        const flaggingSets = Array.isArray(flaggingSetsRes?.data) 
+                          ? flaggingSetsRes.data 
+                          : Array.isArray(flaggingSetsRes) 
+                          ? flaggingSetsRes 
+                          : [];
+                        
+                        if (flaggingSets.length === 0) {
+                          toast({
+                            title: "Không thể tiến hành xét nghiệm",
+                            description: "Chưa có cấu hình flagging set. Vui lòng tạo cấu hình trước.",
+                            status: "error",
+                            duration: 3000,
+                            isClosable: true,
+                          });
+                          return;
+                        }
+
+                        // Lấy flagging set đầu tiên
+                        const firstFlaggingSet = flaggingSets[0];
+                        
+                        // Gọi API tạo kết quả
+                        await createTestResult({
+                          flaggingSetId: firstFlaggingSet.configId,
+                          patientId: detail.testOrder.patientId,
+                          testOrderId: testOrderId,
+                        });
+                        
+                        // Reload detail sau khi tạo thành công
+                        await loadDetail();
+                        onSuccess?.();
+                      } catch (err) {
+                        // Error đã được xử lý trong hook
+                      }
+                    }}
+                    isLoading={creatingResult}
+                    loadingText="Đang xử lý..."
                   >
-                    Nhập kết quả
+                    Tiến hành xét nghiệm
                   </Button>
                 )}
 
@@ -575,21 +691,23 @@ const TestOrderDetailModal: React.FC<Props> = ({
                 </Button>
               )}
 
-              {/* REVIEW ĐƠN */}
-              <Button
-                leftIcon={<FiActivity />}
-                colorScheme="purple"
-                variant="solid"
-                onClick={async () => {
-                  try {
-                    await reviewTestOrder(testOrderId);
-                    await loadDetail();
-                    onSuccess?.();
-                  } catch { }
-                }}
-              >
-                Xác nhận kết quả
-              </Button>
+              {/* REVIEW ĐƠN - Chỉ hiển thị khi status là Completed */}
+              {detail?.testOrder?.status?.toLowerCase() === "completed" && (
+                <Button
+                  leftIcon={<FiActivity />}
+                  colorScheme="purple"
+                  variant="solid"
+                  onClick={async () => {
+                    try {
+                      await reviewTestOrder(testOrderId);
+                      await loadDetail();
+                      onSuccess?.();
+                    } catch { }
+                  }}
+                >
+                  Xác nhận kết quả
+                </Button>
+              )}
 
               {/* Thêm bình luận */}
               <Button

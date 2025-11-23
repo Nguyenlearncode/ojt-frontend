@@ -1,4 +1,3 @@
-// src/features/patient/api/testOrderApi.ts
 import axiosClient from "../../../api/axiosClient";
 
 export const testOrderApi = {
@@ -17,11 +16,11 @@ export const testOrderApi = {
   modifyTestOrder: (testOrderId: string, data: any) =>
     axiosClient.patch(`/patient/testorder/modify/${testOrderId}`, data),
 
-  updateTestOrderStatus: (testOrderId: string, data: any) =>
-    axiosClient.patch(`/patient/testorder/status/${testOrderId}`, data),
-
   deleteTestOrder: (testOrderId: string) =>
     axiosClient.delete(`/patient/testorder/delete/${testOrderId}`),
+
+  reviewTestOrder: (testOrderId: string, data: any) =>
+    axiosClient.patch(`/patient/testorder/review/${testOrderId}`, data),
 
   exportTestOrders: (patientId?: string) =>
     axiosClient.get("/patient/TestOrderReport/export-excel", {
@@ -34,8 +33,4 @@ export const testOrderApi = {
       params: fileName ? { fileName } : undefined,
       responseType: "blob",
     }),
-
-    reviewTestOrder: (testOrderId: string, data: any) =>
-  axiosClient.patch(`/patient/testorder/review/${testOrderId}`, data),
-
 };

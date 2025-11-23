@@ -43,8 +43,8 @@ export const decodeToken = (token: string): JwtPayload | null => {
 
 export const getUserInfo = () => {
   try {
-    const token = localStorage.getItem('accessToken');
-    if (!token) return null;
+  const token = localStorage.getItem('accessToken');
+  if (!token) return null;
     
     // Validate token trước khi decode
     if (token.trim() === '') {
@@ -52,7 +52,7 @@ export const getUserInfo = () => {
       return null;
     }
     
-    return decodeToken(token);
+  return decodeToken(token);
   } catch (error) {
     return null;
   }
