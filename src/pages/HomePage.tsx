@@ -674,10 +674,10 @@ export default function HomePage() {
             "
           >
             {[
-              { name: "BS. Nguyễn Minh Khoa", role: "Huyết Học – Truyền Máu", img: "/src/assets/image/d1.jpg" },
-              { name: "BS. Trần Hải Yến", role: "Sinh Hóa – Miễn Dịch", img: "/src/assets/image/d2.jpg" },
-              { name: "BS. Phạm Đức Long", role: "Ung Bướu – Miễn Dịch", img: "/src/assets/image/d3.jpg" },
-              { name: "BS. Lưu Thanh Hà", role: "Tim Mạch – Huyết Áp", img: "/src/assets/image/d4.jpg" },
+              { name: "BS. Nguyễn Minh Khoa", role: "Huyết Học – Truyền Máu", img: "/image/d1.jpg" },
+              { name: "BS. Trần Hải Yến", role: "Sinh Hóa – Miễn Dịch", img: "/image/d2.jpg" },
+              { name: "BS. Phạm Đức Long", role: "Ung Bướu – Miễn Dịch", img: "/image/d3.jpg" },
+              { name: "BS. Lưu Thanh Hà", role: "Tim Mạch – Huyết Áp", img: "/image/d4.jpg" },
             ].map((doc, i) => (
               <motion.div
                 key={i}
@@ -859,7 +859,7 @@ export default function HomePage() {
                 </div>
 
                 <img
-                  src="/src/assets/image/machine3.jpg"
+                  src="/image/machine3.jpg"
                   className="
                   relative w-full rounded-2xl
                   shadow-[0_12px_45px_rgba(0,150,255,0.25)]
@@ -945,7 +945,7 @@ export default function HomePage() {
                 </div>
 
                 <img
-                  src="/src/assets/image/machine2.jpg"
+                  src="/image/machine2.jpg"
                   className="
                     relative w-full rounded-2xl
                     shadow-[0_12px_45px_rgba(0,150,255,0.25)]
@@ -977,7 +977,7 @@ export default function HomePage() {
           </div>
 
                 <img
-                  src="/src/assets/image/machine1.jpg"
+                  src="/image/machine1.jpg"
                   className="
                     relative w-full rounded-2xl
                     shadow-[0_12px_45px_rgba(0,150,255,0.25)]
