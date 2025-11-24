@@ -2,11 +2,17 @@
 import axios, { AxiosError, type AxiosInstance, type AxiosResponse } from "axios";
 import { authApi } from "../features/auth/api/authApi";
 
+// const axiosClient: AxiosInstance = axios.create({
+//   baseURL: "https://localhost:7000",
+//   headers: { "Content-Type": "application/json" },
+// });
 const axiosClient: AxiosInstance = axios.create({
-  baseURL: "https://localhost:7000",
+  // 👇 SỬA DÒNG NÀY:
+  // Ưu tiên lấy link từ biến môi trường (Render), nếu không có thì mới dùng localhost (Máy bạn)
+  baseURL: import.meta.env.VITE_API_URL || "https://localhost:7000",
+  
   headers: { "Content-Type": "application/json" },
 });
-
 /* ------------------------- REQUEST INTERCEPTOR ------------------------- */
 axiosClient.interceptors.request.use((config) => {
   const token = localStorage.getItem("accessToken");
