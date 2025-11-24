@@ -1,8 +1,8 @@
-* {
-  margin: 0;
-  padding: 0;
+/* //src/styles/index.css */
+*, *::before, *::after {
   box-sizing: border-box;
 }
+
 
 body {
   overflow: hidden;

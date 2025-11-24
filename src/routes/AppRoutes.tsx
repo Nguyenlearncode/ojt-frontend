@@ -1,4 +1,4 @@
-// src/routes/AppRoutes.tsx 
+// src/routes/AppRoutes.tsx
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 
@@ -13,40 +13,77 @@ import RoleManagementPageChakra from "../features/role/pages/RoleManagementPageC
 import CreateRolePageChakra from "../features/role/pages/CreateRolePageChakra";
 import UpdateRolePageChakra from "../features/role/pages/UpdateRolePageChakra";
 import ProfilePageChakra from "../features/user/pages/ProfilePageChakra";
+
 import PrivateRoute from "./PrivateRoute";
 import DashboardLayoutChakra from "../layouts/DashboardLayoutChakra";
+
 import PatientMedicalRecordPageChakra from "../features/patient/pages/PatientMedicalRecordPageChakra";
 import FlaggingSetManagementPage from "../features/flagging/pages/FlaggingSetManagementPage";
 import TestOrdersPage from "../features/patient/pages/TestOrdersPage";
+import HomePage from "../pages/HomePage";
+
+import ChakraLayout from "../layouts/ChakraLayout";
 
 
 const AppRoutes: React.FC = () => {
   return (
     <Routes>
-      {/* Public routes */}
-      <Route path="/" element={<LoginPageChakra />} />
-      <Route path="/forgot-password" element={<ForgotPasswordPageChakra />} />
-      <Route path="/reset-password" element={<ResetPasswordPageChakra />} />
+      
+      {/* ⭐ HomePage – KHÔNG dùng Chakra */}
+      <Route path="/" element={<HomePage />} />
 
-      {/* Protected routes */}
+      {/* ⭐ Login + Auth pages – DÙNG Chakra nên bọc */}
       <Route
-        path="/dashboard"
+        path="/login"
         element={
-          <PrivateRoute>
-            <DashboardLayoutChakra>
-              <DashboardChakra />
-            </DashboardLayoutChakra>
-          </PrivateRoute>
+          <ChakraLayout>
+            <LoginPageChakra />
+          </ChakraLayout>
         }
       />
 
       <Route
+        path="/forgot-password"
+        element={
+          <ChakraLayout>
+            <ForgotPasswordPageChakra />
+          </ChakraLayout>
+        }
+      />
+
+      <Route
+        path="/reset-password"
+        element={
+          <ChakraLayout>
+            <ResetPasswordPageChakra />
+          </ChakraLayout>
+        }
+      />
+
+      {/* ⭐ Protected routes – tất cả đều dùng Chakra */}
+      <Route
+        path="/dashboard"
+        element={
+          <PrivateRoute>
+            <ChakraLayout>
+              <DashboardLayoutChakra>
+                <DashboardChakra />
+              </DashboardLayoutChakra>
+            </ChakraLayout>
+          </PrivateRoute>
+        }
+      />
+
+      {/* Các route còn lại giữ nguyên nhưng thêm ChakraLayout */}
+      <Route
         path="/UserManagement"
         element={
           <PrivateRoute>
-            <DashboardLayoutChakra>
-              <UserManagementPageChakra />
-            </DashboardLayoutChakra>
+            <ChakraLayout>
+              <DashboardLayoutChakra>
+                <UserManagementPageChakra />
+              </DashboardLayoutChakra>
+            </ChakraLayout>
           </PrivateRoute>
         }
       />
@@ -55,21 +92,24 @@ const AppRoutes: React.FC = () => {
         path="/UpdateUserProfile/:id"
         element={
           <PrivateRoute>
-            <DashboardLayoutChakra>
-              <UpdateUserProfileChakra />
-            </DashboardLayoutChakra>
+            <ChakraLayout>
+              <DashboardLayoutChakra>
+                <UpdateUserProfileChakra />
+              </DashboardLayoutChakra>
+            </ChakraLayout>
           </PrivateRoute>
         }
       />
-
 
       <Route
         path="/CreateUser"
         element={
           <PrivateRoute>
-            <DashboardLayoutChakra>
-              <CreateUserChakra />
-            </DashboardLayoutChakra>
+            <ChakraLayout>
+              <DashboardLayoutChakra>
+                <CreateUserChakra />
+              </DashboardLayoutChakra>
+            </ChakraLayout>
           </PrivateRoute>
         }
       />
@@ -78,9 +118,11 @@ const AppRoutes: React.FC = () => {
         path="/RoleManagement"
         element={
           <PrivateRoute>
-            <DashboardLayoutChakra>
-              <RoleManagementPageChakra />
-            </DashboardLayoutChakra>
+            <ChakraLayout>
+              <DashboardLayoutChakra>
+                <RoleManagementPageChakra />
+              </DashboardLayoutChakra>
+            </ChakraLayout>
           </PrivateRoute>
         }
       />
@@ -89,9 +131,11 @@ const AppRoutes: React.FC = () => {
         path="/CreateRole"
         element={
           <PrivateRoute>
-            <DashboardLayoutChakra>
-              <CreateRolePageChakra />
-            </DashboardLayoutChakra>
+            <ChakraLayout>
+              <DashboardLayoutChakra>
+                <CreateRolePageChakra />
+              </DashboardLayoutChakra>
+            </ChakraLayout>
           </PrivateRoute>
         }
       />
@@ -100,9 +144,11 @@ const AppRoutes: React.FC = () => {
         path="/UpdateRole/:roleCode"
         element={
           <PrivateRoute>
-            <DashboardLayoutChakra>
-              <UpdateRolePageChakra />
-            </DashboardLayoutChakra>
+            <ChakraLayout>
+              <DashboardLayoutChakra>
+                <UpdateRolePageChakra />
+              </DashboardLayoutChakra>
+            </ChakraLayout>
           </PrivateRoute>
         }
       />
@@ -111,21 +157,24 @@ const AppRoutes: React.FC = () => {
         path="/Profile"
         element={
           <PrivateRoute>
-            <DashboardLayoutChakra>
-              <ProfilePageChakra />
-            </DashboardLayoutChakra>
+            <ChakraLayout>
+              <DashboardLayoutChakra>
+                <ProfilePageChakra />
+              </DashboardLayoutChakra>
+            </ChakraLayout>
           </PrivateRoute>
         }
       />
-
 
       <Route
         path="/PatientMedicalRecords"
         element={
           <PrivateRoute>
-            <DashboardLayoutChakra>
-              <PatientMedicalRecordPageChakra />
-            </DashboardLayoutChakra>
+            <ChakraLayout>
+              <DashboardLayoutChakra>
+                <PatientMedicalRecordPageChakra />
+              </DashboardLayoutChakra>
+            </ChakraLayout>
           </PrivateRoute>
         }
       />
@@ -134,9 +183,11 @@ const AppRoutes: React.FC = () => {
         path="/FlaggingSets"
         element={
           <PrivateRoute>
-            <DashboardLayoutChakra>
-              <FlaggingSetManagementPage />
-            </DashboardLayoutChakra>
+            <ChakraLayout>
+              <DashboardLayoutChakra>
+                <FlaggingSetManagementPage />
+              </DashboardLayoutChakra>
+            </ChakraLayout>
           </PrivateRoute>
         }
       />
@@ -145,15 +196,15 @@ const AppRoutes: React.FC = () => {
         path="/TestOrders"
         element={
           <PrivateRoute>
-            <DashboardLayoutChakra>
-              <TestOrdersPage />
-            </DashboardLayoutChakra>
+            <ChakraLayout>
+              <DashboardLayoutChakra>
+                <TestOrdersPage />
+              </DashboardLayoutChakra>
+            </ChakraLayout>
           </PrivateRoute>
         }
       />
 
-
-      {/* Redirect others */}
       <Route path="*" element={<Navigate to="/dashboard" />} />
     </Routes>
   );
