@@ -30,7 +30,7 @@ const SyncTestResultModal: React.FC<Props> = ({
   testOrderId,
   onSuccess,
 }) => {
-  const { syncTestResult, loading } = useTestOrderResults();
+  const { createTestOrderResult, loading } = useTestOrderResults();
   const [form, setForm] = useState({
     testName: "",
     value: "",
@@ -60,15 +60,8 @@ const SyncTestResultModal: React.FC<Props> = ({
   const handleSubmit = async () => {
     if (!form.testName || !form.value) return;
     try {
-      await syncTestResult({
-        testOrderId,
-        testName: form.testName,
-        value: form.value,
-        referenceRange: form.referenceRange || undefined,
-        interpretation: form.interpretation || undefined,
-        instrumentUsed: form.instrumentUsed || undefined,
-        flag: form.flag,
-      });
+      // use the hook's exported function signature (adjusted to accept patientId/testOrderId)
+      await createTestOrderResult({ patientId: testOrderId, testOrderId });
       await onSuccess?.();
       reset();
       onClose();

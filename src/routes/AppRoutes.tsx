@@ -23,7 +23,7 @@ import TestOrdersPage from "../features/patient/pages/TestOrdersPage";
 import HomePage from "../pages/HomePage";
 
 import ChakraLayout from "../layouts/ChakraLayout";
-
+import { CBC, SinhHoa, TimMach } from "../pages/Services/ServiceDetail";
 
 const AppRoutes: React.FC = () => {
   return (
@@ -31,6 +31,9 @@ const AppRoutes: React.FC = () => {
       
       {/* ⭐ HomePage – KHÔNG dùng Chakra */}
       <Route path="/" element={<HomePage />} />
+      <Route path="/service/cbc" element={<CBC />} />
+      <Route path="/service/sinh-hoa" element={<SinhHoa />} />
+      <Route path="/service/tim-mach" element={<TimMach />} />
 
       {/* ⭐ Login + Auth pages – DÙNG Chakra nên bọc */}
       <Route

@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { useToast } from "@chakra-ui/react";
 import { testOrderApi } from "../api/testOrderApi";
-import { flaggingSetApi } from "../api/flaggingSetApi";
 import { getUserInfo } from "../../../utils/jwtHelper";
 
 // Interfaces ---------------------------------------------------
@@ -188,27 +187,6 @@ export const useTestOrders = () => {
     }
   };
 
-
-  // APPLY FLAGGING
-  const applyFlagging = async (testOrderId: string) => {
-    try {
-      await flaggingSetApi.applyFlags(testOrderId, {});
-      toast({
-        title: "Đã áp dụng flag",
-        description: "Kết quả xét nghiệm đã được cập nhật flag.",
-        status: "success",
-      });
-    } catch (err: any) {
-      toast({
-        title: "Áp dụng thất bại",
-        description:
-          err.response?.data?.message || "Không thể áp dụng flag cho kết quả xét nghiệm.",
-        status: "error",
-      });
-      throw err;
-    }
-  };
-
   // DOWNLOAD HELPER
   const downloadFile = (data: Blob, filename: string) => {
     const url = window.URL.createObjectURL(data);
@@ -323,7 +301,6 @@ const reviewTestOrder = async (
     getAllTestOrders,
     modifyTestOrder,
     deleteTestOrder,
-    applyFlagging,
     exportTestOrders,
     printTestOrder,
     reviewTestOrder,

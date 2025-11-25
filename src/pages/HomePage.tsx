@@ -1,17 +1,13 @@
+// src/pages/HomePage.tsx
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import { ChatBubbleOvalLeftEllipsisIcon } from "@heroicons/react/24/solid";
 import {
-  BeakerIcon,
-  HeartIcon,
   ShieldCheckIcon,
   Squares2X2Icon,
   ClipboardDocumentCheckIcon,
-  FireIcon,
-  PresentationChartLineIcon,
-  AdjustmentsHorizontalIcon,
-  BugAntIcon,
 
 } from "@heroicons/react/24/outline";
 
@@ -21,12 +17,85 @@ import "swiper/css";
 import "swiper/css/navigation";
 // @ts-ignore: CSS module declarations are not present in this project
 import "swiper/css/pagination";
+import Header from "../components/HomePage/Header";
+import Footer from "../components/HomePage/Footer";
+import ServiceSection from "./Services/ServiceSection";
 
+
+
+import { useLocation } from "react-router-dom";
 
 export default function HomePage() {
+  const location = useLocation();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const scrollTo = params.get("scroll");
+
+    if (scrollTo) {
+      setTimeout(() => {
+        const section = document.getElementById(scrollTo);
+        if (section) {
+          section.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 200);
+    }
+  }, [location]);
+
   const [scrolled, setScrolled] = useState(false);
 
+  const [openEquipment, setOpenEquipment] = useState<null | {
+    name: string;
+    img: string;
+    desc: string;
+  }>(null);
+
+  const [openConsult, setOpenConsult] = useState(false);
+  const [dragged, setDragged] = useState(false);
+
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [buttonPos, setButtonPos] = useState({
+    x: window.innerWidth - 90,
+    y: window.innerHeight - 140
+  });
+  const [dragging, setDragging] = useState(false);
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+
+  const handleMouseDown = (e: React.MouseEvent<HTMLButtonElement>) => {
+    setDragging(true);
+    setDragged(false); // bắt đầu kéo -> chưa biết có kéo thật không
+    setOffset({
+      x: e.clientX - buttonPos.x,
+      y: e.clientY - buttonPos.y,
+    });
+  };
+
+  const handleMouseMove = (e: MouseEvent) => {
+    if (!dragging) return;
+
+    setDragged(true); // di chuyển -> xác nhận là kéo thật
+
+    requestAnimationFrame(() => {
+      setButtonPos({
+        x: e.clientX - offset.x,
+        y: e.clientY - offset.y,
+      });
+    });
+  };
+
+  const handleMouseUp = () => {
+    setDragging(false);
+  };
+
+  useEffect(() => {
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [dragging, offset]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -40,7 +109,6 @@ export default function HomePage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-
   useEffect(() => {
     const handler = () => {
       setScrolled(window.scrollY > 50);
@@ -53,64 +121,7 @@ export default function HomePage() {
     <div className="font-sans bg-white text-gray-900">
 
       {/* ================= HEADER ================= */}
-      <header
-        className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 
-          ${scrolled ? "bg-white/90 backdrop-blur-md shadow" : "bg-transparent shadow-none"
-          }`}
-      >
-        <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-
-          {/* LOGO + TEXT GROUP */}
-          <div className="flex items-center gap-3 select-none">
-            <img src="/logo.svg" alt="Logo" className="h-16 w-auto" />
-
-            <h1 className="text-3xl font-extrabold transition">
-              <span
-                className={`bg-clip-text text-transparent transition-all duration-700 
-        ${scrolled
-                    ? "bg-gradient-to-r from-pink-500 via-purple-500 to-fuchsia-500 animate-gradient"
-                    : "bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 animate-gradient"
-                  }`}
-              >
-                Blood Test
-              </span>
-
-              <span
-                className={`bg-clip-text text-transparent transition-all duration-700 ml-1
-        ${scrolled
-                    ? "bg-gradient-to-r from-fuchsia-400 via-purple-600 to-blue-500 animate-gradient"
-                    : "bg-gradient-to-r from-green-400 via-lime-500 to-emerald-600 animate-gradient"
-                  }`}
-              >
-                OJT Team3
-              </span>
-            </h1>
-          </div>
-
-
-          {/* NAVIGATION */}
-          <nav className="hidden md:flex space-x-8 font-semibold">
-            {[
-              { vi: "Trang Chủ", en: "home" },
-              { vi: "Giới Thiệu", en: "introduction" },
-              { vi: "Dịch Vụ", en: "service" },
-              { vi: "Đội ngũ", en: "team" },
-              { vi: "Thiết bị", en: "equipment" },
-              { vi: "Liên hệ", en: "contact" },
-              { vi: "Đăng Nhập", en: "login" },
-            ].map((item) => (
-              <a
-                key={item.en}
-                href={item.en === "login" ? "/login" : `#${item.en}`}
-                className={`transition ${scrolled ? "text-gray-700 hover:text-blue-500" : "text-white hover:text-gray-200"
-                  }`}
-              >
-                {item.vi}
-              </a>
-            ))}
-          </nav>
-        </div>
-      </header>
+      <Header scrolled={scrolled} />
 
       {/* ================= HERO (SWIPER) ================= */}
       <section id="home" className="h-screen w-full">
@@ -396,202 +407,24 @@ export default function HomePage() {
         </div>
       </section>
 
-
-
       {/* =================== DỊCH VỤ =================== */}
-      <section
-        id="service"
-        className="
-    py-28 relative overflow-hidden
-    bg-gradient-to-b from-[#f7fbff] to-[#dfeafb]
-    text-slate-800
-  "
-      >
-
-        {/* AURORA BACKGROUND */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="
-      absolute inset-0 
-      bg-[radial-gradient(circle_at_top_right,rgba(120,180,255,0.30),transparent_70%)]
-    "></div>
-
-          {/* Floating particles */}
-          {[...Array(18)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute w-1.5 h-1.5 rounded-full bg-cyan-400/30 blur-[2px]"
-              style={{
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
-                animation: `floatParticle ${6 + Math.random() * 6}s infinite linear`,
-                opacity: 0.5,
-              }}
-            ></div>
-          ))}
-
-          <style>{`
-      @keyframes floatParticle {
-        0% { transform: translateY(0); opacity: .4; }
-        50% { transform: translateY(-20px); opacity: .9; }
-        100% { transform: translateY(0); opacity: .4; }
-      }
-    `}</style>
-        </div>
-
-        <div className="container mx-auto px-6 relative">
-
-          {/* TITLE */}
-          <div className="text-center mb-20">
-
-            {/* Inline keyframes cho animation chạy màu */}
-            <style>{`
-    @keyframes serviceTitleGradientMove {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-  `}</style>
-
-            <h2
-              className="
-      text-[28px] md:text-[34px] lg:text-[34px]
-      font-extrabold tracking-tight
-      whitespace-nowrap
-      bg-gradient-to-r from-sky-700 via-cyan-700 to-indigo-800
-      bg-[length:200%_200%] 
-      bg-clip-text text-transparent
-      transition-all duration-700
-      drop-shadow-[0_4px_20px_rgba(56,189,248,0.25)]
-
-      hover:bg-gradient-to-r hover:from-green-500 hover:via-pink-500 hover:to-purple-600
-      hover:bg-[length:250%_250%]
-    "
-              style={{
-                animation: "serviceTitleGradientMove 7s ease-in-out infinite",
-              }}
-            >
-              Danh Mục Xét Nghiệm
-            </h2>
-
-            <p className="max-w-2xl mx-auto mt-2 text-slate-600 text-lg">
-              Công nghệ xét nghiệm thế hệ mới – tốc độ nhanh – độ chính xác cao – chuẩn phòng Lab quốc tế.
-            </p>
-
-            <div
-              className="
-      w-52 h-[3px] mx-auto mt-6
-      bg-gradient-to-r from-cyan-500 to-indigo-500 rounded-full
-      shadow-[0_0_10px_rgba(56,189,248,0.45)]
-    "
-            ></div>
-
-          </div>
-
-
-
-          {/* GRID SERVICE CARDS */}
-          <div className="grid md:grid-cols-3 gap-10">
-
-            {[
-              {
-                title: "Xét Nghiệm Máu Tổng Quát (CBC)",
-                desc: "Đo lường hồng cầu, bạch cầu, tiểu cầu — phát hiện thiếu máu, nhiễm trùng, rối loạn huyết học.",
-                icon: FireIcon,
-              },
-              {
-                title: "Sinh Hóa Máu Chuyên Sâu",
-                desc: "Đánh giá chức năng gan, thận, điện giải, enzyme, mỡ máu theo chuẩn quốc tế ISO 15189.",
-                icon: BeakerIcon,
-              },
-              {
-                title: "Đường Huyết & HbA1c",
-                desc: "Theo dõi đường huyết và HbA1c để chẩn đoán & kiểm soát bệnh tiểu đường chính xác.",
-                icon: PresentationChartLineIcon,
-              },
-              {
-                title: "Đánh Giá Nguy Cơ Tim Mạch",
-                desc: "Phân tích lipid, CRP, Homocysteine nhằm phát hiện sớm nguy cơ nhồi máu & xơ vữa.",
-                icon: HeartIcon,
-              },
-              {
-                title: "Xét Nghiệm Nội Tiết – Hormon",
-                desc: "Đo hormon tuyến giáp, sinh dục, thượng thận giúp phát hiện rối loạn nội tiết.",
-                icon: AdjustmentsHorizontalIcon,
-              },
-              {
-                title: "Viêm & Nhiễm Trùng",
-                desc: "Định lượng CRP, ESR, Procalcitonin — đánh giá tình trạng viêm và đáp ứng điều trị.",
-                icon: BugAntIcon,
-              },
-            ].map((item, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-                whileHover={{ scale: 1.05, y: -10 }}
-                className="
-            p-10 rounded-2xl
-            bg-white/40 backdrop-blur-xl
-            border border-white/60
-            shadow-[0_10px_35px_rgba(0,40,90,0.10)]
-            hover:shadow-[0_15px_55px_rgba(30,120,255,0.30)]
-            transition-all duration-300
-            flex flex-col
-          "
-              >
-
-                {/* ICON WRAPPER */}
-                <div className="
-            w-16 h-16 mb-6
-            flex items-center justify-center
-            bg-gradient-to-br from-white/80 to-white/40
-            border border-slate-200
-            rounded-xl shadow-sm
-            backdrop-blur-xl
-          ">
-                  <item.icon className="h-10 w-10 text-cyan-600" />
-                </div>
-
-                {/* TEXT */}
-                <h3 className="text-xl font-bold text-slate-900 mb-2">{item.title}</h3>
-                <p className="text-slate-600 leading-relaxed mb-6">{item.desc}</p>
-
-                <button className="
-            mt-auto px-5 py-2 rounded-lg text-sm font-semibold
-            text-cyan-700 border border-cyan-400
-            hover:bg-cyan-500 hover:text-white
-            transition-all duration-300
-          ">
-                  Đọc thêm →
-                </button>
-
-              </motion.div>
-            ))}
-
-          </div>
-
-        </div>
-      </section>
-
-
+      <ServiceSection />
 
       {/* ================= ĐỘI NGŨ BÁC SĨ ================= */}
       <section
         id="team"
         className="
-    py-32 relative overflow-hidden
-    bg-[#eaf2ff] text-slate-800
-  "
+          py-32 relative overflow-hidden
+          bg-[#eaf2ff] text-slate-800
+        "
       >
         {/* Background gradient + particles */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="
-      absolute inset-0
-      bg-[radial-gradient(circle_at_top_left,rgba(0,120,255,0.25),transparent_70%)]
-      opacity-40
-    "></div>
+            absolute inset-0
+            bg-[radial-gradient(circle_at_top_left,rgba(0,120,255,0.25),transparent_70%)]
+            opacity-40
+          "></div>
 
           <div className="
       absolute inset-0
@@ -724,8 +557,6 @@ export default function HomePage() {
                   />
                 </div>
 
-
-
                 {/* INFO */}
                 <div className="p-6 text-center">
                   <h3 className="text-l font-bold text-slate-900">
@@ -750,77 +581,21 @@ export default function HomePage() {
           bg-[#f4f7fb] text-slate-800
         "
       >
-        {/* BACKGROUND LAYERS */}
-        <div className="absolute inset-0 pointer-events-none">
-          {/* Aurora premium */}
-          <div
-            className="
-              absolute inset-0
-              bg-[radial-gradient(circle_at_top_left,rgba(140,200,255,0.45),transparent_70%)]
-              blur-[90px] opacity-60
-            "
-          ></div>
-
-          {/* Soft grid */}
-          <div
-            className="
-              absolute inset-0
-              opacity-[0.09]
-              bg-[linear-gradient(90deg,#cbd5e160_1px,transparent_1px),
-                  linear-gradient(#cbd5e160_1px,transparent_1px)]
-              bg-[size:90px_90px]
-            "
-          ></div>
-
-          {/* Floating particles */}
-          {[...Array(20)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute w-2 h-2 bg-cyan-400/40 rounded-full blur-[2px]"
-              style={{
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
-                animation: `floatParticle${i} ${5 + Math.random() * 5}s ease-in-out infinite`,
-              }}
-            ></div>
-          ))}
-
-          <style>{`
-          ${[...Array(20)]
-              .map(
-                (_, i) => `
-            @keyframes floatParticle${i} {
-              0% { transform: translateY(0) translateX(0); opacity:.3; }
-              50% { transform: translateY(-25px) translateX(15px); opacity:.85; }
-              100% { transform: translateY(0) translateX(0); opacity:.3; }
-            }
-            `
-              )
-              .join("")}
-    `}</style>
-        </div>
-
         <div className="container mx-auto px-6 relative">
 
           {/* TITLE */}
-          <style>{`
-          @keyframes equipTitleMove {
-            0% { background-position: 0% 50% }
-            50% { background-position: 100% 50% }
-            100%{ background-position: 0% 50% }
-          }
-          `}</style>
-
           <h2
             className="
-            text-[28px] md:text-[34px] lg:text-[34px]
-            font-extrabold text-center tracking-tight
-            bg-gradient-to-r from-sky-700 via-cyan-700 to-indigo-800
-            bg-clip-text text-transparent
-            bg-[length:200%_200%]
-            drop-shadow-[0_4px_22px_rgba(56,189,248,0.25)]
-          "
-            style={{ animation: "equipTitleMove 7s ease-in-out infinite" }}
+              text-[28px] md:text-[34px] lg:text-[34px]
+              font-extrabold text-center tracking-tight
+              bg-gradient-to-r from-sky-700 via-cyan-700 to-indigo-800
+              bg-clip-text text-transparent
+              bg-[length:200%_200%]
+              drop-shadow-[0_4px_22px_rgba(56,189,248,0.25)]
+            "
+            style={{
+              animation: "equipTitleMove 7s ease-in-out infinite",
+            }}
           >
             Cơ Sở Vật Chất Hiện Đại
           </h2>
@@ -833,385 +608,157 @@ export default function HomePage() {
             w-48 h-[3px] bg-gradient-to-r from-cyan-500 to-blue-600
             mx-auto mt-6 rounded-full
             shadow-[0_0_15px_rgba(0,150,255,0.45)]
-          ">
-          </div>
+          "></div>
 
-          {/* CONTENT */}
-          <div className="mt-28 space-y-32">
+          {/* LIST THIẾT BỊ */}
+          <div className="grid md:grid-cols-3 gap-12 mt-20">
 
-            {/* ITEM 1 */}
-            <div className="grid md:grid-cols-2 gap-16 items-center">
-
-              {/* IMAGE */}
+            {[
+              {
+                name: "Máy Miễn Dịch Tự Động",
+                img: "/image/machine1.jpg",
+                desc: "Công nghệ phát quang hóa học CLIA tiên tiến – độ nhạy cực cao trong đo hormon và marker ung thư.",
+              },
+              {
+                name: "Máy Phân Tích Sinh Hóa",
+                img: "/image/machine3.jpg",
+                desc: "Hệ thống đo sinh hóa tự động, xử lý nhanh mẫu bệnh phẩm với độ chính xác cao.",
+              },
+              {
+                name: "Máy Huyết Học 5 Thành Phần",
+                img: "/image/machine2.jpg",
+                desc: "Công nghệ laser đa kênh – phân tích 5 loại bạch cầu, hỗ trợ chẩn đoán chuyên sâu.",
+              },
+            ].map((item, i) => (
               <motion.div
-                initial={{ opacity: 0, x: -60 }}
-                whileInView={{ opacity: 1, x: 0 }}
+                key={i}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: .7 }}
-                className="relative"
+                className="
+            bg-white/70 backdrop-blur-xl
+            rounded-2xl border border-slate-200
+            shadow-[0_8px_30px_rgba(0,0,0,0.06)]
+            overflow-hidden flex flex-col transition-all duration-500
+            hover:shadow-[0_14px_50px_rgba(0,150,255,0.25)]
+          "
               >
-                {/* Glow behind image */}
-                <div className="
-                  absolute inset-0 
-                  bg-gradient-to-br from-cyan-300/40 to-blue-300/40
-                  blur-2xl rounded-3xl
-                ">
+                {/* IMAGE */}
+                <div className="relative w-full h-[370px] overflow-hidden">
+                  <img
+                    src={item.img}
+                    className="w-full h-full object-cover transition-all duration-500 group-hover:scale-110"
+                  />
                 </div>
 
-                <img
-                  src="/image/machine3.jpg"
-                  className="
-                  relative w-full rounded-2xl
-                  shadow-[0_12px_45px_rgba(0,150,255,0.25)]
-                  border border-slate-200
-                  object-cover transition-all duration-500
-                  hover:scale-[1.03]
-                "
-                />
-              </motion.div>
+                {/* INFO */}
+                <div className="p-6 flex flex-col flex-grow">
+                  <h3 className="text-xl font-bold text-sky-700">{item.name}</h3>
+                  <p className="text-slate-600 mt-2 flex-grow">{item.desc}</p>
 
-              {/* TEXT */}
-              <motion.div
-                initial={{ opacity: 0, x: 60 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: .7 }}
-                className="
-                  bg-white/70 backdrop-blur-2xl
-                  p-10 rounded-2xl 
-                  border border-slate-200
-                  shadow-[0_8px_30px_rgba(0,0,0,0.06)]
-                "
-              >
-                <h3 className="text-2xl font-bold text-sky-700 mb-4">
-                  Máy Phân Tích Sinh Hóa Tự Động
-                </h3>
-
-                <p className="text-slate-600 leading-relaxed">
-                Máy Phân Tích Sinh Hóa Tự Động thế hệ mới sở hữu khả năng vận hành hoàn toàn khép kín,
-                giúp đo lường hàng chục chỉ số sinh hóa quan trọng như men gan, chức năng thận, điện giải,
-                mỡ máu và enzyme chuyển hóa. Hệ thống tự động hóa toàn diện cho phép xử lý số lượng mẫu lớn
-                trong thời gian ngắn với độ chính xác cao và khả năng lặp lại ổn định. Nhờ tích hợp công nghệ
-                quang học đa bước sóng và AI kiểm soát lỗi, máy đảm bảo kết quả tin cậy cho cả các xét nghiệm
-                chuyên sâu. Đây là thiết bị được sử dụng rộng rãi trong các phòng xét nghiệm đạt chuẩn ISO 15189.
-              </p>
-              </motion.div>
-            </div>
-
-            {/* ITEM 2 */}
-            <div className="grid md:grid-cols-2 gap-16 items-center">
-
-              {/* TEXT LEFT */}
-              <motion.div
-                initial={{ opacity: 0, x: -60 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: .7 }}
-                className="
-                  bg-white/70 backdrop-blur-2xl
-                  p-10 rounded-2xl 
-                  border border-slate-200
-                  shadow-[0_8px_30px_rgba(0,0,0,0.06)]
-                  order-last md:order-first
-                "
-              >
-                <h3 className="text-2xl font-bold text-sky-700 mb-4">
-                  Máy Huyết Học 5 Thành Phần
-                </h3>
-
-                <p className="text-slate-600 leading-relaxed">
-                  Máy Huyết Học 5 Thành Phần ứng dụng công nghệ laser đa kênh và hệ thống phân tích lưu lượng tế bào
-                  (Flow Cytometry) tiên tiến, cho phép phân biệt chi tiết 5 loại bạch cầu và các chỉ số huyết học mở rộng.
-                  Thiết bị giúp đánh giá tình trạng thiếu máu, nhiễm trùng, rối loạn tủy xương và nhiều bệnh lý huyết học khác
-                  với độ chính xác cực cao. Bộ xử lý thông minh hỗ trợ tự động phát hiện bất thường hình thái tế bào,
-                  cảnh báo sớm nguy cơ bệnh lý. Đây là công cụ không thể thiếu trong quy trình kiểm tra máu chuyên sâu,
-                  đạt chuẩn quốc tế trong chẩn đoán và điều trị.
-                </p>
-              </motion.div>
-
-              {/* IMAGE */}
-              <motion.div
-                initial={{ opacity: 0, x: 60 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: .7 }}
-                className="relative"
-              >
-                <div className="
-                  absolute inset-0 
-                  bg-gradient-to-br from-cyan-300/40 to-blue-300/40
-                  blur-2xl rounded-3xl
-                ">
+                  {/* BUTTON */}
+                  <button
+                    onClick={() => setOpenEquipment(item)}
+                    className="
+                mt-6 px-4 py-2 rounded-lg text-sm font-semibold
+                text-cyan-700 border border-cyan-400
+                hover:bg-cyan-500 hover:text-white
+                transition-all duration-300
+              "
+                  >
+                    Đọc thêm →
+                  </button>
                 </div>
-
-                <img
-                  src="/image/machine2.jpg"
-                  className="
-                    relative w-full rounded-2xl
-                    shadow-[0_12px_45px_rgba(0,150,255,0.25)]
-                    border border-slate-200
-                    object-cover transition-all duration-500
-                    hover:scale-[1.03]
-                  "
-                />
               </motion.div>
-
-            </div>
-
-            {/* ITEM 3 */}
-            <div className="grid md:grid-cols-2 gap-16 items-center">
-
-              {/* IMAGE */}
-              <motion.div
-                initial={{ opacity: 0, x: -60 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: .7 }}
-                className="relative"
-              >
-                <div className="
-                  absolute inset-0 
-                  bg-gradient-to-br from-cyan-300/40 to-blue-300/40
-                  blur-2xl rounded-3xl
-                ">
-          </div>
-
-                <img
-                  src="/image/machine1.jpg"
-                  className="
-                    relative w-full rounded-2xl
-                    shadow-[0_12px_45px_rgba(0,150,255,0.25)]
-                    border border-slate-200
-                    object-cover transition-all duration-500
-                    hover:scale-[1.03]
-                  "
-                />
-              </motion.div>
-
-              {/* TEXT */}
-              <motion.div
-                initial={{ opacity: 0, x: 60 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: .7 }}
-                className="
-                  bg-white/70 backdrop-blur-2xl
-                  p-10 rounded-2xl 
-                  border border-slate-200
-                  shadow-[0_8px_30px_rgba(0,0,0,0.06)]
-                "
-              >
-                <h3 className="text-2xl font-bold text-sky-700 mb-4">
-                  Máy Miễn Dịch Tự Động
-                </h3>
-
-                <p className="text-slate-600 leading-relaxed">
-                  Máy Miễn Dịch Tự Động sử dụng công nghệ phát quang hóa học (CLIA) thế hệ mới,
-                  mang đến độ nhạy vượt trội trong đo lường hormon nội tiết, dấu ấn ung thư, chỉ số viêm
-                  và nhiều marker sinh học quan trọng khác. Hệ thống có khả năng phân tích nhanh với độ ổn định cao,
-                  cho phép phát hiện bất thường từ giai đoạn rất sớm. Ngoài ra, thiết bị còn tích hợp bộ xử lý thông minh
-                  giúp giảm sai số thao tác, tự động kiểm soát chất lượng và lưu trữ dữ liệu mẫu theo tiêu chuẩn quốc tế.
-                  Đây là công nghệ không thể thiếu trong phòng xét nghiệm hiện đại, hỗ trợ chẩn đoán toàn diện và chính xác.
-                </p>
-
-              </motion.div>
-
-            </div>
+            ))}
 
           </div>
         </div>
       </section>
 
-      {/* ================= FORM MINI ================= */}
-      <section
-        id="contact"
-        className="
-          py-28 relative overflow-hidden
-          bg-[#f5f8fc] text-slate-800
+      {/* ================= POPUP THIẾT BỊ ================= */}
+      {openEquipment && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[1000] flex items-center justify-center p-4">
+
+          <div className="
+      bg-white rounded-2xl w-[90%] md:w-[80%] 
+      h-[85vh] max-h-[800px]
+      shadow-2xl overflow-hidden relative
+      animate-zoom
+      grid grid-cols-1 md:grid-cols-2
+    ">
+
+            {/* NÚT ĐÓNG */}
+            <button
+              onClick={() => setOpenEquipment(null)}
+              className="
+          absolute top-4 right-4 
+          w-10 h-10 flex items-center justify-center
+          bg-white/80 backdrop-blur-md
+          rounded-full shadow-md
+          text-gray-600 hover:text-red-500
+          text-2xl font-bold transition
         "
-      >
-        {/* BACKGROUND PREMIUM */}
-        <div className="absolute inset-0 pointer-events-none">
-
-          {/* Aurora glow */}
-          <div
-            className="
-            absolute inset-0
-            bg-[radial-gradient(circle_at_top_left,rgba(150,200,255,0.45),transparent_70%)]
-            blur-[90px] opacity-70
-          "
-          ></div>
-
-          {/* Grid y tế */}
-          <div
-            className="
-            absolute inset-0 opacity-[0.06]
-            bg-[linear-gradient(90deg,#94a3b820_1px,transparent_1px),
-                linear-gradient(#94a3b820_1px,transparent_1px)]
-            bg-[size:75px_75px]
-          "
-          ></div>
-
-          {/* Floating micro particles */}
-          {[...Array(14)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute w-2 h-2 rounded-full bg-cyan-400/30 blur-[1px]"
-              style={{
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
-                animation: `floatParticle${i} ${5 + Math.random() * 5}s infinite ease-in-out`,
-              }}
-            ></div>
-          ))}
-
-          <style>{`
-      ${[...Array(14)]
-              .map(
-                (_, i) => `
-        @keyframes floatParticle${i} {
-          0% { transform: translateY(0) translateX(0); opacity:.3; }
-          50% { transform: translateY(-20px) translateX(10px); opacity:.8; }
-          100% { transform: translateY(0) translateX(0); opacity:.3; }
-        }
-      `
-              )
-              .join("")}
-    `}</style>
-        </div>
-
-        {/* CONTENT */}
-        <div className="container mx-auto px-6 max-w-xl relative">
-
-          {/* TITLE */}
-          <style>{`
-      @keyframes formTitleMove {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-      }
-      @keyframes lightSweepForm {
-        0% { transform: translateX(-140%) skewX(-15deg); opacity:0; }
-        50% { opacity:.35; }
-        100% { transform: translateX(170%) skewX(-15deg); opacity:0; }
-      }
-    `}</style>
-
-          <div className="relative text-center mb-14">
-
-            {/* Light sweep */}
-            <div
-              className="
-                absolute inset-x-0 top-1/2 h-[120px]
-                bg-gradient-to-r from-transparent via-white/40 to-transparent
-                opacity-0
-              "
-              style={{ animation: "lightSweepForm 6s infinite linear" }}
-            ></div>
-
-            <h2
-              className="
-              text-[26px] md:text-[30px] font-extrabold tracking-tight
-              bg-gradient-to-r from-sky-700 via-cyan-700 to-indigo-800
-              bg-[length:200%_200%] bg-clip-text text-transparent
-              drop-shadow-[0_4px_20px_rgba(56,189,248,0.25)]
-            "
-              style={{ animation: "formTitleMove 7s ease-in-out infinite" }}
             >
-              Đăng ký tư vấn
-            </h2>
+              ✕
+            </button>
 
-            <p className="text-slate-500 mt-3 text-base">
-              Vui lòng điền đầy đủ thông tin bên dưới
-            </p>
-
-            <div className="
-              w-40 h-[3px] mx-auto mt-5
-              bg-gradient-to-r from-cyan-500 to-indigo-500 rounded-full
-              shadow-[0_0_12px_rgba(56,189,248,0.35)]
-            ">
-            </div>
-          </div>
-
-          {/* FORM */}
-          <form
-            className="
-              mt-8 space-y-5
-              bg-white/70 backdrop-blur-2xl
-              border border-slate-200
-              p-8 rounded-2xl
-              shadow-[0_8px_35px_rgba(0,0,0,0.06)]
-            "
-          >
-            {[
-              { label: "Họ và Tên", placeholder: "Nguyễn Văn A", type: "text" },
-              { label: "Số Điện Thoại", placeholder: "0123 456 789", type: "text" },
-              { label: "Email", placeholder: "example@gmail.com", type: "email" },
-            ].map((field, i) => (
-              <div key={i} className="space-y-1">
-                <label className="text-slate-700 text-sm font-semibold">{field.label}</label>
-                <input
-                  type={field.type}
-                  placeholder={field.placeholder}
-                  className="
-                    w-full px-4 py-3 rounded-xl bg-white/50 text-slate-800
-                    border border-slate-300 outline-none text-sm
-                    focus:border-cyan-500 focus:shadow-[0_0_10px_rgba(0,180,255,0.4)]
-                    transition-all
-                  "
-                />
-              </div>
-            ))}
-
-            {/* GIỚI TÍNH */}
-            <div className="space-y-1">
-              <label className="text-slate-700 text-sm font-semibold">Giới Tính</label>
-              <select
-                className="
-                  w-full px-4 py-3 rounded-xl bg-white/50 text-slate-800
-                  border border-slate-300 outline-none text-sm
-                  focus:border-cyan-500 focus:shadow-[0_0_10px_rgba(0,180,255,0.4)]
-                  transition-all
-                "
-              >
-                <option>Nam</option>
-                <option>Nữ</option>
-                <option>Khác</option>
-              </select>
-            </div>
-
-            {/* NGÀY SINH */}
-            <div className="space-y-1">
-              <label className="text-slate-700 text-sm font-semibold">Ngày Sinh</label>
-              <input
-                type="date"
-                className="
-                  w-full px-4 py-3 rounded-xl bg-white/50 text-slate-800
-                  border border-slate-300 outline-none text-sm
-                  focus:border-cyan-500 focus:shadow-[0_0_10px_rgba(0,180,255,0.4)]
-                  transition-all
-                "
+            {/* LEFT — IMAGE FULL HEIGHT */}
+            <div className="h-full w-full">
+              <img
+                src={openEquipment.img}
+                className="w-full h-full object-cover"
               />
             </div>
 
-            {/* SUBMIT */}
-            <button
-              className="
-          w-full py-3 mt-3 text-sm font-semibold
-          bg-gradient-to-r from-cyan-500 to-blue-600 
-          text-white rounded-xl
-          shadow-[0_0_15px_rgba(0,180,255,0.5)]
-          hover:shadow-[0_0_25px_rgba(0,180,255,0.75)]
-          transition-all duration-300
-        "
-            >
-              Gửi →
-            </button>
+            {/* RIGHT — CONTENT */}
+            <div className="p-8 overflow-y-auto">
 
-          </form>
+              <h2 className="text-3xl font-extrabold text-sky-700">
+                {openEquipment.name}
+              </h2>
+
+              <p className="text-slate-600 mt-4 text-lg leading-relaxed">
+                {openEquipment.desc}
+              </p>
+
+              {/* NỘI DUNG CHI TIẾT THÊM */}
+              <div className="mt-6 space-y-4 text-slate-700 text-[15px]">
+
+                <p>
+                  <strong className="text-sky-700">Công nghệ:{" "}</strong>
+                  Máy sử dụng hệ thống phân tích tự động với độ chính xác cao, kiểm soát chất lượng theo chuẩn quốc tế ISO 15189.
+                </p>
+
+                <p>
+                  <strong className="text-sky-700">Ứng dụng trong xét nghiệm:{" "}</strong>
+                  Hỗ trợ phân tích mẫu nhanh chóng, cho phép thực hiện nhiều xét nghiệm cùng lúc với sai số cực thấp.
+                </p>
+
+                <p>
+                  <strong className="text-sky-700">Hiệu suất hoạt động:{" "}</strong>
+                  Khả năng xử lý mẫu liên tục, thiết kế tối ưu giảm thời gian chờ và tăng tốc độ trả kết quả.
+                </p>
+
+                <p>
+                  <strong className="text-sky-700">An toàn & Độ bền:{" "}</strong>
+                  Bảo vệ người vận hành, chống nhiễm chéo và hệ thống cảnh báo sớm khi có sai số.
+                </p>
+
+              </div>
+
+            </div>
+          </div>
         </div>
-      </section>
+      )}
 
+      <style>{`
+        @keyframes equipTitleMove {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+      `}</style>
 
 
       {/* NÚT CUỘN LÊN ĐẦU TRANG (NHỎ + VUÔNG + BO GÓC 3PX) */}
@@ -1234,166 +781,150 @@ export default function HomePage() {
         </button>
       )}
 
-      {/* ================= PREMIUM FOOTER ================= */}
-      <footer
+      {/* ====================== NÚT TƯ VẤN NỔI =============================== */}
+      <button
+        onMouseDown={handleMouseDown}
+        onClick={() => {
+          if (!dragged) setOpenConsult(true);
+        }}
+        style={{
+          position: "fixed",
+          left: buttonPos.x,
+          top: buttonPos.y,
+          zIndex: 999,
+          cursor: "grab",
+          transition: dragging ? "none" : "transform 0.15s ease-out",
+        }}
         className="
-        relative overflow-hidden
-        bg-[#eef3f8] 
-        text-slate-700
-        pt-20 pb-14
-      "
+    p-3 rounded-full
+    bg-gradient-to-r from-cyan-500 to-blue-600
+    shadow-xl hover:shadow-2xl
+    text-white
+  "
       >
-        {/* BACKGROUND LAYERS */}
-        <div className="absolute inset-0 pointer-events-none">
+        <ChatBubbleOvalLeftEllipsisIcon className="w-7 h-7" />
+      </button>
 
-          {/* Aurora Glow */}
-          <div
-            className="
-        absolute inset-0
-        bg-[radial-gradient(circle_at_bottom_left,rgba(120,190,255,0.45),transparent_70%)]
-        blur-[90px] opacity-60
-      "
-          ></div>
+      {/* =========================== POPUP TƯ VẤN =========================== */}
 
-          {/* Subtle Medical Grid */}
-          <div
-            className="
-        absolute inset-0 opacity-[0.08]
-        bg-[linear-gradient(90deg,#94a3b820_1px,transparent_1px),
-            linear-gradient(#94a3b820_1px,transparent_1px)]
-        bg-[size:75px_75px]
-      "
-          ></div>
+      {openConsult && (
+        <div className="fixed inset-0 z-[1000] bg-black/40 backdrop-blur-sm flex items-center justify-center animate-fade">
 
-          {/* Moving Light Sweep */}
-          <style>{`
-      @keyframes footerSweep {
-        0% { transform: translateX(-150%) skewX(-15deg); opacity:0; }
-        50% { opacity:.35; }
-        100% { transform: translateX(180%) skewX(-15deg); opacity:0; }
-      }
-    `}</style>
+          <div className="bg-white w-[90%] max-w-md p-6 rounded-2xl shadow-xl animate-zoom relative">
 
-          <div
-            className="
-        absolute top-1/3 inset-x-0 h-[150px]
-        bg-gradient-to-r from-transparent via-white/40 to-transparent
-        opacity-0
-      "
-            style={{ animation: "footerSweep 8s infinite linear" }}
-          ></div>
-        </div>
+            {/* Nút đóng */}
+            <button
+              onClick={() => setOpenConsult(false)}
+              className="absolute top-2 right-3 text-gray-400 hover:text-gray-700 text-xl"
+            >
+              ✕
+            </button>
 
-        {/* CONTENT */}
-        <div className="container mx-auto px-6 grid md:grid-cols-4 gap-14 relative">
-
-          {/* ==== COL 1 – LOGO & DESCRIPTION ==== */}
-          <div className="space-y-4">
-            <h3 className="
-  text-2xl font-bold
-  bg-gradient-to-r from-red-500 via-orange-500 to-yellow-400
-  bg-clip-text text-transparent
-">
-              Blood Test OJT
-            </h3>
-
-
-            <p className="text-slate-600 text-sm leading-relaxed">
-              Trung tâm xét nghiệm máu hiện đại – công nghệ tiên tiến – đảm bảo kết quả
-              chính xác và an toàn theo tiêu chuẩn quốc tế.
+            {/* Tiêu đề */}
+            <h2 className="text-xl font-bold text-center text-sky-700">Đăng ký tư vấn</h2>
+            <p className="text-gray-500 text-center text-sm mt-1 mb-2">
+              Điền thông tin của bạn để được hỗ trợ sớm nhất
             </p>
-          </div>
 
-          {/* ==== COL 2 – SERVICES ==== */}
-          <div>
-            <h4 className="font-semibold text-slate-800 mb-4 text-lg">Dịch Vụ Chính</h4>
-            <ul className="space-y-2 text-slate-600">
-              <li><a href="#service" className="hover:text-sky-600 transition">Xét Nghiệm Máu Tổng Quát</a></li>
-              <li><a href="#service" className="hover:text-sky-600 transition">Sinh Hóa – Miễn Dịch</a></li>
-              <li><a href="#service" className="hover:text-sky-600 transition">Nội Tiết – Hormon</a></li>
-              <li><a href="#service" className="hover:text-sky-600 transition">Đánh Giá Tim Mạch</a></li>
-            </ul>
-          </div>
+            {/* FORM */}
+            <form className="space-y-4">
 
-          {/* ==== COL 3 – POLICY ==== */}
-          <div>
-            <h4 className="font-semibold text-slate-800 mb-4 text-lg">Hỗ Trợ & Chính Sách</h4>
-            <ul className="space-y-2 text-slate-600">
-              <li><a href="#" className="hover:text-sky-600 transition">Hướng Dẫn Đặt Lịch</a></li>
-              <li><a href="#" className="hover:text-sky-600 transition">Chính Sách Bảo Mật</a></li>
-              <li><a href="#" className="hover:text-sky-600 transition">Điều Khoản Dịch Vụ</a></li>
-              <li><a href="#contact" className="hover:text-sky-600 transition">Hỗ Trợ Khách Hàng</a></li>
-            </ul>
-          </div>
+              {/* Họ tên */}
+              <div className="space-y-1">
+                <label className="text-sm font-medium text-gray-700">Họ và tên</label>
+                <input
+                  type="text"
+                  placeholder="Nguyễn Văn A"
+                  className="w-full px-3 py-2.5 bg-gray-100 border border-gray-300 rounded-xl text-sm outline-none focus:border-cyan-500"
+                />
+              </div>
 
-          {/* ==== COL 4 – CONTACT ==== */}
-          <div>
-            <h4 className="font-semibold text-slate-800 mb-4 text-lg">Thông Tin Liên Hệ</h4>
+              {/* SĐT */}
+              <div className="space-y-1">
+                <label className="text-sm font-medium text-gray-700">Số điện thoại</label>
+                <input
+                  type="text"
+                  placeholder="0123 456 789"
+                  className="w-full px-3 py-2.5 bg-gray-100 border border-gray-300 rounded-xl text-sm outline-none focus:border-cyan-500"
+                />
+              </div>
 
-            <ul className="space-y-2 text-slate-600 text-sm">
+              {/* Email */}
+              <div className="space-y-1">
+                <label className="text-sm font-medium text-gray-700">Email</label>
+                <input
+                  type="email"
+                  placeholder="example@gmail.com"
+                  className="w-full px-3 py-2.5 bg-gray-100 border border-gray-300 rounded-xl text-sm outline-none focus:border-cyan-500"
+                />
+              </div>
 
-              {/* ĐỊA CHỈ 1 HÀNG */}
-              <li className="whitespace-nowrap flex gap-2 items-start overflow-hidden">
-                <span className="font-semibold ext-sky-600">Địa chỉ:</span>
-                <span>123 Đường ABC, Quận 1, TP.HCM</span>
-              </li>
+              {/* 2 cột: Giới tính + Ngày sinh */}
+              <div className="grid grid-cols-2 gap-4">
 
+                {/* Giới tính */}
+                <div className="space-y-1">
+                  <label className="text-sm font-medium text-gray-700">Giới tính</label>
+                  <select
+                    className="w-full px-3 py-2.5 bg-gray-100 border border-gray-300 rounded-xl text-sm outline-none focus:border-cyan-500"
+                  >
+                    <option>Nam</option>
+                    <option>Nữ</option>
+                    <option>Khác</option>
+                  </select>
+                </div>
 
-              {/* HOTLINE */}
-              <li className="flex gap-2">
-                <span className="font-semibold text-slate-700">Hotline:</span>
-                <a href="tel:0258741369" className="hover:text-sky-600 transition">
-                  0258 741 369
-                </a>
-              </li>
+                {/* Ngày sinh */}
+                <div className="space-y-1">
+                  <label className="text-sm font-medium text-gray-700">Ngày sinh</label>
+                  <input
+                    type="date"
+                    className="w-full px-3 py-2.5 bg-gray-100 border border-gray-300 rounded-xl text-sm outline-none focus:border-cyan-500"
+                  />
+                </div>
 
-            </ul>
+              </div>
 
-
-            {/* SOCIAL ICONS */}
-            <div className="flex space-x-5 text-xl mt-4">
-
-              <a
-                href="#"
+              {/* Nút gửi */}
+              <button
                 className="
-            text-slate-500 hover:text-sky-600
+            w-full py-2.5 mt-4 text-sm font-semibold
+            bg-gradient-to-r from-cyan-500 to-blue-600
+            text-white rounded-xl
+            shadow-[0_0_12px_rgba(0,180,255,0.5)]
+            hover:shadow-[0_0_20px_rgba(0,180,255,0.7)]
             transition-all
           "
               >
-                <i className="fab fa-facebook"></i>
-              </a>
+                Gửi thông tin →
+              </button>
 
-              <a
-                href="#"
-                className="
-            text-slate-500 hover:text-indigo-500
-            transition-all
-          "
-              >
-                <i className="fab fa-facebook-messenger"></i>
-              </a>
+            </form>
 
-              <a
-                href="#"
-                className="
-            text-slate-500 hover:text-cyan-500
-            transition-all
-          "
-              >
-                <i className="fas fa-comment-dots"></i>
-              </a>
-
-            </div>
           </div>
         </div>
+      )}
 
-        {/* COPYRIGHT */}
-        <p className="text-center text-slate-500 mt-14 text-sm relative">
-          © Sản phẩm thực tập demo - Tất cả hình ảnh do AI tạo ra.
-        </p>
-      </footer>
+      {/* Tailwind Animations */}
+      <style>
+        {`
+          .animate-fade { animation: fadeIn .25s ease-out; }
+          .animate-zoom { animation: zoomIn .25s ease-out; }
 
+          @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+          }
 
+          @keyframes zoomIn {
+            from { transform: scale(.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+          }
+        `}
+      </style>
+
+      {/* =================FOOTER ================= */}
+      <Footer />
     </div>
   );
 }
