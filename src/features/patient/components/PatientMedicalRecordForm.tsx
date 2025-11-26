@@ -65,13 +65,6 @@ const PatientMedicalRecordForm: React.FC<Props> = ({
       newErrors.dateOfBirth = "Date of birth is required.";
     }
 
-    // Gender: Required, must be "male" or "female" (match BE)
-    if (!form.patient.gender) {
-      newErrors.gender = "Gender is required.";
-    } else if (form.patient.gender !== "male" && form.patient.gender !== "female") {
-      newErrors.gender = "Gender must be 'male' or 'female'.";
-    }
-
     // PhoneNumber: Required, Regex ^\+?[0-9]{9,15}$ (match BE)
     if (!form.patient.phoneNumber.trim()) {
       newErrors.phoneNumber = "Phone number is required.";
