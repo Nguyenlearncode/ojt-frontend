@@ -64,7 +64,7 @@ const SearchFilterChakra: React.FC<SearchFilterChakraProps> = ({
           }))
         );
       } catch (error) {
-        console.error("⚠️ Failed to fetch roles:", error);
+        // Error handling is done silently
       }
     };
 

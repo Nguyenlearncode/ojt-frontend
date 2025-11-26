@@ -14,6 +14,15 @@ import {
   Badge,
   Wrap,
   WrapItem,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
+  VStack,
+  Divider,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { FiEdit2, FiTrash2, FiShield } from "react-icons/fi";
@@ -27,6 +36,101 @@ interface RoleTableChakraProps {
   onEdit?: (role: Role) => void;
   onDelete?: (roleCode: string) => void;
 }
+
+interface PrivilegesModalProps {
+  role: Role;
+}
+
+const PrivilegesModal: React.FC<PrivilegesModalProps> = ({ role }) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const privileges = role.privileges || [];
+  const displayCount = 3;
+  const hasMore = privileges.length > displayCount;
+
+  return (
+    <>
+      <Wrap spacing={1} maxW="300px">
+        {privileges.length > 0 ? (
+          <>
+            {privileges.slice(0, displayCount).map((priv) => (
+              <WrapItem key={priv.privilegeId}>
+                <Badge colorScheme="green" fontSize="xs">
+                  {priv.privilegeName}
+                </Badge>
+              </WrapItem>
+            ))}
+            {hasMore && (
+              <WrapItem>
+                <Badge
+                  colorScheme="gray"
+                  fontSize="xs"
+                  cursor="pointer"
+                  onClick={onOpen}
+                  _hover={{
+                    bg: "gray.300",
+                    transform: "scale(1.05)",
+                  }}
+                  transition="all 0.2s"
+                >
+                  +{privileges.length - displayCount} more
+                </Badge>
+              </WrapItem>
+            )}
+          </>
+        ) : (
+          <Text fontSize="xs" color="gray.400">
+            No privileges
+          </Text>
+        )}
+      </Wrap>
+
+      <Modal isOpen={isOpen} onClose={onClose} size="lg" isCentered>
+        <ModalOverlay bg="blackAlpha.300" backdropFilter="blur(10px)" />
+        <ModalContent>
+          <ModalHeader>
+            <HStack spacing={3}>
+              <Box
+                p={2}
+                bg="blue.50"
+                borderRadius="lg"
+                color="blue.500"
+              >
+                <FiShield size={24} />
+              </Box>
+              <VStack align="start" spacing={0}>
+                <Text fontSize="lg" fontWeight="bold">
+                  {role.roleName}
+                </Text>
+                <Text fontSize="sm" fontWeight="normal" color="gray.600">
+                  {privileges.length} Privilege{privileges.length !== 1 ? 's' : ''}
+                </Text>
+              </VStack>
+            </HStack>
+          </ModalHeader>
+          <ModalCloseButton />
+          <Divider />
+          <ModalBody py={6}>
+            <Wrap spacing={2}>
+              {privileges.map((priv) => (
+                <WrapItem key={priv.privilegeId}>
+                  <Badge
+                    colorScheme="green"
+                    fontSize="sm"
+                    px={3}
+                    py={1}
+                    borderRadius="md"
+                  >
+                    {priv.privilegeName}
+                  </Badge>
+                </WrapItem>
+              ))}
+            </Wrap>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+    </>
+  );
+};
 
 export const RoleTableChakra: React.FC<RoleTableChakraProps> = ({
   roles,
@@ -74,7 +178,6 @@ export const RoleTableChakra: React.FC<RoleTableChakraProps> = ({
             <Tr>
               <Th>#</Th>
               <Th>Tên Role</Th>
-              <Th>Mã Role</Th>
               <Th>Mô tả</Th>
               <Th>Privileges</Th>
               <Th>Hành động</Th>
@@ -112,13 +215,6 @@ export const RoleTableChakra: React.FC<RoleTableChakraProps> = ({
                   </HStack>
                 </Td>
 
-                {/* Mã Role */}
-                <Td>
-                  <Badge colorScheme="purple" fontSize="sm" px={2} py={1} borderRadius="md">
-                    {role.roleCode}
-                  </Badge>
-                </Td>
-
                 {/* Mô tả */}
                 <Td>
                   <Text fontSize="sm" color="gray.600" noOfLines={2}>
@@ -128,26 +224,7 @@ export const RoleTableChakra: React.FC<RoleTableChakraProps> = ({
 
                 {/* Privileges */}
                 <Td>
-                  <Wrap spacing={1} maxW="300px">
-                    {role.privileges && role.privileges.length > 0 ? (
-                      role.privileges.slice(0, 3).map((priv) => (
-                        <WrapItem key={priv.privilegeId}>
-                          <Badge colorScheme="green" fontSize="xs">
-                            {priv.privilegeName}
-                          </Badge>
-                        </WrapItem>
-                      ))
-                    ) : (
-                      <Text fontSize="xs" color="gray.400">No privileges</Text>
-                    )}
-                    {role.privileges && role.privileges.length > 3 && (
-                      <WrapItem>
-                        <Badge colorScheme="gray" fontSize="xs">
-                          +{role.privileges.length - 3} more
-                        </Badge>
-                      </WrapItem>
-                    )}
-                  </Wrap>
+                  <PrivilegesModal role={role} />
                 </Td>
 
                 {/* Hành động */}

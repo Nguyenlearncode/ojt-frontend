@@ -1,8 +1,9 @@
+// src/features/dashboard/components/QuickActionsChakra.tsx
 import React from "react";
 import { Box, Heading, SimpleGrid, Flex, Text, Icon } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { FiUserPlus, FiUsers, FiFileText, FiSettings } from "react-icons/fi";
+import { FiUserPlus, FiUsers } from "react-icons/fi";
 
 const MotionBox = motion(Box);
 
@@ -12,8 +13,8 @@ const QuickActionsChakra: React.FC = () => {
   const actions = [
     {
       id: "create-user",
-      title: "Create User",
-      description: "Add a new user to the system",
+      title: "Tạo người dùng",
+      description: "Thêm người dùng mới vào hệ thống",
       icon: FiUserPlus,
       color: "blue.500",
       bgColor: "blue.50",
@@ -21,31 +22,14 @@ const QuickActionsChakra: React.FC = () => {
     },
     {
       id: "manage-users",
-      title: "Manage Users",
-      description: "View and edit user accounts",
+      title: "Quản lý người dùng",
+      description: "Xem và chỉnh sửa tài khoản người dùng",
       icon: FiUsers,
       color: "green.500",
       bgColor: "green.50",
       path: "/UserManagement",
     },
-    {
-      id: "reports",
-      title: "Generate Report",
-      description: "Create system reports",
-      icon: FiFileText,
-      color: "orange.500",
-      bgColor: "orange.50",
-      path: "/reports",
-    },
-    {
-      id: "settings",
-      title: "System Settings",
-      description: "Configure system preferences",
-      icon: FiSettings,
-      color: "purple.500",
-      bgColor: "purple.50",
-      path: "/settings",
-    },
+
   ];
 
   return (

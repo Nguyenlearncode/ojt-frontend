@@ -16,8 +16,6 @@ import {
   Th,
   Td,
   Badge,
-  IconButton,
-  Tooltip,
   useDisclosure,
   Button,
   SimpleGrid,
@@ -32,7 +30,7 @@ import {
   TableContainer,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
-import { FiEye, FiFileText, FiPlus, FiSearch, FiActivity } from "react-icons/fi";
+import { FiFileText, FiPlus, FiSearch, FiActivity } from "react-icons/fi";
 import { useTestOrders, type TestOrderListDto } from "../hooks/useTestOrders";
 import TestOrderDetailModal from "../components/TestOrderDetailModal";
 import CreateTestOrderModal from "../components/CreateTestOrderModal";
@@ -71,7 +69,8 @@ const TestOrdersPage: React.FC = () => {
     setIsLoading(true);
     try {
       const result = await getAllTestOrders();
-      setTestOrders(result.items || []);
+      const orders = result.items || [];
+      setTestOrders(orders);
     } finally {
       setIsLoading(false);
     }
@@ -91,9 +90,11 @@ const TestOrdersPage: React.FC = () => {
   const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
       case "complete":
+      case "completed":
         return "green";
       case "pending":
         return "yellow";
+      case "reviewed":
       case "review":
         return "blue";
       case "cancelled":
@@ -105,14 +106,11 @@ const TestOrdersPage: React.FC = () => {
 
   const getStatusLabel = (status: string) => {
     switch (status?.toLowerCase()) {
+      case "complete":
       case "completed":
         return "Hoàn thành";
       case "pending":
         return "Đang chờ";
-      case "review":
-        return "Đã review";
-      case "cancelled":
-        return "Đã hủy";
       default:
         return status;
     }
@@ -130,9 +128,15 @@ const TestOrdersPage: React.FC = () => {
   }, [testOrders, searchTerm]);
 
   const totalOrders = testOrders.length;
-  const completedOrders = testOrders.filter((o) => o.status?.toLowerCase() === "complete").length;
-  const pendingOrders = testOrders.filter((o) => o.status?.toLowerCase() === "pending").length;
-  const reviewedOrders = testOrders.filter((o) => o.status?.toLowerCase() === "review").length;
+  const completedOrders = testOrders.filter((o) => {
+    const status = o.status?.toLowerCase();
+    return status === "complete" || status === "completed" || status === "hoàn thành";
+  }).length;
+  const pendingOrders = testOrders.filter((o) => {
+    const status = o.status?.toLowerCase();
+    return status === "pending" || status === "đang chờ";
+  }).length;
+  
 
   return (
     <Box minH="100vh" py={{ base: 8, md: 12 }} px={{ base: 4, md: 8 }} bg={pageBg}>
@@ -175,7 +179,7 @@ const TestOrdersPage: React.FC = () => {
                 </Button>
               </MotionBox>
             </Flex>
-            <SimpleGrid columns={{ base: 1, sm: 2, md: 4 }} gap={4} mt={6}>
+            <SimpleGrid columns={{ base: 1, sm: 2, md: 3 }} gap={4} mt={6}>
               <Stat
                 p={4}
                 borderRadius="xl"
@@ -199,18 +203,9 @@ const TestOrdersPage: React.FC = () => {
                 borderRadius="xl"
                 bg="linear-gradient(135deg, rgba(254, 178, 217, 0.35), rgba(255, 121, 198, 0.2))"
               >
-                <StatLabel color="gray.600">Đang chờ</StatLabel>
+                <StatLabel color="gray.600">Chưa có kết quả</StatLabel>
                 <StatNumber>{pendingOrders}</StatNumber>
                 <StatHelpText color="gray.600">Chờ xử lý</StatHelpText>
-              </Stat>
-              <Stat
-                p={4}
-                borderRadius="xl"
-                bg="linear-gradient(135deg, rgba(246, 229, 141, 0.35), rgba(255, 193, 7, 0.2))"
-              >
-                <StatLabel color="gray.600">Đã review</StatLabel>
-                <StatNumber>{reviewedOrders}</StatNumber>
-                <StatHelpText color="gray.600">Đã duyệt</StatHelpText>
               </Stat>
             </SimpleGrid>
           </Box>
@@ -288,12 +283,16 @@ const TestOrdersPage: React.FC = () => {
                       <Th>Trạng thái</Th>
                       <Th>Ngày tạo</Th>
                       <Th>Người tạo</Th>
-                      <Th textAlign="center">Thao tác</Th>
                     </Tr>
                   </Thead>
                   <Tbody>
                     {filteredOrders.map((order) => (
-                      <Tr key={order.testOrderId} _hover={{ bg: hoverBg }}>
+                      <Tr 
+                        key={order.testOrderId} 
+                        _hover={{ bg: hoverBg, cursor: "pointer" }}
+                        onClick={() => handleViewDetail(order.testOrderId)}
+                        transition="all 0.2s"
+                      >
                         <Td>
                           <VStack align="flex-start" spacing={0}>
                             <Text fontSize="xs" color="gray.500">
@@ -329,20 +328,6 @@ const TestOrdersPage: React.FC = () => {
                         </Td>
                         <Td>
                           <Text fontSize="sm">{order.createdBy || "N/A"}</Text>
-                        </Td>
-                        <Td>
-                          <HStack spacing={2} justify="center">
-                            <Tooltip label="Xem chi tiết" hasArrow>
-                              <IconButton
-                                aria-label="Xem chi tiết"
-                                icon={<FiEye />}
-                                size="sm"
-                                colorScheme="blue"
-                                variant="ghost"
-                                onClick={() => handleViewDetail(order.testOrderId)}
-                              />
-                            </Tooltip>
-                          </HStack>
                         </Td>
                       </Tr>
                     ))}

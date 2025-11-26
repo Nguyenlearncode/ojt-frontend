@@ -53,22 +53,57 @@ const PatientMedicalRecordForm: React.FC<Props> = ({
   const validate = (): boolean => {
     const newErrors: Record<string, string> = {};
 
+    // FullName: Required, MaxLength 200 (match BE)
     if (!form.patient.fullName.trim()) {
-      newErrors.fullName = "Họ và tên là bắt buộc";
+      newErrors.fullName = "Full name is required.";
+    } else if (form.patient.fullName.length > 200) {
+      newErrors.fullName = "Full name must not exceed 200 characters.";
     }
 
+    // DateOfBirth: Required, Format MM/dd/yyyy (match BE)
     if (!form.patient.dateOfBirth) {
-      newErrors.dateOfBirth = "Ngày sinh là bắt buộc";
+      newErrors.dateOfBirth = "Date of birth is required.";
     }
 
+    // Gender: Required, must be "male" or "female" (match BE)
+    if (!form.patient.gender) {
+      newErrors.gender = "Gender is required.";
+    } else if (form.patient.gender !== "male" && form.patient.gender !== "female") {
+      newErrors.gender = "Gender must be 'male' or 'female'.";
+    }
+
+    // PhoneNumber: Required, Regex ^\+?[0-9]{9,15}$ (match BE)
     if (!form.patient.phoneNumber.trim()) {
-      newErrors.phoneNumber = "Số điện thoại là bắt buộc";
-    } else if (!/^[0-9]{10,11}$/.test(form.patient.phoneNumber.replace(/\s/g, ""))) {
-      newErrors.phoneNumber = "Số điện thoại không hợp lệ";
+      newErrors.phoneNumber = "Phone number is required.";
+    } else if (!/^\+?[0-9]{9,15}$/.test(form.patient.phoneNumber.trim())) {
+      newErrors.phoneNumber = "Invalid phone number format. Must be 9-15 digits.";
     }
 
-    // Note: diagnosis và clinicalNotes không được backend hỗ trợ trong API create
-    // Các trường này đã bị comment out trong entity PatientMedicalRecord
+    // Email: Required + Valid email format (FE requirement)
+    if (!form.patient.email || !form.patient.email.trim()) {
+      newErrors.email = "Email is required.";
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(form.patient.email)) {
+        newErrors.email = "Invalid email format.";
+      } else if (form.patient.email.length > 200) {
+        newErrors.email = "Email must not exceed 200 characters.";
+      }
+    }
+
+    // Address: Required (FE requirement)
+    if (!form.patient.address || !form.patient.address.trim()) {
+      newErrors.address = "Address is required.";
+    } else if (form.patient.address.length > 300) {
+      newErrors.address = "Address must not exceed 300 characters.";
+    }
+
+    // IdentifyNumber: Required + Must be 12 digits (FE requirement)
+    if (!form.patient.identifyNumber || !form.patient.identifyNumber.trim()) {
+      newErrors.identifyNumber = "CCCD/CMND is required.";
+    } else if (!/^[0-9]{12}$/.test(form.patient.identifyNumber.trim())) {
+      newErrors.identifyNumber = "CCCD/CMND must be exactly 12 digits.";
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -79,6 +114,77 @@ const PatientMedicalRecordForm: React.FC<Props> = ({
     if (validate()) {
       onSubmit();
     }
+  };
+
+  const handleBlur = (field: string) => {
+    const newErrors = { ...errors };
+
+    switch (field) {
+      case "fullName":
+        if (!form.patient.fullName.trim()) {
+          newErrors.fullName = "Full name is required.";
+        } else if (form.patient.fullName.length > 200) {
+          newErrors.fullName = "Full name must not exceed 200 characters.";
+        } else {
+          delete newErrors.fullName;
+        }
+        break;
+
+      case "dateOfBirth":
+        if (!form.patient.dateOfBirth) {
+          newErrors.dateOfBirth = "Date of birth is required.";
+        } else {
+          delete newErrors.dateOfBirth;
+        }
+        break;
+
+      case "phoneNumber":
+        if (!form.patient.phoneNumber.trim()) {
+          newErrors.phoneNumber = "Phone number is required.";
+        } else if (!/^\+?[0-9]{9,15}$/.test(form.patient.phoneNumber.trim())) {
+          newErrors.phoneNumber = "Invalid phone number format. Must be 9-15 digits.";
+        } else {
+          delete newErrors.phoneNumber;
+        }
+        break;
+
+      case "email":
+        if (!form.patient.email || !form.patient.email.trim()) {
+          newErrors.email = "Email is required.";
+        } else {
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(form.patient.email)) {
+            newErrors.email = "Invalid email format.";
+          } else if (form.patient.email.length > 200) {
+            newErrors.email = "Email must not exceed 200 characters.";
+          } else {
+            delete newErrors.email;
+          }
+        }
+        break;
+
+      case "address":
+        if (!form.patient.address || !form.patient.address.trim()) {
+          newErrors.address = "Address is required.";
+        } else if (form.patient.address.length > 300) {
+          newErrors.address = "Address must not exceed 300 characters.";
+        } else {
+          delete newErrors.address;
+        }
+        break;
+
+      case "identifyNumber":
+        if (!form.patient.identifyNumber || !form.patient.identifyNumber.trim()) {
+          newErrors.identifyNumber = "CCCD/CMND is required.";
+        } else if (!/^[0-9]{12}$/.test(form.patient.identifyNumber.trim())) {
+          newErrors.identifyNumber = "CCCD/CMND must be exactly 12 digits.";
+        } else {
+          delete newErrors.identifyNumber;
+        }
+        break;
+    }
+
+    setErrors(newErrors);
   };
 
   return (
@@ -122,6 +228,7 @@ const PatientMedicalRecordForm: React.FC<Props> = ({
                       patient: { ...form.patient, fullName: e.target.value },
                     })
                   }
+                  onBlur={() => handleBlur("fullName")}
                   placeholder="Nhập họ và tên đầy đủ"
                   focusBorderColor="blue.400"
                   bg="gray.50"
@@ -151,6 +258,7 @@ const PatientMedicalRecordForm: React.FC<Props> = ({
                       patient: { ...form.patient, dateOfBirth: e.target.value },
                     })
                   }
+                  onBlur={() => handleBlur("dateOfBirth")}
                   focusBorderColor="blue.400"
                   bg="gray.50"
                   _hover={{ bg: "white" }}
@@ -162,14 +270,16 @@ const PatientMedicalRecordForm: React.FC<Props> = ({
             </FormControl>
 
             {/* Giới tính */}
-            <FormControl isRequired>
-
+            <FormControl isRequired isInvalid={!!errors.gender}>
               <GenderSelect
                 value={form.patient.gender}
                 onChange={(val) =>
                   setForm({ ...form, patient: { ...form.patient, gender: val } })
                 }
               />
+              {errors.gender && (
+                <FormErrorMessage>{errors.gender}</FormErrorMessage>
+              )}
             </FormControl>
 
             {/* Số điện thoại */}
@@ -189,6 +299,7 @@ const PatientMedicalRecordForm: React.FC<Props> = ({
                       patient: { ...form.patient, phoneNumber: e.target.value },
                     })
                   }
+                  onBlur={() => handleBlur("phoneNumber")}
                   placeholder="Nhập số điện thoại"
                   focusBorderColor="blue.400"
                   bg="gray.50"
@@ -201,7 +312,7 @@ const PatientMedicalRecordForm: React.FC<Props> = ({
             </FormControl>
 
             {/* Email */}
-            <FormControl>
+            <FormControl isRequired isInvalid={!!errors.email}>
               <FormLabel fontWeight="600" color="gray.700">
                 Email
               </FormLabel>
@@ -218,16 +329,20 @@ const PatientMedicalRecordForm: React.FC<Props> = ({
                       patient: { ...form.patient, email: e.target.value },
                     })
                   }
-                  placeholder="Nhập địa chỉ email (tùy chọn)"
+                  onBlur={() => handleBlur("email")}
+                  placeholder="Nhập địa chỉ email"
                   focusBorderColor="blue.400"
                   bg="gray.50"
                   _hover={{ bg: "white" }}
                 />
               </InputGroup>
+              {errors.email && (
+                <FormErrorMessage>{errors.email}</FormErrorMessage>
+              )}
             </FormControl>
 
             {/* Địa chỉ */}
-            <FormControl>
+            <FormControl isRequired isInvalid={!!errors.address}>
               <FormLabel fontWeight="600" color="gray.700">
                 Địa chỉ
               </FormLabel>
@@ -243,16 +358,20 @@ const PatientMedicalRecordForm: React.FC<Props> = ({
                       patient: { ...form.patient, address: e.target.value },
                     })
                   }
-                  placeholder="Nhập địa chỉ (tùy chọn)"
+                  onBlur={() => handleBlur("address")}
+                  placeholder="Nhập địa chỉ"
                   focusBorderColor="blue.400"
                   bg="gray.50"
                   _hover={{ bg: "white" }}
                 />
               </InputGroup>
+              {errors.address && (
+                <FormErrorMessage>{errors.address}</FormErrorMessage>
+              )}
             </FormControl>
 
             {/* Số CCCD/CMND */}
-            <FormControl>
+            <FormControl isRequired isInvalid={!!errors.identifyNumber}>
               <FormLabel fontWeight="600" color="gray.700">
                 Số CCCD/CMND
               </FormLabel>
@@ -268,12 +387,17 @@ const PatientMedicalRecordForm: React.FC<Props> = ({
                       patient: { ...form.patient, identifyNumber: e.target.value },
                     })
                   }
-                  placeholder="Nhập số CCCD/CMND (tùy chọn)"
+                  onBlur={() => handleBlur("identifyNumber")}
+                  placeholder="Nhập số CCCD/CMND (12 số)"
                   focusBorderColor="blue.400"
                   bg="gray.50"
                   _hover={{ bg: "white" }}
+                  maxLength={12}
                 />
               </InputGroup>
+              {errors.identifyNumber && (
+                <FormErrorMessage>{errors.identifyNumber}</FormErrorMessage>
+              )}
             </FormControl>
           </SimpleGrid>
         </MotionBox>

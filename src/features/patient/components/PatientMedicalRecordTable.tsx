@@ -57,8 +57,8 @@ const PatientMedicalRecordTable: React.FC<Props> = ({
       <Table variant="simple" size="md">
         <Thead>
             <Tr>
-            <Th>Mã bệnh nhân</Th>
             <Th>Họ và tên</Th>
+            <Th>Số điện thoại</Th>
             <Th>Ngày sinh</Th>
             <Th>Ngày xét nghiệm gần nhất</Th>
             <Th textAlign="center">Thao tác</Th>
@@ -86,19 +86,12 @@ const PatientMedicalRecordTable: React.FC<Props> = ({
             return (
               <Tr key={r.patientId || `patient-${index}`} _hover={{ bg: hoverBg }}>
                 <Td>
-                  <VStack align="flex-start" spacing={0}>
-                    <Text fontSize="xs" color="gray.500">
-                      {r.patientId || "Không có ID"}
-                    </Text>
-                  </VStack>
+                  <Text fontWeight="semibold">{r.fullName || "N/A"}</Text>
                 </Td>
                 <Td>
-                  <VStack align="flex-start" spacing={0}>
-                    <Text fontWeight="semibold">{r.fullName || "N/A"}</Text>
-                    <Text fontSize="sm" color="gray.500">
-                      {r.phoneNumber || "Chưa có số điện thoại"}
-                    </Text>
-                  </VStack>
+                  <Text fontSize="sm" color="gray.600">
+                    {r.phoneNumber || "Chưa có số điện thoại"}
+                  </Text>
                 </Td>
                 <Td>
                   <Text fontSize="sm">{formattedDateOfBirth}</Text>

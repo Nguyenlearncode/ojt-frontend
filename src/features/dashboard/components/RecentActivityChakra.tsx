@@ -48,7 +48,7 @@ const RecentActivityChakra: React.FC<RecentActivityChakraProps> = ({ activities 
       transition="all 0.3s"
     >
       <Heading size="md" mb={6} color="gray.700">
-        Recent Activity
+        Hoạt động gần đây
       </Heading>
       <VStack spacing={4} align="stretch">
         {activities.map((activity, index) => {

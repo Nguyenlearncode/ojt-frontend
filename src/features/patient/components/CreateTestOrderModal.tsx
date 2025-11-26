@@ -85,18 +85,54 @@ const CreateTestOrderModal: React.FC<Props> = ({
   const validate = (): boolean => {
     const newErrors: Record<string, string> = {};
 
+    // FullName: Required
     if (!form.patient.fullName.trim()) {
-      newErrors.fullName = "Họ và tên là bắt buộc";
+      newErrors.fullName = "Full name is required.";
+    } else if (form.patient.fullName.length > 200) {
+      newErrors.fullName = "Full name must not exceed 200 characters.";
     }
 
+    // DateOfBirth: Required
     if (!form.patient.dateOfBirth) {
-      newErrors.dateOfBirth = "Ngày sinh là bắt buộc";
+      newErrors.dateOfBirth = "Date of birth is required.";
     }
 
+    // Gender: Required
+    if (!form.patient.gender) {
+      newErrors.gender = "Gender is required.";
+    }
+
+    // PhoneNumber: Required, Regex
     if (!form.patient.phoneNumber.trim()) {
-      newErrors.phoneNumber = "Số điện thoại là bắt buộc";
-    } else if (!/^[0-9]{10,11}$/.test(form.patient.phoneNumber.replace(/\s/g, ""))) {
-      newErrors.phoneNumber = "Số điện thoại không hợp lệ";
+      newErrors.phoneNumber = "Phone number is required.";
+    } else if (!/^\+?[0-9]{9,15}$/.test(form.patient.phoneNumber.trim())) {
+      newErrors.phoneNumber = "Invalid phone number format. Must be 9-15 digits.";
+    }
+
+    // Email: Required + Valid format (FE requirement)
+    if (!form.patient.email || !form.patient.email.trim()) {
+      newErrors.email = "Email is required.";
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(form.patient.email)) {
+        newErrors.email = "Invalid email format.";
+      } else if (form.patient.email.length > 200) {
+        newErrors.email = "Email must not exceed 200 characters.";
+      }
+    }
+
+    // Address: Required (FE requirement)
+    if (!form.patient.address || !form.patient.address.trim()) {
+      newErrors.address = "Address is required.";
+    } else if (form.patient.address.length > 300) {
+      newErrors.address = "Address must not exceed 300 characters.";
+    }
+
+    // IdentifyNumber: Required + Must be 12 digits (FE requirement)
+    if (!form.patient.identifyNumber || !form.patient.identifyNumber.trim()) {
+      newErrors.identifyNumber = "CCCD/CMND is required.";
+    } else if (!/^[0-9]{12}$/.test(form.patient.identifyNumber.trim())) {
+      newErrors.identifyNumber = "CCCD/CMND must be exactly 12 digits.";
     }
 
     setErrors(newErrors);
@@ -117,18 +153,13 @@ const CreateTestOrderModal: React.FC<Props> = ({
         dateOfBirth: dateOfBirth,
         gender: form.patient.gender.toLowerCase(),
         phoneNumber: form.patient.phoneNumber,
+        // Required fields (FE validation)
+        email: form.patient.email?.trim() || "",
+        address: form.patient.address?.trim() || "",
+        identifyNumber: form.patient.identifyNumber?.trim() || "",
       };
 
-      // Optional fields
-      if (form.patient.email?.trim()) {
-        patientData.email = form.patient.email.trim();
-      }
-      if (form.patient.address?.trim()) {
-        patientData.address = form.patient.address.trim();
-      }
-      if (form.patient.identifyNumber?.trim()) {
-        patientData.identifyNumber = form.patient.identifyNumber.trim();
-      }
+      // Optional field: lastTestDate
       if (form.patient.lastTestDate?.trim()) {
         patientData.lastTestDate = convertToMMDDYYYY(form.patient.lastTestDate);
       }
@@ -157,6 +188,77 @@ const CreateTestOrderModal: React.FC<Props> = ({
     } catch (err) {
       // Error đã được xử lý trong hook
     }
+  };
+
+  const handleBlur = (field: string) => {
+    const newErrors = { ...errors };
+
+    switch (field) {
+      case "fullName":
+        if (!form.patient.fullName.trim()) {
+          newErrors.fullName = "Full name is required.";
+        } else if (form.patient.fullName.length > 200) {
+          newErrors.fullName = "Full name must not exceed 200 characters.";
+        } else {
+          delete newErrors.fullName;
+        }
+        break;
+
+      case "dateOfBirth":
+        if (!form.patient.dateOfBirth) {
+          newErrors.dateOfBirth = "Date of birth is required.";
+        } else {
+          delete newErrors.dateOfBirth;
+        }
+        break;
+
+      case "phoneNumber":
+        if (!form.patient.phoneNumber.trim()) {
+          newErrors.phoneNumber = "Phone number is required.";
+        } else if (!/^\+?[0-9]{9,15}$/.test(form.patient.phoneNumber.trim())) {
+          newErrors.phoneNumber = "Invalid phone number format. Must be 9-15 digits.";
+        } else {
+          delete newErrors.phoneNumber;
+        }
+        break;
+
+      case "email":
+        if (!form.patient.email || !form.patient.email.trim()) {
+          newErrors.email = "Email is required.";
+        } else {
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(form.patient.email)) {
+            newErrors.email = "Invalid email format.";
+          } else if (form.patient.email.length > 200) {
+            newErrors.email = "Email must not exceed 200 characters.";
+          } else {
+            delete newErrors.email;
+          }
+        }
+        break;
+
+      case "address":
+        if (!form.patient.address || !form.patient.address.trim()) {
+          newErrors.address = "Address is required.";
+        } else if (form.patient.address.length > 300) {
+          newErrors.address = "Address must not exceed 300 characters.";
+        } else {
+          delete newErrors.address;
+        }
+        break;
+
+      case "identifyNumber":
+        if (!form.patient.identifyNumber || !form.patient.identifyNumber.trim()) {
+          newErrors.identifyNumber = "CCCD/CMND is required.";
+        } else if (!/^[0-9]{12}$/.test(form.patient.identifyNumber.trim())) {
+          newErrors.identifyNumber = "CCCD/CMND must be exactly 12 digits.";
+        } else {
+          delete newErrors.identifyNumber;
+        }
+        break;
+    }
+
+    setErrors(newErrors);
   };
 
   const handleClose = () => {
@@ -248,6 +350,7 @@ const CreateTestOrderModal: React.FC<Props> = ({
                           patient: { ...form.patient, fullName: e.target.value },
                         })
                       }
+                      onBlur={() => handleBlur("fullName")}
                     />
                   </InputGroup>
                   <FormErrorMessage>{errors.fullName}</FormErrorMessage>
@@ -269,14 +372,15 @@ const CreateTestOrderModal: React.FC<Props> = ({
                           patient: { ...form.patient, dateOfBirth: e.target.value },
                         })
                       }
+                      onBlur={() => handleBlur("dateOfBirth")}
                     />
                   </InputGroup>
                   <FormErrorMessage>{errors.dateOfBirth}</FormErrorMessage>
                 </FormControl>
 
                 {/* Giới tính */}
-                <FormControl>
-                  <FormLabel>Giới tính</FormLabel>
+                <FormControl isRequired isInvalid={!!errors.gender}>
+              
                   <GenderSelect
                     value={form.patient.gender}
                     onChange={(value) =>
@@ -286,6 +390,7 @@ const CreateTestOrderModal: React.FC<Props> = ({
                       })
                     }
                   />
+                  <FormErrorMessage>{errors.gender}</FormErrorMessage>
                 </FormControl>
 
                 {/* Số điện thoại */}
@@ -304,13 +409,14 @@ const CreateTestOrderModal: React.FC<Props> = ({
                           patient: { ...form.patient, phoneNumber: e.target.value },
                         })
                       }
+                      onBlur={() => handleBlur("phoneNumber")}
                     />
                   </InputGroup>
                   <FormErrorMessage>{errors.phoneNumber}</FormErrorMessage>
                 </FormControl>
 
                 {/* Email */}
-                <FormControl>
+                <FormControl isRequired isInvalid={!!errors.email}>
                   <FormLabel>Email</FormLabel>
                   <InputGroup>
                     <InputLeftElement pointerEvents="none">
@@ -318,7 +424,7 @@ const CreateTestOrderModal: React.FC<Props> = ({
                     </InputLeftElement>
                     <Input
                       type="email"
-                      placeholder="Nhập email (tùy chọn)"
+                      placeholder="Nhập email"
                       value={form.patient.email}
                       onChange={(e) =>
                         setForm({
@@ -326,19 +432,21 @@ const CreateTestOrderModal: React.FC<Props> = ({
                           patient: { ...form.patient, email: e.target.value },
                         })
                       }
+                      onBlur={() => handleBlur("email")}
                     />
                   </InputGroup>
+                  <FormErrorMessage>{errors.email}</FormErrorMessage>
                 </FormControl>
 
                 {/* Địa chỉ */}
-                <FormControl>
+                <FormControl isRequired isInvalid={!!errors.address}>
                   <FormLabel>Địa chỉ</FormLabel>
                   <InputGroup>
                     <InputLeftElement pointerEvents="none">
                       <Icon as={FiMapPin} color="gray.400" />
                     </InputLeftElement>
                     <Input
-                      placeholder="Nhập địa chỉ (tùy chọn)"
+                      placeholder="Nhập địa chỉ"
                       value={form.patient.address}
                       onChange={(e) =>
                         setForm({
@@ -346,19 +454,21 @@ const CreateTestOrderModal: React.FC<Props> = ({
                           patient: { ...form.patient, address: e.target.value },
                         })
                       }
+                      onBlur={() => handleBlur("address")}
                     />
                   </InputGroup>
+                  <FormErrorMessage>{errors.address}</FormErrorMessage>
                 </FormControl>
 
                 {/* Số CMND/CCCD */}
-                <FormControl>
+                <FormControl isRequired isInvalid={!!errors.identifyNumber}>
                   <FormLabel>Số CMND/CCCD</FormLabel>
                   <InputGroup>
                     <InputLeftElement pointerEvents="none">
                       <Icon as={FiCreditCard} color="gray.400" />
                     </InputLeftElement>
                     <Input
-                      placeholder="Nhập số CMND/CCCD (tùy chọn)"
+                      placeholder="Nhập số CMND/CCCD (12 số)"
                       value={form.patient.identifyNumber}
                       onChange={(e) =>
                         setForm({
@@ -366,8 +476,11 @@ const CreateTestOrderModal: React.FC<Props> = ({
                           patient: { ...form.patient, identifyNumber: e.target.value },
                         })
                       }
+                      onBlur={() => handleBlur("identifyNumber")}
+                      maxLength={12}
                     />
                   </InputGroup>
+                  <FormErrorMessage>{errors.identifyNumber}</FormErrorMessage>
                 </FormControl>
 
                 {/* Ngày test gần nhất */}

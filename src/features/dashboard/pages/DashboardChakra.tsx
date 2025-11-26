@@ -14,7 +14,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
-import { FiUsers, FiActivity, FiClock, FiCheckCircle, FiDollarSign, FiTrendingUp } from "react-icons/fi";
+import {  FiActivity, FiClock, FiCheckCircle } from "react-icons/fi";
 import { useDashboard } from "../hooks/useDashboard";
 import StatCardChakra from "../components/StatCardChakra";
 import RecentActivityChakra from "../components/RecentActivityChakra";
@@ -36,7 +36,7 @@ const DashboardChakra: React.FC = () => {
           color="brand.500"
           size="xl"
         />
-        <Text color="gray.600">Loading dashboard...</Text>
+        <Text color="gray.600">Đang tải...</Text>
       </Flex>
     );
   }
@@ -63,7 +63,7 @@ const DashboardChakra: React.FC = () => {
             mt={4}
             onClick={() => window.location.reload()}
           >
-            Retry
+            Thử lại
           </Button>
         </Alert>
       </Container>
@@ -95,7 +95,7 @@ const DashboardChakra: React.FC = () => {
                 fontSize="md"
                 fontWeight="medium"
               >
-                Welcome back! Here's what's happening in your lab today.
+                Chào mừng bạn trở lại! Đây là những gì đang diễn ra trong phòng thí nghiệm của bạn hôm nay.
               </Text>
             </VStack>
             <Text 
@@ -123,14 +123,7 @@ const DashboardChakra: React.FC = () => {
           gap={6}
           mb={8}
         >
-          <StatCardChakra
-            title="Total Users"
-            value={stats?.totalUsers || 0}
-            icon={FiUsers}
-            color="blue.500"
-            trend={{ value: 12.5, isUp: true }}
-            delay={0}
-          />
+          
           <StatCardChakra
             title="Total Tests"
             value={stats?.totalTests || 0}
@@ -155,23 +148,8 @@ const DashboardChakra: React.FC = () => {
             trend={{ value: 15.7, isUp: true }}
             delay={0.3}
           />
-          <StatCardChakra
-            title="Active Projects"
-            value={stats?.activeProjects || 0}
-            icon={FiTrendingUp}
-            color="pink.500"
-            trend={{ value: 5.1, isUp: true }}
-            delay={0.4}
-          />
-          <StatCardChakra
-            title="Today's Revenue"
-            value={stats?.todayRevenue || 0}
-            icon={FiDollarSign}
-            color="cyan.500"
-            prefix="$"
-            trend={{ value: 18.2, isUp: true }}
-            delay={0.5}
-          />
+          
+          
         </Grid>
 
         {/* Main Content Grid */}

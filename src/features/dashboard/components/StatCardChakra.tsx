@@ -114,7 +114,7 @@ const StatCardChakra: React.FC<StatCardChakraProps> = ({
               <Text>{trend.value}%</Text>
             </Flex>
             <Text fontSize="xs" color="gray.500">
-              vs last month
+              so với tháng trước
             </Text>
           </HStack>
         )}
