@@ -82,7 +82,7 @@ const TestOrderDetailModal: React.FC<Props> = ({
   testOrderId,
   onSuccess,
 }) => {
-  const { getTestOrderDetail, deleteTestOrder, exportTestOrders, printTestOrder, reviewTestOrder } =
+  const { getTestOrderDetail, deleteTestOrder, exportTestOrders, printTestOrder, reviewTestOrder, sendEmailResult } =
     useTestOrders();
 
   const toast = useToast();
@@ -621,38 +621,38 @@ const TestOrderDetailModal: React.FC<Props> = ({
               {/* Tiến hành xét nghiệm */}
               {detail?.testOrder &&
                 detail.testOrder.status?.toLowerCase() === "pending" && (
-                <Button
-                  leftIcon={<FiActivity />}
-                  colorScheme="green"
-                  onClick={async () => {
-                    try {
-                      const pid =
-                        detail?.testOrder?.patientId ??
-                        null;
+                  <Button
+                    leftIcon={<FiActivity />}
+                    colorScheme="green"
+                    onClick={async () => {
+                      try {
+                        const pid =
+                          detail?.testOrder?.patientId ??
+                          null;
 
-                      if (!pid) {
-                        toast({
-                          title: "Không thể tạo kết quả",
-                          description: "Không tìm thấy patientId từ backend.",
-                          status: "error",
+                        if (!pid) {
+                          toast({
+                            title: "Không thể tạo kết quả",
+                            description: "Không tìm thấy patientId từ backend.",
+                            status: "error",
+                          });
+                          return;
+                        }
+
+                        await createTestOrderResult({
+                          patientId: pid,
+                          testOrderId,
                         });
-                        return;
-                      }
 
-                      await createTestOrderResult({
-                        patientId: pid,
-                        testOrderId,
-                      });
-
-                      await loadDetail();
-                      onSuccess?.();
-                    } catch { }
-                  }}
-                  isLoading={loading}
-                  loadingText="Đang xử lý..."
-                >
-                  Tiến hành xét nghiệm
-                </Button>
+                        await loadDetail();
+                        onSuccess?.();
+                      } catch { }
+                    }}
+                    isLoading={loading}
+                    loadingText="Đang xử lý..."
+                  >
+                    Tiến hành xét nghiệm
+                  </Button>
 
                 )}
 
@@ -718,6 +718,18 @@ const TestOrderDetailModal: React.FC<Props> = ({
                   <MenuItem icon={<FiPrinter />} onClick={handleDownloadPdf}>
                     In PDF
                   </MenuItem>
+
+                  <MenuItem
+                    icon={<FiUpload />}
+                    onClick={async () => {
+                      try {
+                        await sendEmailResult(testOrderId);
+                      } catch { }
+                    }}
+                  >
+                    Gửi kết quả
+                  </MenuItem>
+
                 </MenuList>
               </Menu>
             </HStack>

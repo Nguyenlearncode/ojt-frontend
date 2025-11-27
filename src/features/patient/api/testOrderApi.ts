@@ -33,4 +33,8 @@ export const testOrderApi = {
       params: fileName ? { fileName } : undefined,
       responseType: "blob",
     }),
+
+    sendEmailWithResult: (testOrderId: string) =>
+  axiosClient.post(`/patient/reports/email/send-testorder/${testOrderId}`),
+
 };

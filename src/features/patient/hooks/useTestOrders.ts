@@ -292,6 +292,27 @@ const reviewTestOrder = async (
   }
 };
 
+const sendEmailResult = async (testOrderId: string) => {
+  try {
+    await testOrderApi.sendEmailWithResult(testOrderId);
+
+    toast({
+      title: "Đã gửi email",
+      description: "Kết quả xét nghiệm đã được gửi đến bệnh nhân.",
+      status: "success",
+    });
+  } catch (err: any) {
+    toast({
+      title: "Gửi email thất bại",
+      description:
+        err.response?.data?.message ||
+        "Không thể gửi email kết quả xét nghiệm.",
+      status: "error",
+    });
+  }
+};
+
+
 
   return {
     loading,
@@ -304,5 +325,6 @@ const reviewTestOrder = async (
     exportTestOrders,
     printTestOrder,
     reviewTestOrder,
+    sendEmailResult
   };
 };
