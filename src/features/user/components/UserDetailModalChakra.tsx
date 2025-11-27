@@ -40,6 +40,10 @@ const UserDetailModalChakra: React.FC<UserDetailModalChakraProps> = ({
   user,
   onClose,
 }) => {
+
+  // 🔒 RÀO TẤT CẢ TRƯỜNG HỢP CỦA "ADMIN"
+  const isAdmin = /^admin$/i.test(user.role?.roleName?.trim() || "");
+
   return (
     <Modal isOpen={true} onClose={onClose} isCentered>
       <ModalOverlay bg="blackAlpha.700" backdropFilter="blur(10px)" />
@@ -73,7 +77,7 @@ const UserDetailModalChakra: React.FC<UserDetailModalChakraProps> = ({
           />
 
           <Grid templateColumns={{ base: "1fr", md: "280px 1fr" }} overflow="hidden" minH="400px">
-            {/* Left Side - Gradient Background with Avatar */}
+            {/* Left Side */}
             <GridItem
               bgGradient="linear(to-r, #ee5a6f, #f29263)"
               borderRadius="5px 0 0 5px"
@@ -109,14 +113,19 @@ const UserDetailModalChakra: React.FC<UserDetailModalChakraProps> = ({
                   </Text>
                 </VStack>
 
-                {/* Delete Button */}
+                {/* 🔥 Delete Button – CHỈ HIỆN KHI KHÔNG PHẢI ADMIN */}
                 <Box mt="auto" w="full">
-                  <DeleteUserButton userId={user.userId} fullName={user.fullName} />
+                  {!isAdmin && (
+                    <DeleteUserButton
+                      userId={user.userId}
+                      fullName={user.fullName}
+                    />
+                  )}
                 </Box>
               </VStack>
             </GridItem>
 
-            {/* Right Side - User Information */}
+            {/* Right Side */}
             <GridItem p={6} bg="white">
               <VStack spacing={4} align="stretch" h="full">
                 <Text fontSize="lg" fontWeight="600" color="gray.800" mb={2}>

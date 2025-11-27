@@ -32,7 +32,7 @@ const formatDateTime = (value?: string) => {
   if (!value) return "—";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "—";
-  return date.toLocaleString("vi-VN", { hour12: false });
+  return date.toLocaleDateString("vi-VN");
 };
 
 const FlaggingSetTable: React.FC<Props> = ({
@@ -87,9 +87,6 @@ const FlaggingSetTable: React.FC<Props> = ({
               Cảnh báo
             </Th>
             <Th textTransform="uppercase" fontSize="xs">
-              Version
-            </Th>
-            <Th textTransform="uppercase" fontSize="xs">
               Ngày cập nhật
             </Th>
             <Th textAlign="center" textTransform="uppercase" fontSize="xs">
@@ -101,50 +98,46 @@ const FlaggingSetTable: React.FC<Props> = ({
           {[...configs]
             .sort((a, b) => (a.configId || 0) - (b.configId || 0))
             .map((config) => (
-              <Tr
-                key={config.configId}
-                _hover={{ bg: hoverBg, transition: "background 0.2s" }}
-              >
-                <Td>
-                  <Badge colorScheme="purple" variant="subtle">
-                    {config.configId}
-                  </Badge>
-                </Td>
-                <Td fontWeight="semibold">{config.testName}</Td>
-                <Td isNumeric fontWeight="medium">
-                  {formatNumber(config.lowThreshold)}
-                </Td>
-                <Td isNumeric fontWeight="medium">
-                  {formatNumber(config.highThreshold)}
-                </Td>
-                <Td isNumeric fontWeight="medium">
-                  {formatNumber(config.criticalThreshold)}
-                </Td>
-                <Td>{config.version || "1.0"}</Td>
-                <Td>{formatDateTime(config.updatedAt)}</Td>
-                <Td>
-                  <HStack justify="center">
-                    <Tooltip label="Chỉnh sửa" hasArrow>
-                      <IconButton
-                        aria-label="Chỉnh sửa"
-                        icon={<FiEdit />}
-                        size="sm"
-                        variant="ghost"
-                        colorScheme="purple"
-                        onClick={() => onEdit(config)}
-                      />
-                    </Tooltip>
-                  </HStack>
-                </Td>
-              </Tr>
-            ))}
+            <Tr
+              key={config.configId}
+              _hover={{ bg: hoverBg, transition: "background 0.2s" }}
+            >
+              <Td>
+                <Badge colorScheme="purple" variant="subtle">
+                  {config.configId}
+                </Badge>
+              </Td>
+              <Td fontWeight="semibold">{config.testName}</Td>
+              <Td isNumeric fontWeight="medium">
+                {formatNumber(config.lowThreshold)}
+              </Td>
+              <Td isNumeric fontWeight="medium">
+                {formatNumber(config.highThreshold)}
+              </Td>
+              <Td isNumeric fontWeight="medium">
+                {formatNumber(config.criticalThreshold)}
+              </Td>
+              <Td>{formatDateTime(config.updatedAt)}</Td>
+              <Td>
+                <HStack justify="center">
+                  <Tooltip label="Chỉnh sửa" hasArrow>
+                    <IconButton
+                      aria-label="Chỉnh sửa"
+                      icon={<FiEdit />}
+                      size="sm"
+                      variant="ghost"
+                      colorScheme="purple"
+                      onClick={() => onEdit(config)}
+                    />
+                  </Tooltip>
+                </HStack>
+              </Td>
+            </Tr>
+          ))}
         </Tbody>
-
       </Table>
     </TableContainer>
   );
 };
 
 export default FlaggingSetTable;
-
-

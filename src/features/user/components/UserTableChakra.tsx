@@ -19,7 +19,7 @@ import { FiMail, FiPhone, FiEye, FiEdit2 } from "react-icons/fi";
 import type { User } from "../api/userApi";
 import { formatGender } from "../../../utils/genderUtils";
 import UserDetailModalChakra from "./UserDetailModalChakra";
-import { UserStatusToggleButton } from "./Button/UserStatusToggleButton"; 
+import { UserStatusToggleButton } from "./Button/UserStatusToggleButton";
 
 const MotionTr = motion(Tr);
 const MotionBox = motion(Box);
@@ -158,6 +158,7 @@ export const UserTableChakra: React.FC<UserTableChakraProps> = ({
                   </Td>
 
                   {/* Hành động */}
+                  {/* Hành động */}
                   <Td>
                     <HStack spacing={2}>
                       <Tooltip label="Xem chi tiết" placement="top" hasArrow>
@@ -170,20 +171,26 @@ export const UserTableChakra: React.FC<UserTableChakraProps> = ({
                           onClick={() => setSelectedUser(user)}
                         />
                       </Tooltip>
-                      {onEdit && (
-                        <Tooltip label="Chỉnh sửa" placement="top" hasArrow>
-                          <IconButton
-                            aria-label="Edit user"
-                            icon={<FiEdit2 />}
-                            size="sm"
-                            colorScheme="green"
-                            variant="ghost"
-                            onClick={() => onEdit(user)}
-                          />
-                        </Tooltip>
-                      )}
+
+                      {/* 🔒 Ẩn Edit khi role là admin hoặc administrator */}
+                      {onEdit &&
+                        !/^(admin|administrator)$/i.test(
+                          user.role?.roleName?.trim() || ""
+                        ) && (
+                          <Tooltip label="Chỉnh sửa" placement="top" hasArrow>
+                            <IconButton
+                              aria-label="Edit user"
+                              icon={<FiEdit2 />}
+                              size="sm"
+                              colorScheme="green"
+                              variant="ghost"
+                              onClick={() => onEdit(user)}
+                            />
+                          </Tooltip>
+                        )}
                     </HStack>
                   </Td>
+
                 </MotionTr>
               ))}
             </Tbody>

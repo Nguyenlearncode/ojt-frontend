@@ -60,6 +60,20 @@ const LoginPageChakra: React.FC = () => {
           boxShadow={cardShadow}
           backdropFilter="blur(10px)"
         >
+          {/* 🔙 Nút Back */}
+          <Flex w="full" justify="flex-start" mb={4}>
+            <Button
+              as={Link}
+              to="/"
+              variant="ghost"
+              colorScheme="gray"
+              leftIcon={<span>←</span>}
+              size="sm"
+            >
+              Back to Home
+            </Button>
+          </Flex>
+
           {/* Header */}
           <VStack spacing={6} mb={8}>
             <Flex align="center" gap={3}>
@@ -73,10 +87,18 @@ const LoginPageChakra: React.FC = () => {
                 Laboratory Management
               </Heading>
             </Flex>
-            <Text fontSize="lg" color="gray.600" fontWeight="medium">
+            <Text
+              fontSize="27px"
+              bgGradient={bgGradient}
+              bgClip="text"
+              fontWeight="bold"
+              textTransform="uppercase"
+            >
               LOGIN
             </Text>
+
           </VStack>
+
 
           {/* Form */}
           <form onSubmit={handleSubmit}>
