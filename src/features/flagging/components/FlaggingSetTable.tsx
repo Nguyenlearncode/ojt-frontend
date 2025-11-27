@@ -98,45 +98,48 @@ const FlaggingSetTable: React.FC<Props> = ({
           </Tr>
         </Thead>
         <Tbody>
-          {configs.map((config) => (
-            <Tr
-              key={config.configId}
-              _hover={{ bg: hoverBg, transition: "background 0.2s" }}
-            >
-              <Td>
-                <Badge colorScheme="purple" variant="subtle">
-                  {config.configId}
-                </Badge>
-              </Td>
-              <Td fontWeight="semibold">{config.testName}</Td>
-              <Td isNumeric fontWeight="medium">
-                {formatNumber(config.lowThreshold)}
-              </Td>
-              <Td isNumeric fontWeight="medium">
-                {formatNumber(config.highThreshold)}
-              </Td>
-              <Td isNumeric fontWeight="medium">
-                {formatNumber(config.criticalThreshold)}
-              </Td>
-              <Td>{config.version || "1.0"}</Td>
-              <Td>{formatDateTime(config.updatedAt)}</Td>
-              <Td>
-                <HStack justify="center">
-                  <Tooltip label="Chỉnh sửa" hasArrow>
-                    <IconButton
-                      aria-label="Chỉnh sửa"
-                      icon={<FiEdit />}
-                      size="sm"
-                      variant="ghost"
-                      colorScheme="purple"
-                      onClick={() => onEdit(config)}
-                    />
-                  </Tooltip>
-                </HStack>
-              </Td>
-            </Tr>
-          ))}
+          {[...configs]
+            .sort((a, b) => (a.configId || 0) - (b.configId || 0))
+            .map((config) => (
+              <Tr
+                key={config.configId}
+                _hover={{ bg: hoverBg, transition: "background 0.2s" }}
+              >
+                <Td>
+                  <Badge colorScheme="purple" variant="subtle">
+                    {config.configId}
+                  </Badge>
+                </Td>
+                <Td fontWeight="semibold">{config.testName}</Td>
+                <Td isNumeric fontWeight="medium">
+                  {formatNumber(config.lowThreshold)}
+                </Td>
+                <Td isNumeric fontWeight="medium">
+                  {formatNumber(config.highThreshold)}
+                </Td>
+                <Td isNumeric fontWeight="medium">
+                  {formatNumber(config.criticalThreshold)}
+                </Td>
+                <Td>{config.version || "1.0"}</Td>
+                <Td>{formatDateTime(config.updatedAt)}</Td>
+                <Td>
+                  <HStack justify="center">
+                    <Tooltip label="Chỉnh sửa" hasArrow>
+                      <IconButton
+                        aria-label="Chỉnh sửa"
+                        icon={<FiEdit />}
+                        size="sm"
+                        variant="ghost"
+                        colorScheme="purple"
+                        onClick={() => onEdit(config)}
+                      />
+                    </Tooltip>
+                  </HStack>
+                </Td>
+              </Tr>
+            ))}
         </Tbody>
+
       </Table>
     </TableContainer>
   );
