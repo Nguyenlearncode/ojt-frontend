@@ -219,17 +219,28 @@ const TestOrdersPage: React.FC = () => {
           direction={{ base: "column", md: "row" }}
         >
           <InputGroup maxW={{ base: "100%", md: "350px" }}>
-            <InputLeftElement pointerEvents="none">
-              <Icon as={FiSearch} color="gray.400" />
-            </InputLeftElement>
-            <Input
-              placeholder="Tìm theo mã, tên hoặc số điện thoại"
-              bg="white"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              borderRadius="full"
-            />
-          </InputGroup>
+  <InputLeftElement pointerEvents="none">
+    <Icon as={FiSearch} color="gray.400" />
+  </InputLeftElement>
+
+  <Input
+    placeholder="Tìm theo mã, tên hoặc số điện thoại"
+    value={searchTerm}
+    onChange={(e) => setSearchTerm(e.target.value)}
+    bg="white"
+    border="1px solid #E2E8F0"   // viền xám nhạt cố định
+    borderRadius="full"
+    _focus={{
+      borderColor: "#E2E8F0",    // không đổi màu khi click
+      boxShadow: "none",         // tắt hiệu ứng xanh khi focus
+      bg: "white",               // không đổi màu nền
+    }}
+    _hover={{
+      borderColor: "#E2E8F0",    // không đổi màu khi hover
+    }}
+  />
+</InputGroup>
+
           <HStack spacing={3}>
             <HStack spacing={2} px={4} py={2} borderRadius="full" bg="whiteAlpha.700" boxShadow="md">
               <Icon as={FiActivity} color="purple.500" />

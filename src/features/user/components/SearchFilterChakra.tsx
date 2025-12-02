@@ -11,13 +11,9 @@ import {
   Badge,
   Flex,
 } from "@chakra-ui/react";
-import { motion, AnimatePresence } from "framer-motion";
 import { FiSearch, FiUsers, FiX } from "react-icons/fi";
 import { BsGenderMale, BsGenderFemale } from "react-icons/bs";
-import { roleApi } from "../../role/api/roleApi"; 
-
-const MotionBox = motion(Box);
-const MotionButton = motion(Button);
+import { roleApi } from "../../role/api/roleApi";
 
 interface SearchFilterChakraProps {
   searchTerm: string;
@@ -43,19 +39,15 @@ const SearchFilterChakra: React.FC<SearchFilterChakraProps> = ({
 }) => {
   const [showRoles, setShowRoles] = useState(false);
   const [showGenders, setShowGenders] = useState(false);
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
-  // ⬇️ ROLE LIST TỪ API
   const [roles, setRoles] = useState<
     { value: string; label: string; color: string }[]
   >([]);
 
-  // Load roles từ API
   useEffect(() => {
     const fetchRoles = async () => {
       try {
         const data = await roleApi.getAllRoles();
-
         setRoles(
           data.map((role, index) => ({
             value: role.roleCode,
@@ -63,9 +55,7 @@ const SearchFilterChakra: React.FC<SearchFilterChakraProps> = ({
             color: ["purple", "blue", "green", "orange", "pink", "teal", "red"][index % 7],
           }))
         );
-      } catch (error) {
-        // Error handling is done silently
-      }
+      } catch (error) {}
     };
 
     fetchRoles();
@@ -74,234 +64,152 @@ const SearchFilterChakra: React.FC<SearchFilterChakraProps> = ({
   const activeFiltersCount = [roleFilter, genderFilter].filter(Boolean).length;
 
   return (
-    <MotionBox initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} mb={6}>
+    <Box mb={6}>
       <Box
         bg="white"
         p={6}
         borderRadius="2xl"
-        boxShadow="lg"
-        position="relative"
-        overflow="hidden"
+        boxShadow="md"
         border="1px"
         borderColor="gray.100"
       >
-        {/* gradient background */}
-        <MotionBox
-          position="absolute"
-          top="-50%"
-          right="-10%"
-          width="300px"
-          height="300px"
-          bgGradient="linear(to-br, purple.200, pink.200, blue.200)"
-          opacity={0.15}
-          borderRadius="full"
-          filter="blur(60px)"
-          animate={{ scale: [1, 1.3, 1], rotate: [0, 180, 360] }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        />
-
-        <VStack spacing={5} align="stretch" position="relative" zIndex={1}>
+        <VStack spacing={5} align="stretch">
           <Box>
             <Flex gap={3} mb={3} align="center" flexWrap="wrap">
-              {/* Search Box */}
-              <MotionBox
-                bg="white"
+              
+              {/* SIMPLE SEARCH BOX */}
+              <Flex
+                bg="gray.100"
                 h="40px"
                 borderRadius="30px"
                 px={4}
-                py={2}
-                display="flex"
-                alignItems="center"
-                cursor="pointer"
-                boxShadow="4px 4px 6px 0 rgba(255,255,255,.3), -4px -4px 6px rgba(116,125,136,.2), inset -4px -4px 6px rgba(255,255,255,.2), inset 4px 4px 6px rgba(0,0,0,.2)"
-                onMouseEnter={() => setIsSearchFocused(true)}
-                onMouseLeave={() => !searchTerm && setIsSearchFocused(false)}
-                whileHover={{ skewX: [0, 5, -5, 5, -5, 0] }}
-                transition={{ duration: 0.45, ease: "linear" }}
-                minW="50px"
+                align="center"
               >
-                <MotionBox
-                  mr={isSearchFocused || searchTerm ? 2 : 0}
-                  animate={{
-                    rotate: searchTerm ? 360 : 0,
-                    scale: isSearchFocused ? [1, 1.2, 1] : 1,
-                  }}
-                  transition={{ duration: 0.5 }}
-                  display="inline-block"
-                >
-                  <Icon as={FiSearch} color="#5cbdbb" boxSize={5} />
-                </MotionBox>
-
+                <Icon as={FiSearch} color="teal.400" boxSize={5} mr={2} />
                 <Input
                   placeholder="Tìm kiếm theo tên/email/sđt"
                   value={searchTerm}
                   onChange={(e) => onSearchChange(e.target.value)}
-                  onFocus={() => setIsSearchFocused(true)}
-                  onBlur={() => !searchTerm && setIsSearchFocused(false)}
                   bg="transparent"
                   border="none"
                   outline="none"
-                  w={isSearchFocused || searchTerm ? "350px" : "0px"}
-                  fontWeight="500"
-                  fontSize="15px"
-                  transition="width 0.8s"
-                  px={isSearchFocused || searchTerm ? 2 : 0}
-                  _focus={{ boxShadow: "none", border: "none" }}
+                  w="300px"
+                  _focus={{ boxShadow: "none" }}
                 />
-              </MotionBox>
+              </Flex>
 
-              <Text fontSize="sm" fontWeight="600" color="gray.600">Lọc theo:</Text>
+              <Text fontSize="sm" fontWeight="600" color="gray.600">
+                Lọc theo:
+              </Text>
 
               {/* Role Filter */}
-              <MotionButton
+              <Button
                 size="sm"
                 variant={showRoles ? "solid" : "outline"}
-                colorScheme={showRoles ? "purple" : "gray"}
-                leftIcon={<Icon as={FiUsers} />}
+                colorScheme="purple"
+                leftIcon={<FiUsers />}
                 onClick={() => setShowRoles(!showRoles)}
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-                transition={{ duration: 0.2 }}
-                boxShadow={showRoles ? "md" : "sm"}
               >
                 Vai trò
-                {roleFilter && <Badge ml={2} colorScheme="purple" variant="solid">1</Badge>}
-              </MotionButton>
+                {roleFilter && (
+                  <Badge ml={2} colorScheme="purple">
+                    1
+                  </Badge>
+                )}
+              </Button>
 
               {/* Gender Filter */}
-              <MotionButton
+              <Button
                 size="sm"
                 variant={showGenders ? "solid" : "outline"}
-                colorScheme={showGenders ? "pink" : "gray"}
-                leftIcon={<Icon as={BsGenderMale} />}
+                colorScheme="pink"
+                leftIcon={<BsGenderMale />}
                 onClick={() => setShowGenders(!showGenders)}
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-                transition={{ duration: 0.2 }}
-                boxShadow={showGenders ? "md" : "sm"}
               >
                 Giới tính
-                {genderFilter && <Badge ml={2} colorScheme="pink" variant="solid">1</Badge>}
-              </MotionButton>
+                {genderFilter && (
+                  <Badge ml={2} colorScheme="pink">
+                    1
+                  </Badge>
+                )}
+              </Button>
 
               {/* Clear Filters */}
-              <AnimatePresence>
-                {activeFiltersCount > 0 && (
-                  <MotionButton
-                    size="sm"
-                    variant="ghost"
-                    colorScheme="red"
-                    leftIcon={<Icon as={FiX} />}
-                    onClick={() => {
-                      onRoleFilterChange("");
-                      onGenderFilterChange("");
-                    }}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.8 }}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    Xóa bộ lọc ({activeFiltersCount})
-                  </MotionButton>
-                )}
-              </AnimatePresence>
+              {activeFiltersCount > 0 && (
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  colorScheme="red"
+                  leftIcon={<FiX />}
+                  onClick={() => {
+                    onRoleFilterChange("");
+                    onGenderFilterChange("");
+                  }}
+                >
+                  Xóa bộ lọc ({activeFiltersCount})
+                </Button>
+              )}
             </Flex>
 
-            {/* ROLE PILLS */}
-            <AnimatePresence>
-              {showRoles && (
-                <MotionBox
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.3 }}
-                  mb={3}
-                >
-                  <Box p={4} bg="purple.50" borderRadius="xl" border="1px" borderColor="purple.100">
-                    <Text fontSize="xs" fontWeight="600" color="purple.700" mb={2}>
-                      CHỌN VAI TRÒ
-                    </Text>
+            {/* ROLE OPTIONS */}
+            {showRoles && (
+              <Box p={4} bg="purple.50" borderRadius="xl" border="1px" borderColor="purple.100" mb={3}>
+                <Text fontSize="xs" mb={2} fontWeight="600" color="purple.700">
+                  CHỌN VAI TRÒ
+                </Text>
 
-                    <Wrap spacing={2}>
-                      {roles.map((role, index) => (
-                        <WrapItem key={role.value}>
-                          <MotionButton
-                            size="sm"
-                            variant={roleFilter === role.value ? "solid" : "outline"}
-                            colorScheme={role.color}
-                            onClick={() =>
-                              onRoleFilterChange(roleFilter === role.value ? "" : role.value)
-                            }
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: index * 0.05 }}
-                            whileHover={{ scale: 1.1, y: -2 }}
-                            whileTap={{ scale: 0.95 }}
-                            borderRadius="full"
-                            fontWeight="600"
-                            boxShadow={roleFilter === role.value ? "md" : "sm"}
-                          >
-                            {role.label}
-                          </MotionButton>
-                        </WrapItem>
-                      ))}
-                    </Wrap>
-                  </Box>
-                </MotionBox>
-              )}
-            </AnimatePresence>
+                <Wrap spacing={2}>
+                  {roles.map((role) => (
+                    <WrapItem key={role.value}>
+                      <Button
+                        size="sm"
+                        variant={roleFilter === role.value ? "solid" : "outline"}
+                        colorScheme={role.color}
+                        onClick={() =>
+                          onRoleFilterChange(roleFilter === role.value ? "" : role.value)
+                        }
+                        borderRadius="full"
+                      >
+                        {role.label}
+                      </Button>
+                    </WrapItem>
+                  ))}
+                </Wrap>
+              </Box>
+            )}
 
-            {/* GENDER PILLS */}
-            <AnimatePresence>
-              {showGenders && (
-                <MotionBox
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <Box p={4} bg="pink.50" borderRadius="xl" border="1px" borderColor="pink.100">
-                    <Text fontSize="xs" fontWeight="600" color="pink.700" mb={2}>
-                      CHỌN GIỚI TÍNH
-                    </Text>
+            {/* GENDER OPTIONS */}
+            {showGenders && (
+              <Box p={4} bg="pink.50" borderRadius="xl" border="1px" borderColor="pink.100">
+                <Text fontSize="xs" mb={2} fontWeight="600" color="pink.700">
+                  CHỌN GIỚI TÍNH
+                </Text>
 
-                    <Wrap spacing={3}>
-                      {genders.map((gender, index) => (
-                        <WrapItem key={gender.value}>
-                          <MotionButton
-                            size="md"
-                            variant={genderFilter === gender.value ? "solid" : "outline"}
-                            colorScheme={gender.color}
-                            leftIcon={<Icon as={gender.icon} />}
-                            onClick={() =>
-                              onGenderFilterChange(
-                                genderFilter === gender.value ? "" : gender.value
-                              )
-                            }
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: index * 0.1 }}
-                            whileHover={{ scale: 1.1, y: -3 }}
-                            whileTap={{ scale: 0.95 }}
-                            borderRadius="full"
-                            fontWeight="600"
-                            boxShadow={genderFilter === gender.value ? "md" : "sm"}
-                            px={6}
-                          >
-                            {gender.label}
-                          </MotionButton>
-                        </WrapItem>
-                      ))}
-                    </Wrap>
-                  </Box>
-                </MotionBox>
-              )}
-            </AnimatePresence>
+                <Wrap spacing={3}>
+                  {genders.map((gender) => (
+                    <WrapItem key={gender.value}>
+                      <Button
+                        size="md"
+                        variant={genderFilter === gender.value ? "solid" : "outline"}
+                        colorScheme={gender.color}
+                        leftIcon={<gender.icon />}
+                        onClick={() =>
+                          onGenderFilterChange(genderFilter === gender.value ? "" : gender.value)
+                        }
+                        borderRadius="full"
+                        px={6}
+                      >
+                        {gender.label}
+                      </Button>
+                    </WrapItem>
+                  ))}
+                </Wrap>
+              </Box>
+            )}
           </Box>
         </VStack>
       </Box>
-    </MotionBox>
+    </Box>
   );
 };
 
