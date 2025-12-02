@@ -121,13 +121,13 @@ export default function ServiceSection() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.5 }}
-                                whileHover={{ scale: 1.05, y: -10 }}
+                                
                                 className="
                                     p-10 rounded-2xl
                                     bg-white/40 backdrop-blur-xl
                                     border border-white/60
                                     shadow-[0_10px_35px_rgba(0,40,90,0.10)]
-                                    hover:shadow-[0_15px_55px_rgba(30,120,255,0.30)]
+                                   
                                     transition-all duration-300
                                     flex flex-col
                                 "
