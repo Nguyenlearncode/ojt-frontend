@@ -129,8 +129,8 @@ export default function HomePage() {
           modules={[Navigation, Pagination, Autoplay]}
           navigation
           pagination={{ clickable: true }}
-          autoplay={{ delay: 6000, disableOnInteraction: false }}
-          speed={2000}
+          autoplay={{ delay: 5000, disableOnInteraction: false }}
+          speed={1000}
           loop
           allowTouchMove={false}
           className="h-full"
