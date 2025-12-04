@@ -87,15 +87,7 @@ const LoginPageChakra: React.FC = () => {
                 Laboratory Management
               </Heading>
             </Flex>
-            <Text
-              fontSize="27px"
-              bgGradient={bgGradient}
-              bgClip="text"
-              fontWeight="bold"
-              textTransform="uppercase"
-            >
-              LOGIN
-            </Text>
+            
 
           </VStack>
 
