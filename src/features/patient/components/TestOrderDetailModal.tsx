@@ -707,9 +707,9 @@ const TestOrderDetailModal: React.FC<Props> = ({
                     Chỉnh sửa đơn
                   </MenuItem>
 
-                  <MenuItem icon={<FiRefreshCw />} onClick={onSyncResultOpen}>
+                  {/* <MenuItem icon={<FiRefreshCw />} onClick={onSyncResultOpen}>
                     Đồng bộ kết quả
-                  </MenuItem>
+                  </MenuItem> */}
 
                   <MenuItem icon={<FiUpload />} onClick={handleExportExcel}>
                     Xuất Excel
