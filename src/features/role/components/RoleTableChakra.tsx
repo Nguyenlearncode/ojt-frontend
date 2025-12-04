@@ -229,33 +229,40 @@ export const RoleTableChakra: React.FC<RoleTableChakraProps> = ({
 
                 {/* Hành động */}
                 <Td>
-                  <HStack spacing={2}>
-                    {onEdit && (
-                      <Tooltip label="Chỉnh sửa" placement="top" hasArrow>
-                        <IconButton
-                          aria-label="Edit role"
-                          icon={<FiEdit2 />}
-                          size="sm"
-                          colorScheme="blue"
-                          variant="ghost"
-                          onClick={() => onEdit(role)}
-                        />
-                      </Tooltip>
-                    )}
-                    {onDelete && (
-                      <Tooltip label="Xóa" placement="top" hasArrow>
-                        <IconButton
-                          aria-label="Delete role"
-                          icon={<FiTrash2 />}
-                          size="sm"
-                          colorScheme="red"
-                          variant="ghost"
-                          onClick={() => onDelete(role.roleCode)}
-                        />
-                      </Tooltip>
-                    )}
-                  </HStack>
-                </Td>
+  <HStack spacing={2}>
+    {/* 🔒 Ẩn thao tác nếu là Admin */}
+    {!/^(admin|administrator)$/i.test(role.roleName?.trim() || "") && (
+      <>
+        {onEdit && (
+          <Tooltip label="Chỉnh sửa" placement="top" hasArrow>
+            <IconButton
+              aria-label="Edit role"
+              icon={<FiEdit2 />}
+              size="sm"
+              colorScheme="blue"
+              variant="ghost"
+              onClick={() => onEdit(role)}
+            />
+          </Tooltip>
+        )}
+
+        {onDelete && (
+          <Tooltip label="Xóa" placement="top" hasArrow>
+            <IconButton
+              aria-label="Delete role"
+              icon={<FiTrash2 />}
+              size="sm"
+              colorScheme="red"
+              variant="ghost"
+              onClick={() => onDelete(role.roleCode)}
+            />
+          </Tooltip>
+        )}
+      </>
+    )}
+  </HStack>
+</Td>
+
               </MotionTr>
             ))}
           </Tbody>

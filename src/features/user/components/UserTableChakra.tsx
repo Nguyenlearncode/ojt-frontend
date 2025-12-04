@@ -158,38 +158,41 @@ export const UserTableChakra: React.FC<UserTableChakraProps> = ({
                   </Td>
 
                   {/* Hành động */}
-                  {/* Hành động */}
                   <Td>
-                    <HStack spacing={2}>
-                      <Tooltip label="Xem chi tiết" placement="top" hasArrow>
-                        <IconButton
-                          aria-label="View details"
-                          icon={<FiEye />}
-                          size="sm"
-                          colorScheme="blue"
-                          variant="ghost"
-                          onClick={() => setSelectedUser(user)}
-                        />
-                      </Tooltip>
+  <HStack spacing={2}>
+    {/* 👁️ Ẩn nút xem chi tiết nếu user là admin */}
+    {!/^(admin|administrator)$/i.test(user.role?.roleName?.trim() || "") && (
+      <Tooltip label="Xem chi tiết" placement="top" hasArrow>
+        <IconButton
+          aria-label="View details"
+          icon={<FiEye />}
+          size="sm"
+          colorScheme="blue"
+          variant="ghost"
+          onClick={() => setSelectedUser(user)}
+        />
+      </Tooltip>
+    )}
 
-                      {/* 🔒 Ẩn Edit khi role là admin hoặc administrator */}
-                      {onEdit &&
-                        !/^(admin|administrator)$/i.test(
-                          user.role?.roleName?.trim() || ""
-                        ) && (
-                          <Tooltip label="Chỉnh sửa" placement="top" hasArrow>
-                            <IconButton
-                              aria-label="Edit user"
-                              icon={<FiEdit2 />}
-                              size="sm"
-                              colorScheme="green"
-                              variant="ghost"
-                              onClick={() => onEdit(user)}
-                            />
-                          </Tooltip>
-                        )}
-                    </HStack>
-                  </Td>
+    {/* 🛠️ Ẩn Edit khi là admin */}
+    {onEdit &&
+      !/^(admin|administrator)$/i.test(
+        user.role?.roleName?.trim() || ""
+      ) && (
+        <Tooltip label="Chỉnh sửa" placement="top" hasArrow>
+          <IconButton
+            aria-label="Edit user"
+            icon={<FiEdit2 />}
+            size="sm"
+            colorScheme="green"
+            variant="ghost"
+            onClick={() => onEdit(user)}
+          />
+        </Tooltip>
+      )}
+  </HStack>
+</Td>
+
 
                 </MotionTr>
               ))}
